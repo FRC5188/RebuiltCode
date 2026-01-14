@@ -13,6 +13,13 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -26,6 +33,8 @@ public final class Constants {
 
   public static final String CanIDs = null;
 
+  public static final boolean tuningMode = false;
+
   public static enum Mode {
     /** Running on a real robot. */
     REAL,
@@ -35,6 +44,22 @@ public final class Constants {
 
     /** Replaying from a log file. */
     REPLAY
+  }
+
+  public class FieldConstants {
+    /**
+     *     Contains various field dimensions and useful reference points. All units are in meters
+     * and poses    have a blue alliance origin.
+     */
+    public static final AprilTagFieldLayout aprilTagLayout =
+        AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
+
+    public static final Distance FIELDLENGTH = Meters.of(aprilTagLayout.getFieldLength());
+    public static final Distance FIELDWIDTH = Meters.of(aprilTagLayout.getFieldWidth());
+    public static final Distance STARTINGLINEX = Inches.of(299.438);
+    public static final Translation2d FIELDCENTER =
+        new Translation2d(FIELDLENGTH.in(Meters) / 2, FIELDWIDTH.in(Meters) / 2);
+    public static final Distance ALGAEDIAMETER = Meters.of(.41);
   }
 
   public static final int CANDLE_ID = 50;
