@@ -22,6 +22,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotBase;
 
+import frc.lib.W8.util.Device;
+import frc.lib.W8.util.Device.CAN;
+
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
  * on a roboRIO. Change the value of "simMode" to switch between "sim" (physics sim) and "replay"
@@ -60,6 +63,14 @@ public final class Constants {
     public static final Translation2d FIELDCENTER =
         new Translation2d(FIELDLENGTH.in(Meters) / 2, FIELDWIDTH.in(Meters) / 2);
     public static final Distance ALGAEDIAMETER = Meters.of(.41);
+  }
+
+  public class Ports {
+    // Constants for Port Values !!!!!!
+    public static final Device.CAN IntakeRoller = new CAN(1, "rio");
+    public static final Device.CAN LEDs = new CAN(2, "rio");
+    public static final Device.CAN HopperRoller = new CAN(3, "rio");
+    public static final Device.CAN ClimberLinearMechanism = new CAN(4, "rio");
   }
 
   public static final int CANDLE_ID = 50;
