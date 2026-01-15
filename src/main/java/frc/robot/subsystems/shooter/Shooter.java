@@ -1,4 +1,4 @@
-package frc.robot.subsystems.drive.shooter;
+package frc.robot.subsystems.shooter;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.W8.mechanisms.flywheel.FlywheelMechanism;
