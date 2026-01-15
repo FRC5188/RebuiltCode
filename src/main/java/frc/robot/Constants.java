@@ -15,12 +15,23 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Second;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.units.AngularAccelerationUnit;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.lib.W8.mechanisms.rotary.RotaryMechanism.RotaryMechCharacteristics;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -63,4 +74,19 @@ public final class Constants {
   }
 
   public static final int CANDLE_ID = 50;
+
+  public class IntakeConstants {
+    // constants the intake :thumbs_up: :D
+    public static final AngularVelocity TOLERANCE = RotationsPerSecond.of(0.0);
+    public static final AngularVelocity CRUISE_VELOCITY = RotationsPerSecond.of(0.0);
+    public static final AngularAcceleration ACCELERATION = RotationsPerSecondPerSecond.of(0.0);
+    public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
+    public static final Angle MIN_ANGLE = Rotations.of(0.0);
+    public static final Angle MAX_ANGLE = Rotations.of(1);
+    public static final Angle STARTING_ANGLE = Rotations.of(0.0);
+    public static final Distance WHEEL_RADIUS = Meters.of(0.05);
+    public static final Translation3d OFFSET = Translation3d.kZero;
+    public static final RotaryMechCharacteristics CONSTANTS =
+        new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
+  }
 }
