@@ -15,12 +15,26 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Second;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.units.AngularAccelerationUnit;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.lib.W8.mechanisms.rotary.RotaryMechanism.RotaryMechCharacteristics;
+
+import frc.lib.W8.util.Device;
+import frc.lib.W8.util.Device.CAN;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -60,7 +74,43 @@ public final class Constants {
     public static final Translation2d FIELDCENTER =
         new Translation2d(FIELDLENGTH.in(Meters) / 2, FIELDWIDTH.in(Meters) / 2);
     public static final Distance ALGAEDIAMETER = Meters.of(.41);
+  }  
+  public static final AngularAcceleration ACCELERATION = RotationsPerSecondPerSecond.of(0.1);
+
+
+  public class HopperConstants {
+    //holds constants for the hopper
+    public static final Distance TOLERANCE = Inches.of(2.0);
+    public static final Double GEARING = (5.0/1.0);
+    public static final Distance MIN_DISTANCE = Inches.of(0.0);
+    public static final Distance MAX_DISTANCE = Inches.of(15.0);
+    public static final Distance STARTING_DISTANCE = Inches.of(0.0);
+    private static final Distance DRUM_RADIUS = Inches.of(2.0);
+    public static final DistanceAngleConverter CONVERTER = new DistanceAngleConverter(DRUM_RADIUS);
+  }
+
+  public class Ports {
+    // Constants for Port Values !!!!!!
+    public static final Device.CAN IntakeRoller = new CAN(1, "rio");
+    public static final Device.CAN LEDs = new CAN(2, "rio");
+    public static final Device.CAN HopperRoller = new CAN(3, "rio");
+    public static final Device.CAN ClimberLinearMechanism = new CAN(4, "rio");
   }
 
   public static final int CANDLE_ID = 50;
+
+  public class IntakeConstants {
+    // constants the intake :thumbs_up: :D
+    public static final AngularVelocity TOLERANCE = RotationsPerSecond.of(0.0);
+    public static final AngularVelocity CRUISE_VELOCITY = RotationsPerSecond.of(0.0);
+    public static final AngularAcceleration ACCELERATION = RotationsPerSecondPerSecond.of(0.0);
+    public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
+    public static final Angle MIN_ANGLE = Rotations.of(0.0);
+    public static final Angle MAX_ANGLE = Rotations.of(1);
+    public static final Angle STARTING_ANGLE = Rotations.of(0.0);
+    public static final Distance WHEEL_RADIUS = Meters.of(0.05);
+    public static final Translation3d OFFSET = Translation3d.kZero;
+    public static final RotaryMechCharacteristics CONSTANTS =
+        new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
+  }
 }
