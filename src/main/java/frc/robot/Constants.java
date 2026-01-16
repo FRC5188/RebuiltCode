@@ -65,6 +65,15 @@ public final class Constants {
     public static final Distance ALGAEDIAMETER = Meters.of(.41);
   }
 
+  public class HopperConstants {
+    //holds constants for the hopper
+    public static final Distance TOLERANCE = Inches.of(2.0);
+    public static final Double GEARING = (5.0/1.0);
+    public static final Distance MIN_DISTANCE = Inches.of(0.0);
+    public static final Distance MAX_DISTANCE = Inches.of(15.0);
+    public static final Distance STARTING_DISTANCE = Inches.of(0.0);
+  }
+
   public class Ports {
     // Constants for Port Values !!!!!!
     public static final Device.CAN IntakeRoller = new CAN(1, "rio");
