@@ -5,15 +5,12 @@ import frc.lib.W8.mechanisms.flywheel.FlywheelMechanism;
 
 public class Hopper extends SubsystemBase {
 
-    private FlywheelMechanism _io;
+  private FlywheelMechanism _io;
 
-    public Hopper(FlywheelMechanism io) {
-        _io = io;
-    }
+  public Hopper(FlywheelMechanism io) {
+    _io = io;
+  }
 
-    @Override
-    public void periodic() {
-        
-    }
-
+  @Override
+  public void periodic() {}
 }
