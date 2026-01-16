@@ -15,10 +15,12 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -60,7 +62,9 @@ public final class Constants {
     public static final Translation2d FIELDCENTER =
         new Translation2d(FIELDLENGTH.in(Meters) / 2, FIELDWIDTH.in(Meters) / 2);
     public static final Distance ALGAEDIAMETER = Meters.of(.41);
-  }
+  }  
+  public static final AngularAcceleration ACCELERATION = RotationsPerSecondPerSecond.of(0.1);
+
 
   public static final int CANDLE_ID = 50;
 }
