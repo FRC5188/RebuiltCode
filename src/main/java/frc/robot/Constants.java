@@ -32,7 +32,6 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism.RotaryMechCharacteristics;
-
 import frc.lib.W8.util.Device;
 import frc.lib.W8.util.Device.CAN;
 
@@ -74,14 +73,14 @@ public final class Constants {
     public static final Translation2d FIELDCENTER =
         new Translation2d(FIELDLENGTH.in(Meters) / 2, FIELDWIDTH.in(Meters) / 2);
     public static final Distance ALGAEDIAMETER = Meters.of(.41);
-  }  
+  }
+
   public static final AngularAcceleration ACCELERATION = RotationsPerSecondPerSecond.of(0.1);
 
-
   public class HopperConstants {
-    //holds constants for the hopper
+    // holds constants for the hopper
     public static final Distance TOLERANCE = Inches.of(2.0);
-    public static final Double GEARING = (5.0/1.0);
+    public static final Double GEARING = (5.0 / 1.0);
     public static final Distance MIN_DISTANCE = Inches.of(0.0);
     public static final Distance MAX_DISTANCE = Inches.of(15.0);
     public static final Distance STARTING_DISTANCE = Inches.of(0.0);
