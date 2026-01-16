@@ -74,7 +74,9 @@ public final class Constants {
     public static final Translation2d FIELDCENTER =
         new Translation2d(FIELDLENGTH.in(Meters) / 2, FIELDWIDTH.in(Meters) / 2);
     public static final Distance ALGAEDIAMETER = Meters.of(.41);
-  }
+  }  
+  public static final AngularAcceleration ACCELERATION = RotationsPerSecondPerSecond.of(0.1);
+
 
   public class HopperConstants {
     //holds constants for the hopper
