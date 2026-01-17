@@ -15,5 +15,8 @@ public class Hopper extends SubsystemBase {
     public void periodic() {
         
     }
-
+    double voltage; 
+    public void runHopper(double voltage){ 
+        _io.runVoltage(voltage); 
+    }
 }
