@@ -95,6 +95,23 @@ public final class Constants {
     public static final Device.CAN ClimberLinearMechanism = new CAN(4, "rio");
   }
 
+  public final class ShooterConstants {
+  // Constants for the Shooter
+    public static final Angle ANGLE_TOLERANCE = Rotations.of(0.01);
+    public static final AngularVelocity ANGLE_VELOCITY_TOLERANCE = RotationsPerSecond.of(0.01);
+    public static final AngularVelocity CRUISE_VELOCITY = RotationsPerSecond.of(204);
+    public static final AngularAcceleration ACCELERATION = RotationsPerSecondPerSecond.of(204);
+    public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
+    public static final double ROTOR_TO_SENSOR = (1.0 / 1.0);
+    public static final double SENSOR_TO_MECHANISM = (204.0 / 1.0);
+    public static final Translation3d OFFSET = Translation3d.kZero;
+    public static final Angle MIN_ANGLE = Rotations.of(0.0);
+    public static final Angle MAX_ANGLE = Rotations.of(10.0);
+    public static final Angle STARTING_ANGLE = Rotations.of(0.0);
+    public static final Distance WHEEL_RADIUS = Meters.of(0.5);
+    public static final RotaryMechCharacteristics CONSTANTS = RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
+  }
+  
   public static final int CANDLE_ID = 50;
 
   public class IntakeConstants {
