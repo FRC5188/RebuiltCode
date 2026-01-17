@@ -31,10 +31,12 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.lib.W8.mechanisms.linear.LinearMechanism.LinearMechCharacteristics;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism.RotaryMechCharacteristics;
 
 import frc.lib.W8.util.Device;
 import frc.lib.W8.util.Device.CAN;
+import frc.lib.W8.util.MechanismUtil.DistanceAngleConverter;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -127,5 +129,18 @@ public final class Constants {
     public static final Translation3d OFFSET = Translation3d.kZero;
     public static final RotaryMechCharacteristics CONSTANTS =
         new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
+  }
+  public class ClimberConstants {
+    public static final Distance TOLERANCE = Inches.of(0.1);
+    public static final double GEARING = (5.0 / 1.0);
+    public static final Distance MIN_DISTANCE = Inches.of(0.0);
+    public static final Distance MAX_DISTANCE = Inches.of(10.0);
+    public static final Distance STARTING_DISTANCE = Inches.of(0.0);
+    public static final Distance DRUM_RADIUS = Inches.of(2.0);
+    public static final DistanceAngleConverter CONVERTER = new DistanceAngleConverter(DRUM_RADIUS);
+    public static final LinearMechCharacteristics CHARACTERISTICS = new LinearMechCharacteristics(new Translation3d(0.0, 0.0, 0.0), MIN_DISTANCE, MAX_DISTANCE, STARTING_DISTANCE, CONVERTER);
+
+  
+    
   }
 }
