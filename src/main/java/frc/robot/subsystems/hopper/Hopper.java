@@ -20,6 +20,8 @@ _io.runPosition(HopperConstants.CONVERTER.toAngle(positionInches), PIDSlot.SLOT_
 @Override
 public void periodic() {
 
+  @Override
+  public void periodic() {}
 }
 
 }

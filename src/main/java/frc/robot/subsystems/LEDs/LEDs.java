@@ -1,15 +1,15 @@
-package frc.robot.subsystems.leds;
+package frc.robot.subsystems.LEDs;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.w8.io.lights.LightsIOCandle;
+import frc.lib.W8.io.lights.LightsIO;
 
 public class LEDs extends SubsystemBase {
-    private final LightsIOCandle _io;
+  private final LightsIO _io;
 
-    public LEDs(LightsIOCandle io) {
-        _io = io;
-    }
+  public LEDs(LightsIO io) {
+    _io = io;
+  }
 
-    @Override
-    public void periodic() {}
+  @Override
+  public void periodic() {}
 }
