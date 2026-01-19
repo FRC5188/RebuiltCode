@@ -13,15 +13,11 @@ _io = io;
 }
 
 public void setGoal(double position) {
-Distance positionInches = Inches.of(position);
-_io.runPosition(HopperConstants.CONVERTER.toAngle(positionInches), PIDSlot.SLOT_0);
+  Distance positionInches = Inches.of(position);
+  _io.runPosition(HopperConstants.CONVERTER.toAngle(positionInches), PIDSlot.SLOT_0);
 }
-
-@Override
-public void periodic() {
 
   @Override
   public void periodic() {}
-}
 
 }
