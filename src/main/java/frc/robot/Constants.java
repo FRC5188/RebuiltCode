@@ -88,6 +88,8 @@ public final class Constants {
     public static final Distance STARTING_DISTANCE = Inches.of(0.0);
     private static final Distance DRUM_RADIUS = Inches.of(2.0);
     public static final DistanceAngleConverter CONVERTER = new DistanceAngleConverter(DRUM_RADIUS);
+    public static final AngularVelocity ANGULAR_VELOCITY = RotationsPerSecond.of(1);
+    public static final AngularAcceleration ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(1);
   }
 
   public class Ports {
@@ -112,7 +114,7 @@ public final class Constants {
     public static final Angle MAX_ANGLE = Rotations.of(10.0);
     public static final Angle STARTING_ANGLE = Rotations.of(0.0);
     public static final Distance WHEEL_RADIUS = Meters.of(0.5);
-    public static final RotaryMechCharacteristics CONSTANTS = RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
+    public static final RotaryMechCharacteristics CONSTANTS = new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
   }
   
   public static final int CANDLE_ID = 50;
