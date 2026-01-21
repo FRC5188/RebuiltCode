@@ -99,7 +99,7 @@ public final class Constants {
   }
 
   public final class ShooterConstants {
-  // Constants for the Shooter
+    // Constants for the Shooter
     public static final Angle ANGLE_TOLERANCE = Rotations.of(0.01);
     public static final AngularVelocity ANGLE_VELOCITY_TOLERANCE = RotationsPerSecond.of(0.01);
     public static final AngularVelocity CRUISE_VELOCITY = RotationsPerSecond.of(204);
@@ -112,9 +112,10 @@ public final class Constants {
     public static final Angle MAX_ANGLE = Rotations.of(10.0);
     public static final Angle STARTING_ANGLE = Rotations.of(0.0);
     public static final Distance WHEEL_RADIUS = Meters.of(0.5);
-    public static final RotaryMechCharacteristics CONSTANTS = RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
+    public static final RotaryMechCharacteristics CONSTANTS =
+        RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
   }
-  
+
   public static final int CANDLE_ID = 50;
 
   public class IntakeConstants {
@@ -131,6 +132,7 @@ public final class Constants {
     public static final RotaryMechCharacteristics CONSTANTS =
         new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
   }
+
   public class ClimberConstants {
     public static final Distance TOLERANCE = Inches.of(0.1);
     public static final double GEARING = (5.0 / 1.0);
@@ -139,6 +141,12 @@ public final class Constants {
     public static final Distance STARTING_DISTANCE = Inches.of(0.0);
     public static final Distance DRUM_RADIUS = Inches.of(2.0);
     public static final DistanceAngleConverter CONVERTER = new DistanceAngleConverter(DRUM_RADIUS);
-    public static final LinearMechCharacteristics CHARACTERISTICS = new LinearMechCharacteristics(new Translation3d(0.0, 0.0, 0.0), MIN_DISTANCE, MAX_DISTANCE, STARTING_DISTANCE, CONVERTER);  
+    public static final LinearMechCharacteristics CHARACTERISTICS =
+        new LinearMechCharacteristics(
+            new Translation3d(0.0, 0.0, 0.0),
+            MIN_DISTANCE,
+            MAX_DISTANCE,
+            STARTING_DISTANCE,
+            CONVERTER);
   }
 }
