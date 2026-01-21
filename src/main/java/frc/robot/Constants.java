@@ -32,6 +32,8 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism.RotaryMechCharacteristics;
+import com.ctre.phoenix6.signals.RGBWColor;
+import com.ctre.phoenix6.controls.*;
 
 import frc.lib.W8.util.Device;
 import frc.lib.W8.util.Device.CAN;
@@ -61,15 +63,9 @@ public final class Constants {
   }
 
   public class LEDConstants {
-    /*public enum LEDAnimations {
-        Fire,
-        ColorFlow,
-        Twinkle
-    }*/
-    
-    FireAnimation animFire = new FireAnimation();
-
-    
+    public static final RainbowAnimation rainbowAnim = new RainbowAnimation(0, 2);
+    public static final RGBWColor colorPaleBlue = new RGBWColor(165, 180, 208, 0);
+    public static final RBGWColor colorWheezerBlue = new RGBWColor(24, 155, 204, 0);
   }
 
   public class FieldConstants {
