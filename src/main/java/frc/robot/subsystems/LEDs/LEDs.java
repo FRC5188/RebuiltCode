@@ -22,6 +22,6 @@ public class LEDs extends SubsystemBase {
         )
     }
 
-    @Override
-    public void periodic() {}
+  @Override
+  public void periodic() {}
 }

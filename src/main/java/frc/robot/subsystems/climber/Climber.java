@@ -11,7 +11,5 @@ public class Climber extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {
-
-  }
+  public void periodic() {}
 }
