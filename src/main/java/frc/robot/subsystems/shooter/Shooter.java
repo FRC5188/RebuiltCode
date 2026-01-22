@@ -46,13 +46,21 @@ public class Shooter extends SubsystemBase {
             () -> {
               setFlywheelVelocity(velocity);
             })
+        .until(
+            () -> flyAtVelocity())
         .andThen(
             () -> {
               runFeeder();
             })
-        .unless(() -> (flyAtVelocity() == false));
+        // .until(
+        //   () -> noBalls()
+        // )
+        .andThen(
+          ()->{
+            setFlywheelVelocity(0);
+          });
   }
-
+ 
   @Override
   public void periodic() {}
 }
