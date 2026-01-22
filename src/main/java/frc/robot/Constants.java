@@ -25,6 +25,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.AngularAccelerationUnit;
+import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -85,6 +86,11 @@ public final class Constants {
     public static final Distance MIN_DISTANCE = Inches.of(0.0);
     public static final Distance MAX_DISTANCE = Inches.of(15.0);
     public static final Distance STARTING_DISTANCE = Inches.of(0.0);
+
+    // CHANGE TO PROPER RPMS !!!!
+    public static final double SLOW_SPEED_RPM = 0.0;
+    public static final double FAST_SPEED_RPM = 0.0;
+    public static final double REVERSE_SPEED_RPM = 0.0;
   }
 
   public class Ports {
