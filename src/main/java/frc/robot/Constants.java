@@ -77,8 +77,6 @@ public final class Constants {
     public static final Distance ALGAEDIAMETER = Meters.of(.41);
   }
 
-  public static final AngularAcceleration ACCELERATION = RotationsPerSecondPerSecond.of(0.1);
-
   public class HopperConstants {
     // holds constants for the hopper
     public static final Distance TOLERANCE = Inches.of(2.0);
@@ -133,6 +131,17 @@ public final class Constants {
     public static final RotaryMechCharacteristics CONSTANTS =
         new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
   }
+
+  public class ShooterConstants {
+    public static final double FLYWHEEL_VELOCITY_TOLERANCE = 1.0;
+    public static final AngularAcceleration ACCELERATION = RotationsPerSecondPerSecond.of(0.1);
+  }
+
+  public class FeederConstants {
+    public static final AngularVelocity FEED_SPEED = RotationsPerSecond.of(0.0);
+    public static final AngularAcceleration FEED_ACCELERATION = RotationsPerSecondPerSecond.of(0.0);
+  }
+  
   public class ClimberConstants {
     public static final Distance TOLERANCE = Inches.of(0.1);
     public static final double GEARING = (5.0 / 1.0);
