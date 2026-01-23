@@ -12,6 +12,7 @@ import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
+
   private FlywheelMechanism _flywheel;
   private FlywheelMechanism _feeder;
   public double desiredVelo;
@@ -52,9 +53,6 @@ public class Shooter extends SubsystemBase {
             () -> {
               runFeeder();
             })
-        // .until(
-        //   () -> noBalls()
-        // )
         .andThen(
           ()->{
             setFlywheelVelocity(0);
