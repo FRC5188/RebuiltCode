@@ -112,6 +112,7 @@ public final class Constants {
     public static final Angle MAX_ANGLE = Rotations.of(10.0);
     public static final Angle STARTING_ANGLE = Rotations.of(0.0);
     public static final Distance WHEEL_RADIUS = Meters.of(0.5);
+    public static final double FLYWHEEL_VELOCITY_TOLERANCE = 1.0;
     public static final RotaryMechCharacteristics CONSTANTS = new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
   }
   
@@ -130,11 +131,6 @@ public final class Constants {
     public static final Translation3d OFFSET = Translation3d.kZero;
     public static final RotaryMechCharacteristics CONSTANTS =
         new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
-  }
-
-  public class ShooterConstants {
-    public static final double FLYWHEEL_VELOCITY_TOLERANCE = 1.0;
-    public static final AngularAcceleration ACCELERATION = RotationsPerSecondPerSecond.of(0.1);
   }
 
   public class FeederConstants {
