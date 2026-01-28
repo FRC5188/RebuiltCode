@@ -29,6 +29,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.lib.W8.mechanisms.linear.LinearMechanism.LinearMechCharacteristics;
@@ -147,5 +148,6 @@ public final class Constants {
     public static final Distance DRUM_RADIUS = Inches.of(2.0);
     public static final DistanceAngleConverter CONVERTER = new DistanceAngleConverter(DRUM_RADIUS);
     public static final LinearMechCharacteristics CHARACTERISTICS = new LinearMechCharacteristics(new Translation3d(0.0, 0.0, 0.0), MIN_DISTANCE, MAX_DISTANCE, STARTING_DISTANCE, CONVERTER);  
+    public static final double CLIMBER_SPEED = 1.0;
   }
 }
