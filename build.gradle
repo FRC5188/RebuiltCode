@@ -10,6 +10,14 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
+sourceSets {
+    main {
+        java {
+            exclude 'frc/robot/subsystems/examples/**'
+        }
+    }
+}
+
 def ROBOT_MAIN_CLASS = "frc.robot.Main"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
@@ -123,7 +131,7 @@ spotless {
     java {
         target fileTree('.') {
             include '**/*.java'
-            exclude '**/build/**', '**/build-*/**', '**/bin/**'
+            exclude '**/build/**', '**/build-*/**', '**/bin/**', '**/frc/robot/subsystems/examples/**'
         }
         toggleOffOn()
         googleJavaFormat()
