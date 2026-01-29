@@ -60,18 +60,6 @@ public final class Constants {
     REPLAY
   }
 
-  public class LEDConstants {
-    /*public enum LEDAnimations {
-        Fire,
-        ColorFlow,
-        Twinkle
-    }*/
-    
-    FireAnimation animFire = new FireAnimation();
-
-    
-  }
-
   public class FieldConstants {
     /**
      *     Contains various field dimensions and useful reference points. All units are in meters
