@@ -114,7 +114,8 @@ public final class Constants {
     public static final Distance WHEEL_RADIUS = Meters.of(0.5);
     public static final double FLYWHEEL_VELOCITY_TOLERANCE = 1.0;
     public static final RotaryMechCharacteristics CONSTANTS = new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
-    public static final double HEIGHT_DIFFERENCE = 1.0;
+    public static final double HEIGHT_DIFFERENCE = 21.0; // Inches between flywheel center and top of hub opening
+    public static final double EXIT_VELOCITY = 7.4; // m/s from ReCalc Flywheel Calculator
   }
   
   public static final int CANDLE_ID = 50;

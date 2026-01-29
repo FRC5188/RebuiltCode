@@ -2,6 +2,7 @@ package frc.robot.subsystems.shooter;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -16,6 +17,7 @@ public class Shooter extends SubsystemBase {
   private FlywheelMechanism _flywheel;
   private FlywheelMechanism _feeder;
   public double desiredVelo;
+  public Angle HoodAngle;
 
   public Shooter(FlywheelMechanism flywheel, FlywheelMechanism feeder) {
     _flywheel = flywheel;
@@ -40,6 +42,18 @@ public class Shooter extends SubsystemBase {
   public boolean flyAtVelocity() {
     return Math.abs(desiredVelo - _flywheel.getVelocity().in(RotationsPerSecond))
         <= ShooterConstants.FLYWHEEL_VELOCITY_TOLERANCE;
+  }
+
+  public double getHoodAngleDegrees(double distanceToTarget) {
+
+    final double g = 9.81;
+
+    double check = Math.pow(ShooterConstants.EXIT_VELOCITY, 4) - g * (g * Math.pow(distanceToTarget, 2) + 2 * ShooterConstants.HEIGHT_DIFFERENCE * Math.pow(ShooterConstants.EXIT_VELOCITY, 2));
+
+    if (check < 0) {
+      return 45.0; // Default angle if the shot is not possible
+    }
+    return Math.toDegrees(Math.atan((ShooterConstants.EXIT_VELOCITY*ShooterConstants.EXIT_VELOCITY + Math.sqrt(check)) / (g * distanceToTarget)));
   }
 
   public Command shoot(double velocity) {
