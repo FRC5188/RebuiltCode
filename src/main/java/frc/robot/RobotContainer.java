@@ -20,6 +20,7 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -29,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.W8.io.motor.*;
 import frc.lib.W8.mechanisms.flywheel.*;
 import frc.lib.W8.util.Device.CAN;
+import frc.robot.Constants.HopperConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -38,6 +40,11 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.hopper.Hopper;
+
+import static edu.wpi.first.units.Units.Kilogram;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -49,7 +56,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
 // Subsystems
 private final Drive drive;
-//private final Hopper hopper;
+private final Hopper hopper;
 
 // Controller
 private final CommandXboxController controller = new CommandXboxController(0);
@@ -70,8 +77,8 @@ new ModuleIOTalonFX(TunerConstants.FrontRight),
 new ModuleIOTalonFX(TunerConstants.BackLeft),
 new ModuleIOTalonFX(TunerConstants.BackRight));
 
-/*hopper =
-new Hopper(new FlywheelMechanismReal(new MotorIORev("HopperMotor", new CAN(0, "rio"), false, null, null)));*/
+hopper =
+new Hopper(new FlywheelMechanismReal(new MotorIORev("HopperMotor", new CAN(HopperConstants.CAN_ID, "rio"), false, HopperConstants.MOTOR_CONFIG)));
 break;
 
 case SIM:
@@ -84,8 +91,8 @@ new ModuleIOSim(TunerConstants.FrontRight),
 new ModuleIOSim(TunerConstants.BackLeft),
 new ModuleIOSim(TunerConstants.BackRight));
 
-/*hopper =
-new Hopper(new FlywheelMechanismSim(new MotorIOSim("HopperMotor", new CAN(0, "rio"), false, null, null)), new DCMotor(0, 0, 0, 0, 0, 0));*/
+hopper =
+new Hopper(new FlywheelMechanismSim(new MotorIORevSim("Simulated Rev Motor", new CAN(HopperConstants.CAN_ID, "rio"), false, 1, 1, DCMotor.getNEO(1), HopperConstants.MOTOR_CONFIG), DCMotor.getNEO(1), KilogramSquareMeters.of(0.5), RotationsPerSecond.of(0.1)));
 break;
 
 default:
@@ -97,6 +104,8 @@ new ModuleIO() {},
 new ModuleIO() {},
 new ModuleIO() {},
 new ModuleIO() {});
+hopper =
+new Hopper(new FlywheelMechanism() {});
 break;
 }
 
@@ -161,6 +170,9 @@ drive.setPose(
 new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
 drive)
 .ignoringDisable(true));
+
+// Followed example on line 161
+controller.x().onTrue(Commands.runOnce(() -> hopper.setGoal(HopperConstants.HOPPER_POSITION), hopper));
 }
 
 /**
