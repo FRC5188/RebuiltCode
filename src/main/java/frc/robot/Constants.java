@@ -14,20 +14,18 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Volts;
-import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.AngularAccelerationUnit;
-import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -97,7 +95,8 @@ public final class Constants {
     public static final Distance DRUM_RADIUS = Inches.of(2.0);
     public static final DistanceAngleConverter CONVERTER = new DistanceAngleConverter(DRUM_RADIUS);
     public static final AngularVelocity ANGULAR_VELOCITY = RotationsPerSecond.of(1);
-    public static final AngularAcceleration ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(1);
+    public static final AngularAcceleration ANGULAR_ACCELERATION =
+        RotationsPerSecondPerSecond.of(1);
   }
 
   public class Ports {
@@ -152,7 +151,7 @@ public final class Constants {
     public static final AngularVelocity FEED_SPEED = RotationsPerSecond.of(0.0);
     public static final AngularAcceleration FEED_ACCELERATION = RotationsPerSecondPerSecond.of(0.0);
   }
-  
+
   public class ClimberConstants {
     public static final Distance TOLERANCE = Inches.of(0.1);
     public static final double GEARING = (5.0 / 1.0);
