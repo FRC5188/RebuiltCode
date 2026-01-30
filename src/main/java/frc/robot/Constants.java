@@ -123,7 +123,7 @@ public final class Constants {
     public static final Angle STARTING_ANGLE = Rotations.of(0.0);
     public static final Distance WHEEL_RADIUS = Meters.of(0.5);
     public static final RotaryMechCharacteristics CONSTANTS =
-        RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
+        new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
     public static final double IDLE_SPEED_RPM = (1.0);
     public static final double HUB_SPEED_RPM = (1.0);
     public static final double TOWER_SPEED_RPM = (1.0);
