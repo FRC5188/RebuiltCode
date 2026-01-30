@@ -147,5 +147,6 @@ public final class Constants {
     public static final Distance DRUM_RADIUS = Inches.of(2.0);
     public static final DistanceAngleConverter CONVERTER = new DistanceAngleConverter(DRUM_RADIUS);
     public static final LinearMechCharacteristics CHARACTERISTICS = new LinearMechCharacteristics(new Translation3d(0.0, 0.0, 0.0), MIN_DISTANCE, MAX_DISTANCE, STARTING_DISTANCE, CONVERTER);  
+    public static final double CLIMB_SPEED = 1.0;
   }
 }
