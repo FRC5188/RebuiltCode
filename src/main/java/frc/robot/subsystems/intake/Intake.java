@@ -2,6 +2,7 @@ package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
@@ -23,6 +24,18 @@ public class Intake extends SubsystemBase {
     AngularVelocity angVelo = RotationsPerSecond.of(velocity);
 
     _rollerIO.runVelocity(angVelo, Constants.IntakeConstants.ACCELERATION, PIDSlot.SLOT_0);
+  }
+
+  public AngularVelocity getVelocity() {
+    return _io.getVelocity();
+  }
+
+  public Angle getPosition() {
+    return _io.getPosition();
+  }
+
+  public void stop() {
+    setVelocity(0);
   }
 
   @Override
