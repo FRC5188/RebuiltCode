@@ -407,5 +407,6 @@ public final class Constants {
             MAX_DISTANCE,
             STARTING_DISTANCE,
             CONVERTER);
+    public static final double CLIMB_SPEED = 1.0;
   }
 }
