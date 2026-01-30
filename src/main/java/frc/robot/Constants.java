@@ -14,6 +14,8 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -25,12 +27,14 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.AngularAccelerationUnit;
+import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Velocity;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.lib.W8.mechanisms.linear.LinearMechanism.LinearMechCharacteristics;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism.RotaryMechCharacteristics;
@@ -85,7 +89,13 @@ public final class Constants {
     public static final Distance MIN_DISTANCE = Inches.of(0.0);
     public static final Distance MAX_DISTANCE = Inches.of(15.0);
     public static final Distance STARTING_DISTANCE = Inches.of(0.0);
-    private static final Distance DRUM_RADIUS = Inches.of(2.0);
+
+    // CHANGE TO PROPER RPMS !!!!
+    public static final double SLOW_SPEED_RPM = 0.0;
+    public static final double FAST_SPEED_RPM = 0.0;
+    public static final double REVERSE_SPEED_RPM = 0.0;
+    public static final Voltage VOLTAGE = Volts.of(12.0);
+    public static final Distance DRUM_RADIUS = Inches.of(2.0);
     public static final DistanceAngleConverter CONVERTER = new DistanceAngleConverter(DRUM_RADIUS);
     public static final AngularVelocity ANGULAR_VELOCITY = RotationsPerSecond.of(1);
     public static final AngularAcceleration ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(1);
@@ -100,7 +110,7 @@ public final class Constants {
   }
 
   public final class ShooterConstants {
-  // Constants for the Shooter
+    // Constants for the Shooter
     public static final Angle ANGLE_TOLERANCE = Rotations.of(0.01);
     public static final AngularVelocity ANGLE_VELOCITY_TOLERANCE = RotationsPerSecond.of(0.01);
     public static final AngularVelocity CRUISE_VELOCITY = RotationsPerSecond.of(204);
@@ -113,10 +123,15 @@ public final class Constants {
     public static final Angle MAX_ANGLE = Rotations.of(10.0);
     public static final Angle STARTING_ANGLE = Rotations.of(0.0);
     public static final Distance WHEEL_RADIUS = Meters.of(0.5);
+    public static final RotaryMechCharacteristics CONSTANTS =
+        RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
+    public static final double IDLE_SPEED_RPM = (1.0);
+    public static final double HUB_SPEED_RPM = (1.0);
+    public static final double TOWER_SPEED_RPM = (1.0);
+    public static final double DEFAULT_SPEED_RPM = (1.0);
     public static final double FLYWHEEL_VELOCITY_TOLERANCE = 1.0;
-    public static final RotaryMechCharacteristics CONSTANTS = new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
   }
-  
+
   public static final int CANDLE_ID = 50;
 
   public class IntakeConstants {
@@ -149,5 +164,12 @@ public final class Constants {
     public static final DistanceAngleConverter CONVERTER = new DistanceAngleConverter(DRUM_RADIUS);
     public static final LinearMechCharacteristics CHARACTERISTICS = new LinearMechCharacteristics(new Translation3d(0.0, 0.0, 0.0), MIN_DISTANCE, MAX_DISTANCE, STARTING_DISTANCE, CONVERTER);  
     public static final double CLIMBER_SPEED = 1.0;
+    public static final LinearMechCharacteristics CHARACTERISTICS =
+        new LinearMechCharacteristics(
+            new Translation3d(0.0, 0.0, 0.0),
+            MIN_DISTANCE,
+            MAX_DISTANCE,
+            STARTING_DISTANCE,
+            CONVERTER);
   }
 }
