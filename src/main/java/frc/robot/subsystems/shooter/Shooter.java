@@ -1,27 +1,38 @@
 package frc.robot.subsystems.shooter;
 
+import static edu.wpi.first.units.Units.Degree;
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.flywheel.FlywheelMechanism;
+import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
 import frc.robot.Constants.FeederConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
 
-  private FlywheelMechanism _flywheel;
-  private FlywheelMechanism _feeder;
-  public double desiredVelo;
-  public Angle HoodAngle;
+  private final FlywheelMechanism _flywheel;
+  private final FlywheelMechanism _feeder;
+  private final RotaryMechanism _hood;
 
-  public Shooter(FlywheelMechanism flywheel, FlywheelMechanism feeder) {
+  // desired target values
+  private double desiredVelo;
+  private double hoodAngle;
+
+  public Shooter(FlywheelMechanism flywheel, FlywheelMechanism feeder, RotaryMechanism hood) {
     _flywheel = flywheel;
     _feeder = feeder;
+    _hood = hood;
   }
 
   // Sets feeder motor speed
@@ -32,8 +43,9 @@ public class Shooter extends SubsystemBase {
 
   // Sets the flywheel velocity based on an input.
   public void setFlywheelVelocity(double velocity) {
+    // store the desired velocity then send converted velocity to the mechanism
+    this.desiredVelo = velocity;
     AngularVelocity angVelo = RotationsPerSecond.of(velocity);
-    velocity = desiredVelo;
 
     _flywheel.runVelocity(angVelo, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
   }
@@ -44,33 +56,45 @@ public class Shooter extends SubsystemBase {
         <= ShooterConstants.FLYWHEEL_VELOCITY_TOLERANCE;
   }
 
-  public double getHoodAngleDegrees(double distanceToTarget) {
+  public double getHoodAngleDegrees(Translation2d robotPos) {
 
     final double g = 9.81;
 
-    double check = Math.pow(ShooterConstants.EXIT_VELOCITY, 4) - g * (g * Math.pow(distanceToTarget, 2) + 2 * ShooterConstants.HEIGHT_DIFFERENCE * Math.pow(ShooterConstants.EXIT_VELOCITY, 2));
+    //TODO: Replace with HUB later once it gets added.
+    double distance = robotPos.getDistance(FieldConstants.FIELDCENTER);
+
+    double check = Math.pow(ShooterConstants.EXIT_VELOCITY, 4) - g * (g * Math.pow(distance, 2) + 2 * ShooterConstants.HEIGHT_DIFFERENCE * Math.pow(ShooterConstants.EXIT_VELOCITY, 2));
 
     if (check < 0) {
       return 45.0; // Default angle if the shot is not possible
     }
-    return Math.toDegrees(Math.atan((ShooterConstants.EXIT_VELOCITY*ShooterConstants.EXIT_VELOCITY + Math.sqrt(check)) / (g * distanceToTarget)));
+    return Math.toDegrees(Math.atan((ShooterConstants.EXIT_VELOCITY*ShooterConstants.EXIT_VELOCITY + Math.sqrt(check)) / (g * distance)));
   }
 
+  // Sets hood angle
+  public void setHoodAngle(double angleDegrees) {
+    hoodAngle = angleDegrees;
+    _hood.runPosition(Angle.ofBaseUnits(angleDegrees, Degrees), ShooterConstants.HOOD_VELOCITY, ShooterConstants.HOOD_ACCELERATION, null, PIDSlot.SLOT_0);
+  }
+
+  // Checks if hood is at angle
+  public boolean hoodAtAngle() {
+    return Math.abs(hoodAngle - _hood.getPosition().in(Degrees)) < ShooterConstants.HOOD_TOLERANCE;
+  }
+
+
   public Command shoot(double velocity) {
-    return Commands.run(
-            () -> {
-              setFlywheelVelocity(velocity);
-            })
-        .until(
-            () -> flyAtVelocity())
-        .andThen(
-            () -> {
-              runFeeder();
-            })
-        .andThen(
-          ()->{
-            setFlywheelVelocity(0);
-          });
+    // Prepare targets
+    return Commands.sequence(
+        // start setting targets in parallel
+        Commands.runOnce(() -> setFlywheelVelocity(velocity)),
+        Commands.runOnce(() -> setHoodAngle(hoodAngle)),
+        // wait until both are ready
+        Commands.waitUntil(this::flyAtVelocity).alongWith(Commands.waitUntil(this::hoodAtAngle)),
+        // feed once ready
+        Commands.runOnce(() -> runFeeder()),
+        // stop flywheel when finished
+        Commands.runOnce(() -> setFlywheelVelocity(0)));
   }
  
   @Override
