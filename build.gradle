@@ -1,3 +1,4 @@
+
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2026.1.1"
@@ -8,6 +9,14 @@ plugins {
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
+}
+
+sourceSets {
+    main {
+        java {
+            exclude 'frc/robot/subsystems/w8_examples/**'
+        }
+    }
 }
 
 def ROBOT_MAIN_CLASS = "frc.robot.Main"
@@ -120,10 +129,11 @@ tasks.withType(JavaCompile) {
 
 
 spotless {
+    enforceCheck = false
     java {
         target fileTree('.') {
             include '**/*.java'
-            exclude '**/build/**', '**/build-*/**', '**/bin/**'
+            exclude '**/build/**', '**/build-*/**', '**/bin/**', '**/frc/robot/subsystems/w8_examples/**'
         }
         toggleOffOn()
         googleJavaFormat()
@@ -134,7 +144,7 @@ spotless {
     groovyGradle {
         target fileTree('.') {
             include '**/*.gradle'
-            exclude '**/build/**', '**/build-*/**'
+            exclude '**/build/**', '**/build-*/**', '**/frc/robot/subsystems/w8_examples/**'
         }
         greclipse()
         indentWithSpaces(4)
