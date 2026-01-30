@@ -18,7 +18,7 @@ public class Intake extends SubsystemBase {
   public void setVelocity(double velocity) {
     AngularVelocity angVelo = RotationsPerSecond.of(velocity);
 
-    _io.runVelocity(angVelo, Constants.ACCELERATION, PIDSlot.SLOT_0);
+    _io.runVelocity(angVelo, Constants.IntakeConstants.ACCELERATION, PIDSlot.SLOT_0);
   }
 
   @Override
