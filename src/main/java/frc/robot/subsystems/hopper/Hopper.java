@@ -14,19 +14,14 @@ public class Hopper extends SubsystemBase {
   private FlywheelMechanism _io;
 
   public Hopper(FlywheelMechanism io) {
-  _io = io;
+    _io = io;
   }
 
   public void setGoal(double position) {
     Distance positionInches = Inches.of(position);
-    _io.runPosition(HopperConstants.CONVERTER.toAngle(positionInches), HopperConstants.ANGULAR_VELOCITY, HopperConstants.ANGULAR_ACCELERATION, null, PIDSlot.SLOT_0);
+    _io.runPosition(HopperConstants.CONVERTER.toAngle(positionInches), PIDSlot.SLOT_0);
   }
-  
-  public void runHopper() {
-        _io.runVoltage(HopperConstants.VOLTAGE);
-    }
 
   @Override
   public void periodic() {}
-
 }
