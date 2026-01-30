@@ -12,7 +12,7 @@ import frc.robot.Constants.HopperConstants;
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.units.measure.*;
-import frc.robot.Constants.HopperConstants;
+import frc.robot.Constants.HopperConstants.*;
 
 public class Hopper extends SubsystemBase {
     private FlywheelMechanism _io;
@@ -37,7 +37,7 @@ public class Hopper extends SubsystemBase {
 
   public void setGoal(double position) {
     Distance positionInches = Inches.of(position);
-    _io.runPosition(HopperConstants.CONVERTER.toAngle(positionInches), PIDSlot.SLOT_0);
+    _io.runPosition(HopperConstants.CONVERTER.toAngle(positionInches), HopperConstants.ANGULAR_VELOCITY, HopperConstants.ANGULAR_ACCELERATION, null, PIDSlot.SLOT_0);
   }
 
   @Override
