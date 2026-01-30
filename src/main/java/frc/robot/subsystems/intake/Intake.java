@@ -27,11 +27,11 @@ public class Intake extends SubsystemBase {
   }
 
   public AngularVelocity getVelocity() {
-    return _io.getVelocity();
+    return _rollerIO.getVelocity();
   }
 
   public Angle getPosition() {
-    return _io.getPosition();
+    return _pivotIO.getPosition();
   }
 
   public void stop() {
