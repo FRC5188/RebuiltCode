@@ -66,7 +66,7 @@ public final class Constants {
   public class LEDConstants {
     public static final RainbowAnimation rainbowAnim = new RainbowAnimation(0, 2);
     public static final RGBWColor colorPaleBlue = new RGBWColor(165, 180, 208, 0);
-    public static final RBGWColor colorWheezerBlue = new RGBWColor(24, 155, 204, 0);
+    public static final RGBWColor colorWheezerBlue = new RGBWColor(24, 155, 204, 0);
   }
 
   public class FieldConstants {
