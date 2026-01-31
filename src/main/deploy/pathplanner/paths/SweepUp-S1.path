@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.9,
-        "y": 6.7
+        "x": 8.610125,
+        "y": 6.675017857142857
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.391053930123539,
-        "y": 5.377644393137878
+        "x": 6.101178930123539,
+        "y": 5.352662250280734
       },
       "isLocked": false,
       "linkedName": "EndUpSweep"
@@ -69,7 +69,7 @@
   "folder": "Sweep Paths ✔",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 100.0
   },
   "useDefaultConstraints": true
 }

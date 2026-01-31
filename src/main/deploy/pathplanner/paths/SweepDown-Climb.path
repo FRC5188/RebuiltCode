@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.866,
-        "y": 1.360512820512821
+        "x": 8.445516380202934,
+        "y": 1.422337567097868
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.643091240177124,
-        "y": 2.7463218864951484
+        "x": 4.2226076203800575,
+        "y": 2.808146633080195
       },
       "isLocked": false,
       "linkedName": "EndDownSweep"
@@ -69,7 +69,7 @@
   "folder": "Climb Paths ✔",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": -100.0
   },
   "useDefaultConstraints": true
 }

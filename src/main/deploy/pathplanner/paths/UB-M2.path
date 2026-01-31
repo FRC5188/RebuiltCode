@@ -3,35 +3,42 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.866,
-        "y": 1.360512820512821
+        "x": 3.6,
+        "y": 5.590272435897436
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.28827564102564,
-        "y": 1.0334695512820522
+        "x": 4.672552460510815,
+        "y": 5.426709321687979
       },
       "isLocked": false,
-      "linkedName": "EndDownSweep"
+      "linkedName": "UB"
     },
     {
       "anchor": {
-        "x": 3.6,
-        "y": 0.6394
+        "x": 7.645743952021233,
+        "y": 5.00357851618481
       },
       "prevControl": {
-        "x": 5.624583333333333,
-        "y": 0.5538060897435901
+        "x": 6.571965991274344,
+        "y": 5.166054074779463
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "LT"
+      "linkedName": "M2"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0.6674757281553398,
+      "endWaypointRelativePos": 1.0,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -45,10 +52,10 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Sweep Paths ✔",
+  "folder": "Gather",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

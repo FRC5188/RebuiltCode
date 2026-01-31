@@ -48,12 +48,12 @@
     },
     {
       "anchor": {
-        "x": 8.9,
-        "y": 1.4
+        "x": 9.096017857142858,
+        "y": 1.4273749999999996
       },
       "prevControl": {
-        "x": 8.778733974358973,
-        "y": 0.8372435897435901
+        "x": 8.97475183150183,
+        "y": 0.8646185897435898
       },
       "nextControl": null,
       "isLocked": false,
@@ -79,7 +79,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 100.0
   },
   "reversed": false,
   "folder": "Shoot ",

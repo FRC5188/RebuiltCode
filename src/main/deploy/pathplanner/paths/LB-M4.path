@@ -3,56 +3,67 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.564944129185973,
-        "y": 2.961412209299814
+        "x": 3.6,
+        "y": 2.51
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.769430200353409,
-        "y": 3.1052365698876714
+        "x": 5.602163009832578,
+        "y": 2.3236462116921324
       },
       "isLocked": false,
-      "linkedName": "M3"
+      "linkedName": "LB"
     },
     {
       "anchor": {
-        "x": 4.50536858974359,
-        "y": 2.53786858974359
+        "x": 6.9638388710538255,
+        "y": 1.4862519654865514
       },
       "prevControl": {
-        "x": 4.75296013050242,
-        "y": 2.5032502572495448
+        "x": 6.7308248199357505,
+        "y": 1.2896463598556762
       },
       "nextControl": {
-        "x": 3.9090950812509098,
-        "y": 2.621239752228083
+        "x": 7.288384401266579,
+        "y": 1.7600872566035608
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.4674999999999998,
-        "y": 3.7297596153846158
+        "x": 7.756784652889603,
+        "y": 2.1754616603872785
       },
       "prevControl": {
-        "x": 3.0410242054149363,
-        "y": 3.156955080737063
+        "x": 7.384028611929901,
+        "y": 1.802705619427576
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Climb"
+      "linkedName": "M4"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.647982062780269,
+      "waypointRelativePos": 0.42362525458248607,
       "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 1.2953156822810552,
+      "rotationDegrees": 45.0
     }
   ],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0.7524271844660192,
+      "endWaypointRelativePos": 2.0,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -63,10 +74,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 45.0
   },
   "reversed": false,
-  "folder": "Climb Paths ✔",
+  "folder": "Gather",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0
