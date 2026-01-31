@@ -27,15 +27,29 @@ public class Intake extends SubsystemBase {
   }
 
   public AngularVelocity getVelocity() {
-    return _io.getVelocity();
+    return _rollerIO.getVelocity();
   }
 
   public Angle getPosition() {
-    return _io.getPosition();
+    return _rollerIO.getPosition();
   }
 
   public void stop() {
     setVelocity(0);
+  }
+
+  public void setAngle(Angle angle)
+  {
+    // Change null values
+    _pivotIO.runPosition(angle, getVelocity(), null, null, null);
+  }
+
+  public boolean isIntendedAngle()
+  {
+    // Account for tolerance
+    return 
+    _pivotIO.getPosition().lt(Constants.IntakeConstants.MAX_ANGLE) && 
+    _pivotIO.getPosition().gt(Constants.IntakeConstants.MIN_ANGLE);
   }
 
   @Override
