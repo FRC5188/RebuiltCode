@@ -66,7 +66,7 @@ public final class Constants {
      *     Contains various field dimensions and useful reference points. All units are in meters
      * and poses    have a blue alliance origin.
      */
-    //TODO: Update to 2026 Field Constants and add HUB Center
+    // TODO: Update to 2026 Field Constants and add HUB Center
     public static final AprilTagFieldLayout aprilTagLayout =
         AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
 
@@ -88,7 +88,8 @@ public final class Constants {
     private static final Distance DRUM_RADIUS = Inches.of(2.0);
     public static final DistanceAngleConverter CONVERTER = new DistanceAngleConverter(DRUM_RADIUS);
     public static final AngularVelocity ANGULAR_VELOCITY = RotationsPerSecond.of(1);
-    public static final AngularAcceleration ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(1);
+    public static final AngularAcceleration ANGULAR_ACCELERATION =
+        RotationsPerSecondPerSecond.of(1);
   }
 
   public class Ports {
@@ -100,7 +101,7 @@ public final class Constants {
   }
 
   public final class ShooterConstants {
-  // Constants for the Shooter
+    // Constants for the Shooter
     public static final Angle ANGLE_TOLERANCE = Rotations.of(0.01);
     public static final AngularVelocity ANGLE_VELOCITY_TOLERANCE = RotationsPerSecond.of(0.01);
     public static final AngularVelocity CRUISE_VELOCITY = RotationsPerSecond.of(204);
@@ -114,15 +115,19 @@ public final class Constants {
     public static final Angle STARTING_ANGLE = Rotations.of(0.0);
     public static final Distance WHEEL_RADIUS = Meters.of(0.5);
     public static final double FLYWHEEL_VELOCITY_TOLERANCE = 1.0;
-    public static final RotaryMechCharacteristics CONSTANTS = new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
-  // Hood Constants
-    public static final double HEIGHT_DIFFERENCE = 1.295; // Meters between flywheel center and top of hub opening
+    public static final RotaryMechCharacteristics CONSTANTS =
+        new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
+    // Hood Constants
+    public static final double HEIGHT_DIFFERENCE =
+        1.295; // Meters between flywheel center and top of hub opening
     public static final double EXIT_VELOCITY = 7.4; // m/s from ReCalc Flywheel Calculator
     public static final AngularVelocity HOOD_VELOCITY = RotationsPerSecond.of(1.0);
     public static final AngularAcceleration HOOD_ACCELERATION = RotationsPerSecondPerSecond.of(1.0);
-    public static final double HOOD_TOLERANCE = 1.0; // degrees
+    public static final Velocity<AngularAccelerationUnit> HOOD_JERK = HOOD_ACCELERATION.per(Second);
+    public static final double HOOD_TOLERANCE = 1.0; // In degrees
+    public static final double GRAVITY = 9.81; // m/s^2
   }
-  
+
   public static final int CANDLE_ID = 50;
 
   public class IntakeConstants {
@@ -144,7 +149,7 @@ public final class Constants {
     public static final AngularVelocity FEED_SPEED = RotationsPerSecond.of(0.0);
     public static final AngularAcceleration FEED_ACCELERATION = RotationsPerSecondPerSecond.of(0.0);
   }
-  
+
   public class ClimberConstants {
     public static final Distance TOLERANCE = Inches.of(0.1);
     public static final double GEARING = (5.0 / 1.0);
@@ -153,6 +158,12 @@ public final class Constants {
     public static final Distance STARTING_DISTANCE = Inches.of(0.0);
     public static final Distance DRUM_RADIUS = Inches.of(2.0);
     public static final DistanceAngleConverter CONVERTER = new DistanceAngleConverter(DRUM_RADIUS);
-    public static final LinearMechCharacteristics CHARACTERISTICS = new LinearMechCharacteristics(new Translation3d(0.0, 0.0, 0.0), MIN_DISTANCE, MAX_DISTANCE, STARTING_DISTANCE, CONVERTER);  
+    public static final LinearMechCharacteristics CHARACTERISTICS =
+        new LinearMechCharacteristics(
+            new Translation3d(0.0, 0.0, 0.0),
+            MIN_DISTANCE,
+            MAX_DISTANCE,
+            STARTING_DISTANCE,
+            CONVERTER);
   }
 }
