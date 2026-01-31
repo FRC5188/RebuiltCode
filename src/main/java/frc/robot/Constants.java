@@ -110,7 +110,6 @@ public final class Constants {
 
   public final class ShooterConstants {
     // Constants for the Shooter
-    // Constants for the Shooter
     public static final Angle ANGLE_TOLERANCE = Rotations.of(0.01);
     public static final AngularVelocity ANGLE_VELOCITY_TOLERANCE = RotationsPerSecond.of(0.01);
     public static final AngularVelocity CRUISE_VELOCITY = RotationsPerSecond.of(204);
@@ -131,6 +130,7 @@ public final class Constants {
     public static final double FLYWHEEL_VELOCITY_TOLERANCE = 1.0;
     public static final RotaryMechCharacteristics CONSTANTS =
         new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
+
     // Hood Constants
     public static final double HEIGHT_DIFFERENCE =
         1.295; // Meters between flywheel center and top of hub opening
@@ -140,6 +140,7 @@ public final class Constants {
     public static final Velocity<AngularAccelerationUnit> HOOD_JERK = HOOD_ACCELERATION.per(Second);
     public static final double HOOD_TOLERANCE = 1.0; // In degrees
     public static final double GRAVITY = 9.81; // m/s^2
+    public static final double IDLE_HOOD_ANGLE = 25.0; // degrees
   }
 
   public static final int CANDLE_ID = 50;

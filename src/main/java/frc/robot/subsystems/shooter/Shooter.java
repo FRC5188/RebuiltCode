@@ -83,7 +83,7 @@ public class Shooter extends SubsystemBase {
                         * Math.pow(ShooterConstants.EXIT_VELOCITY, 2));
 
     if (check < 0) {
-      return 45.0; // Default angle if the shot is not possible
+      return ShooterConstants.IDLE_HOOD_ANGLE; // Default angle if the shot is not possible
     }
     return Math.toDegrees(
         Math.atan(
