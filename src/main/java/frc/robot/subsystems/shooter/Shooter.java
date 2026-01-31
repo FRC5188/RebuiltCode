@@ -36,6 +36,21 @@ public class Shooter extends SubsystemBase {
     _flywheel.runVelocity(angVelo, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
   }
 
+  // public enum State {
+  //   OFF(Units.RevolutionsPerSecond.of(0.0)),
+  //   IDLE(Units.RevolutionsPerSecond.of(ShooterConstants.IDLE_SPEED_RPM / 60)),
+  //   SHOOT_FROM_HUB(Units.RevolutionsPerSecond.of(ShooterConstants.HUB_SPEED_RPM / 60)),
+  //   SHOOT_FROM_TOWER(Units.RevolutionsPerSecond.of(ShooterConstants.TOWER_SPEED_RPM / 60)),
+  //   SHOOT(Units.RevolutionsPerSecond.of(ShooterConstants.DEFAULT_SPEED_RPM / 60)),
+  //   SHOOT_ON_MOVE(Units.RevolutionsPerSecond.of(ShooterConstants.DEFAULT_SPEED_RPM / 60));
+
+  //   private final AngularVelocity stateVelocity;
+
+  //   State(AngularVelocity stateVelocity) {
+  //     this.stateVelocity = stateVelocity;
+  //   }
+  // }
+
   // Checks if the flywheel is at speed and returns a boolean
   public boolean flyAtVelocity() {
     return Math.abs(desiredVelo - _flywheel.getVelocity().in(RotationsPerSecond))
