@@ -17,16 +17,16 @@ public class Climber extends SubsystemBase {
     io = _io;
   }
 
-  public void Position(double position) {
+  // public void Position(double position) {
 
-    Distance positionInches = Inches.of(position);
-    _io.runPosition(
-        ClimberConstants.CONVERTER.toAngle(positionInches),
-        ClimberConstants.ANGULAR_VELOCITY,
-        ClimberConstants.ANGULAR_ACCELERATION,
-        null,
-        PIDSlot.SLOT_0);
-  }
+  //   Distance positionInches = Inches.of(position);
+  //   _io.runPosition(
+  //       ClimberConstants.CONVERTER.toAngle(positionInches),
+  //       ClimberConstants.ANGULAR_VELOCITY,
+  //       ClimberConstants.ANGULAR_ACCELERATION,
+  //       null,
+  //       PIDSlot.SLOT_0);
+  // }
 
   @Override
   public void periodic() {}

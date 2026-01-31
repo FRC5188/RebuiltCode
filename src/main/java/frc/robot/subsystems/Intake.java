@@ -39,10 +39,9 @@ public class Intake extends SubsystemBase {
                     IntakeConstants.CRUISE_VELOCITY,
                     IntakeConstants.ACCELERATION,
                     IntakeConstants.JERK,
-                    PIDSlot.SLOT_0))
-        .withName("Go To " + setpoint.toString() + " Setpoint");
+                    PIDSlot.SLOT_0));
+        // .withName("Go To " + setpoint.toString() + " Setpoint");
   }
-  ;
 
   public AngularVelocity getVelocity() {
     return _rollerIO.getVelocity();
@@ -56,9 +55,22 @@ public class Intake extends SubsystemBase {
     setVelocity(0);
   }
 
-  public Command intake() {
-    return Commands.sequence(
-        Commands.run(() -> setVelocity(velocity)), Commands.run(() -> setPivotAngle(pivotAngle)));
+  // public Command intake() {
+  //   return Commands.sequence(
+  //       Commands.run(() -> setVelocity(velocity)), Commands.run(() -> setPivotAngle(pivotAngle)));
+  // }
+  public void setAngle(Angle angle)
+  {
+    // Change null values
+    _pivotIO.runPosition(angle, getVelocity(), null, null, null);
+  }
+
+  public boolean isIntendedAngle()
+  {
+    // Account for tolerance
+    return 
+    _pivotIO.getPosition().lt(Constants.IntakeConstants.MAX_ANGLE) && 
+    _pivotIO.getPosition().gt(Constants.IntakeConstants.MIN_ANGLE);
   }
 
   @Override
