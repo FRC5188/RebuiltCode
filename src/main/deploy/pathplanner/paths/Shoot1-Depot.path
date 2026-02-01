@@ -3,35 +3,47 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.6,
-        "y": 2.51
+        "x": 2.971899038461538,
+        "y": 5.9245833333333335
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.65764423076923,
-        "y": 3.635280448717949
+        "x": 1.7243012048192772,
+        "y": 5.958277108433736
       },
       "isLocked": false,
-      "linkedName": "LB"
+      "linkedName": "S1"
     },
     {
       "anchor": {
-        "x": 1.4674999999999998,
-        "y": 3.7297596153846158
+        "x": 0.5375257072239912,
+        "y": 5.9245833333333335
       },
       "prevControl": {
-        "x": 2.0763541666666656,
-        "y": 3.707472346153847
+        "x": 1.233204093847408,
+        "y": 5.914671339202966
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Climb"
+      "linkedName": "Depot"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.8201904761904751,
+      "rotationDegrees": 180.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0.31434977578475565,
+      "endWaypointRelativePos": 1.0,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -42,13 +54,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Climb Paths ✔",
+  "folder": "Shoot ",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -45.0
   },
   "useDefaultConstraints": true
 }

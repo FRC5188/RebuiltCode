@@ -3,35 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.610125,
-        "y": 6.675017857142857
+        "x": 8.445516380202934,
+        "y": 1.422337567097868
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.926120481927711,
-        "y": 5.761578313253013
+        "x": 5.657030803279856,
+        "y": 1.9238039132517137
       },
       "isLocked": false,
-      "linkedName": "EndUpSweep"
+      "linkedName": "EndDownSweep"
     },
     {
       "anchor": {
-        "x": 1.0716738049959909,
-        "y": 4.599583975068654
+        "x": 3.6,
+        "y": 2.51
       },
       "prevControl": {
-        "x": 3.280448600922837,
-        "y": 4.638438076655999
+        "x": 5.624583333333333,
+        "y": 2.4244060897435897
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Climb1"
+      "linkedName": "LB"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.3158095238095237,
-      "rotationDegrees": 90.0
+      "waypointRelativePos": 0.5818385650224271,
+      "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [],
@@ -47,13 +47,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Climb Paths ✔",
+  "folder": "Sweep Paths ✔",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 100.0
+    "rotation": -100.0
   },
   "useDefaultConstraints": true
 }

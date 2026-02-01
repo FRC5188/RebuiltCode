@@ -5,9 +5,15 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "ExtendClimber"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "JustClimb"
+            "pathName": "JustClimb1"
           }
         },
         {

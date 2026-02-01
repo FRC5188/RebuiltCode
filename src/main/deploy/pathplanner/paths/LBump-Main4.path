@@ -4,50 +4,41 @@
     {
       "anchor": {
         "x": 3.6,
-        "y": 0.6394
+        "y": 2.51
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.8496143483334184,
-        "y": 0.6532808179183692
+        "x": 5.325279331824971,
+        "y": 2.4556189300493476
       },
       "isLocked": false,
-      "linkedName": "LT"
+      "linkedName": "LB"
     },
     {
       "anchor": {
-        "x": 2.2451362179487178,
-        "y": 3.730244
+        "x": 7.756784652889603,
+        "y": 2.1754616603872785
       },
       "prevControl": {
-        "x": 2.481334186983143,
-        "y": 3.6483262398742946
-      },
-      "nextControl": {
-        "x": 1.9893488712075735,
-        "y": 3.818955713310616
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 1.4674999999999998,
-        "y": 3.7297596153846158
-      },
-      "prevControl": {
-        "x": 2.583918923253049,
-        "y": 3.4505070629105794
+        "x": 7.485616952764362,
+        "y": 2.1642888942636884
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Climb"
+      "linkedName": "M4"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0.4,
+      "endWaypointRelativePos": 2.0,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -61,7 +52,7 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Climb Paths ✔",
+  "folder": "Initial✔️",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

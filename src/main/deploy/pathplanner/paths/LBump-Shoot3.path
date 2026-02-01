@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.4674999999999998,
-        "y": 3.7297596153846158
+        "x": 3.6,
+        "y": 2.51
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7174990503509686,
-        "y": 3.730448689846287
+        "x": 2.94361753445769,
+        "y": 1.8908647591613876
       },
       "isLocked": false,
-      "linkedName": "Climb"
+      "linkedName": "LB"
     },
     {
       "anchor": {
-        "x": 1.4674999999999998,
-        "y": 3.7297596153846158
+        "x": 2.6085176282051274,
+        "y": 1.4477243589743591
       },
       "prevControl": {
-        "x": 1.1881687358980473,
-        "y": 3.7292068437845707
+        "x": 2.861623824615099,
+        "y": 1.6826579820201002
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Climb"
+      "linkedName": "S3"
     }
   ],
   "rotationTargets": [],
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 39.09385888622944
   },
   "reversed": false,
-  "folder": "Climb Paths ✔",
+  "folder": "Initial✔️",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

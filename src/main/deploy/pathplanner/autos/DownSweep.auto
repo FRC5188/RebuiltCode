@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "S1-SweepDown"
+            "pathName": "Shoot1-SweepDown"
           }
         },
         {
@@ -42,7 +42,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SweepDown-S3"
+                  "pathName": "SweepDown-Shoot3"
                 }
               }
             ]

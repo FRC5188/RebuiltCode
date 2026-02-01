@@ -8,40 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.966224917367802,
-        "y": 5.808254396375313
+        "x": 3.784613565375717,
+        "y": 7.598375892343081
       },
       "isLocked": false,
       "linkedName": "UT"
     },
     {
       "anchor": {
-        "x": 2.3178124999999996,
-        "y": 3.911450320512821
+        "x": 2.971899038461538,
+        "y": 5.9245833333333335
       },
       "prevControl": {
-        "x": 2.798875767346509,
-        "y": 4.239983130968574
-      },
-      "nextControl": {
-        "x": 2.10588140882812,
-        "y": 3.766716100023065
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 1.4674999999999998,
-        "y": 3.7297596153846158
-      },
-      "prevControl": {
-        "x": 1.8676791490586127,
-        "y": 3.712679546659486
+        "x": 2.9448849566443043,
+        "y": 6.173119526640408
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Climb"
+      "linkedName": "S1"
     }
   ],
   "rotationTargets": [],
@@ -58,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -45.0
   },
   "reversed": false,
-  "folder": "Climb Paths ✔",
+  "folder": "Initial✔️",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 90.0
   },
   "useDefaultConstraints": true
 }

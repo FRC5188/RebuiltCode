@@ -3,42 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.6,
-        "y": 5.590272435897436
+        "x": 1.4627440246710683,
+        "y": 4.57531457311145
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.672552460510815,
-        "y": 5.426709321687979
+        "x": 1.712743075022037,
+        "y": 4.576003647573122
       },
       "isLocked": false,
-      "linkedName": "UB"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.645743952021233,
-        "y": 5.00357851618481
+        "x": 1.0716738049959909,
+        "y": 4.599583975068654
       },
       "prevControl": {
-        "x": 6.571965991274344,
-        "y": 5.166054074779463
+        "x": 0.7923425408940383,
+        "y": 4.599031203468609
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "M2"
+      "linkedName": "Climb1"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "Intake",
-      "waypointRelativePos": 0.6674757281553398,
-      "endWaypointRelativePos": 1.0,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -49,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 90.0
   },
   "reversed": false,
-  "folder": "Gather",
+  "folder": "Climb Paths ✔",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 90.0
   },
   "useDefaultConstraints": true
 }
