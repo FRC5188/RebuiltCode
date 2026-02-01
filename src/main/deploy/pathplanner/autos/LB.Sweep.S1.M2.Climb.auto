@@ -5,22 +5,15 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Shoot1-SweepDown"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeOut"
-                }
-              }
-            ]
+            "pathName": "LBump-SweepUp-Shoot1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         },
         {
@@ -30,13 +23,26 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SweepDown"
+                  "pathName": "Shoot1-Main2"
                 }
               },
               {
-                "type": "named",
+                "type": "parallel",
                 "data": {
-                  "name": "IntakeOn"
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.5
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "IntakeOn"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -46,12 +52,6 @@
           "type": "parallel",
           "data": {
             "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "SweepDown-Shoot3"
-                }
-              },
               {
                 "type": "named",
                 "data": {
@@ -59,9 +59,15 @@
                 }
               },
               {
+                "type": "path",
+                "data": {
+                  "pathName": "Main2-Climb1"
+                }
+              },
+              {
                 "type": "named",
                 "data": {
-                  "name": "SpinUp"
+                  "name": "ExtendClimber"
                 }
               }
             ]
@@ -70,13 +76,13 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": "Climb"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Sweep First",
   "choreoAuto": false
 }

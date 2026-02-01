@@ -8,42 +8,46 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.4618072289156623,
-        "y": 5.433746987951806
+        "x": 3.562498037081225,
+        "y": 4.685423967526528
       },
       "isLocked": false,
       "linkedName": "S2"
     },
     {
       "anchor": {
-        "x": 0.5375257072239912,
-        "y": 5.9245833333333335
+        "x": 3.70221686746988,
+        "y": 5.302614457831326
       },
       "prevControl": {
-        "x": 2.718722891566265,
-        "y": 5.848999999999998
+        "x": 3.315394304995904,
+        "y": 4.9551819731083935
+      },
+      "nextControl": {
+        "x": 4.311156428667846,
+        "y": 5.8495458039244985
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.645743952021233,
+        "y": 5.00357851618481
+      },
+      "prevControl": {
+        "x": 6.50986388720549,
+        "y": 5.104680754437479
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Depot"
+      "linkedName": "M2"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.8064761904761906,
-      "rotationDegrees": 180.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "IntakeOn",
-      "waypointRelativePos": 0.787892376681611,
-      "endWaypointRelativePos": 1.0,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -54,7 +58,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "Shoot✔️ ",

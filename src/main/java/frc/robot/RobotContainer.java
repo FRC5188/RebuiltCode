@@ -92,8 +92,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("ExtendClimber", getAutonomousCommand());
     // Retracts climber arm
     NamedCommands.registerCommand("Climb", getAutonomousCommand());
-    // Bring flywheel up to speed
-    NamedCommands.registerCommand("SpinUp", getAutonomousCommand());
+    // Bring flywheel up to speed + hood to position for known locations?
+    NamedCommands.registerCommand("ReadyUp", getAutonomousCommand());
     // Shoots
     NamedCommands.registerCommand("Shoot", getAutonomousCommand());
     // Pulls in fuel - sets intake mode to 
