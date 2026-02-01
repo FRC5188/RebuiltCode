@@ -15,6 +15,8 @@ package frc.robot;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -85,6 +87,21 @@ public class RobotContainer {
                 new ModuleIO() {});
         break;
     }
+
+    // Extends climber arm
+    NamedCommands.registerCommand("ExtendClimber", getAutonomousCommand());
+    // Retracts climber arm
+    NamedCommands.registerCommand("Climb", getAutonomousCommand());
+    // Bring flywheel up to speed
+    NamedCommands.registerCommand("SpinUp", getAutonomousCommand());
+    // Shoots
+    NamedCommands.registerCommand("Shoot", getAutonomousCommand());
+    // Pulls in fuel - sets intake mode to 
+    NamedCommands.registerCommand("IntakeOn", getAutonomousCommand());
+    // Turns intake off - sets intake mode to  
+    NamedCommands.registerCommand("IntakeOff", getAutonomousCommand());
+    // Extends the intake
+    NamedCommands.registerCommand("IntakeOut", getAutonomousCommand());
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());

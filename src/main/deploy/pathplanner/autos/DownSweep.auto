@@ -5,9 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Shoot1-SweepDown"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Shoot1-SweepDown"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeOut"
+                }
+              }
+            ]
           }
         },
         {
@@ -23,7 +36,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Intake"
+                  "name": "IntakeOn"
                 }
               }
             ]
@@ -34,18 +47,30 @@
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "Shoot"
-                }
-              },
-              {
                 "type": "path",
                 "data": {
                   "pathName": "SweepDown-Shoot3"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeOff"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "SpinUp"
+                }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         }
       ]
