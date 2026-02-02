@@ -3,6 +3,7 @@
   "waypoints": [
     {
       "anchor": {
+<<<<<<< Updated upstream
         "x": 9.096017857142858,
         "y": 1.4273749999999996
       },
@@ -10,18 +11,36 @@
       "nextControl": {
         "x": 8.962748422454817,
         "y": 2.835331845875036
+=======
+        "x": 8.324638554216868,
+        "y": 1.2812168674698796
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 8.068913161385245,
+        "y": 2.6632014404968594
+>>>>>>> Stashed changes
       },
       "isLocked": true,
       "linkedName": "StartUpSweep"
     },
     {
       "anchor": {
+<<<<<<< Updated upstream
         "x": 8.610125,
         "y": 6.675017857142857
       },
       "prevControl": {
         "x": 8.729972160410021,
         "y": 5.341758218669989
+=======
+        "x": 7.373927710843373,
+        "y": 6.450024096385542
+      },
+      "prevControl": {
+        "x": 7.59480257681475,
+        "y": 5.199453067086351
+>>>>>>> Stashed changes
       },
       "nextControl": null,
       "isLocked": true,

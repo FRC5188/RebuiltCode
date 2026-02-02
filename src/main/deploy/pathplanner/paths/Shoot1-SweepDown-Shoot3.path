@@ -32,6 +32,7 @@
     },
     {
       "anchor": {
+<<<<<<< Updated upstream
         "x": 9.041303567076948,
         "y": 6.673505957694848
       },
@@ -42,12 +43,25 @@
       "nextControl": {
         "x": 8.744749624862864,
         "y": 5.140119581783615
+=======
+        "x": 8.30278313253012,
+        "y": 6.668578313253013
+      },
+      "prevControl": {
+        "x": 8.460334987143131,
+        "y": 7.4832289820636655
+      },
+      "nextControl": {
+        "x": 8.006229190316036,
+        "y": 5.13519193734178
+>>>>>>> Stashed changes
       },
       "isLocked": false,
       "linkedName": "StartDownSweep"
     },
     {
       "anchor": {
+<<<<<<< Updated upstream
         "x": 8.445516380202934,
         "y": 1.422337567097868
       },
@@ -58,6 +72,18 @@
       "nextControl": {
         "x": 8.10608433735261,
         "y": -0.07381927710895297
+=======
+        "x": 7.384855421686748,
+        "y": 1.4232771084337343
+      },
+      "prevControl": {
+        "x": 7.564741800193415,
+        "y": 2.2161846787452664
+      },
+      "nextControl": {
+        "x": 7.045423378836425,
+        "y": -0.0728797357730866
+>>>>>>> Stashed changes
       },
       "isLocked": false,
       "linkedName": "EndDownSweep"
@@ -114,7 +140,11 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
+<<<<<<< Updated upstream
       "name": "IntakeOut",
+=======
+      "name": "IntakeDown",
+>>>>>>> Stashed changes
       "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
       "command": null
