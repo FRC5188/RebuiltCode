@@ -65,8 +65,8 @@ public final class Constants {
 
   public class FieldConstants {
     /**
-     *     Contains various field dimensions and useful reference points. All units are in meters
-     * and poses    have a blue alliance origin.
+     * Contains various field dimensions and useful reference points. All units are in meters
+     * and poses have a blue alliance origin.
      */
     public static final AprilTagFieldLayout aprilTagLayout =
         AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
@@ -77,6 +77,14 @@ public final class Constants {
     public static final Translation2d FIELDCENTER =
         new Translation2d(FIELDLENGTH.in(Meters) / 2, FIELDWIDTH.in(Meters) / 2);
     public static final Distance ALGAEDIAMETER = Meters.of(.41);
+  }
+
+  public class Ports {
+    // Constants for Port Values
+    public static final Device.CAN IntakeRoller = new CAN(1, "rio");
+    public static final Device.CAN LEDs = new CAN(2, "rio");
+    public static final Device.CAN HopperRoller = new CAN(3, "rio");
+    public static final Device.CAN ClimberLinearMechanism = new CAN(4, "rio");
   }
 
   public class HopperConstants {
@@ -99,16 +107,9 @@ public final class Constants {
         RotationsPerSecondPerSecond.of(1);
   }
 
-  public class Ports {
-    // Constants for Port Values !!!!!!
-    public static final Device.CAN IntakeRoller = new CAN(1, "rio");
-    public static final Device.CAN LEDs = new CAN(2, "rio");
-    public static final Device.CAN HopperRoller = new CAN(3, "rio");
-    public static final Device.CAN ClimberLinearMechanism = new CAN(4, "rio");
-  }
 
   public final class ShooterConstants {
-    // Constants for the Shooter
+    // Constants for Shooter
     public static final Angle ANGLE_TOLERANCE = Rotations.of(0.01);
     public static final AngularVelocity ANGLE_VELOCITY_TOLERANCE = RotationsPerSecond.of(0.01);
     public static final AngularVelocity CRUISE_VELOCITY = RotationsPerSecond.of(204);
@@ -133,7 +134,7 @@ public final class Constants {
   public static final int CANDLE_ID = 50;
 
   public class IntakeConstants {
-    // constants the intake :thumbs_up: :D
+    // Constants for Intake
     public static final AngularVelocity TOLERANCE = RotationsPerSecond.of(0.0);
     public static final AngularVelocity CRUISE_VELOCITY = RotationsPerSecond.of(0.0);
     public static final AngularAcceleration ACCELERATION = RotationsPerSecondPerSecond.of(0.0);
