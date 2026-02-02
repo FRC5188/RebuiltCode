@@ -86,7 +86,7 @@ public final class Constants {
     public static final Distance MIN_DISTANCE = Inches.of(0.0);
     public static final Distance MAX_DISTANCE = Inches.of(15.0);
     public static final Distance STARTING_DISTANCE = Inches.of(0.0);
-    
+
     // CHANGE TO PROPER RPMS !!!!
     public static final double SLOW_SPEED_RPM = 0.0;
     public static final double FAST_SPEED_RPM = 0.0;
