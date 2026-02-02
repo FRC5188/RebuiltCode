@@ -77,6 +77,7 @@ public final class Constants {
      *     Contains various field dimensions and useful reference points. All units are in meters
      * and poses    have a blue alliance origin.
      */
+    // TODO: Update to 2026 Field Constants and add HUB Center
     public static final AprilTagFieldLayout aprilTagLayout =
         AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
 
@@ -133,13 +134,25 @@ public final class Constants {
     public static final Angle MAX_ANGLE = Rotations.of(10.0);
     public static final Angle STARTING_ANGLE = Rotations.of(0.0);
     public static final Distance WHEEL_RADIUS = Meters.of(0.5);
-    public static final RotaryMechCharacteristics CONSTANTS =
-        new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
+
     public static final double IDLE_SPEED_RPM = (1.0);
     public static final double HUB_SPEED_RPM = (1.0);
     public static final double TOWER_SPEED_RPM = (1.0);
     public static final double DEFAULT_SPEED_RPM = (1.0);
     public static final double FLYWHEEL_VELOCITY_TOLERANCE = 1.0;
+    public static final RotaryMechCharacteristics CONSTANTS =
+        new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
+
+    // Hood Constants
+    public static final double HEIGHT_DIFFERENCE =
+        1.295; // Meters between flywheel center and top of hub opening
+    public static final double EXIT_VELOCITY = 7.4; // m/s from ReCalc Flywheel Calculator
+    public static final AngularVelocity HOOD_VELOCITY = RotationsPerSecond.of(1.0);
+    public static final AngularAcceleration HOOD_ACCELERATION = RotationsPerSecondPerSecond.of(1.0);
+    public static final Velocity<AngularAccelerationUnit> HOOD_JERK = HOOD_ACCELERATION.per(Second);
+    public static final double HOOD_TOLERANCE = 1.0; // In degrees
+    public static final double GRAVITY = 9.81; // m/s^2
+    public static final double IDLE_HOOD_ANGLE = 25.0; // degrees
   }
 
   public static final int CANDLE_ID = 50;
