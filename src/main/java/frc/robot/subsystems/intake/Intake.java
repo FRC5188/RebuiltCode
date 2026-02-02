@@ -9,10 +9,14 @@ import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.flywheel.FlywheelMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
 import frc.robot.Constants;
+import frc.robot.Constants.IntakePivotConstants;
+import frc.robot.Constants.ShooterConstants;
+import edu.wpi.first.math.MathUtil;
 
 public class Intake extends SubsystemBase {
   private FlywheelMechanism _rollerIO;
   private RotaryMechanism _pivotIO;
+  public double desiredAngle;
 
   public Intake(FlywheelMechanism rollerIO, RotaryMechanism pivotIO) {
     _rollerIO = rollerIO;
@@ -40,16 +44,14 @@ public class Intake extends SubsystemBase {
 
   public void setAngle(Angle angle)
   {
-    // Change null values
-    _pivotIO.runPosition(angle, getVelocity(), null, null, null);
+    _pivotIO.runPosition(angle, getVelocity(), IntakePivotConstants.ACCELERATION, IntakePivotConstants.JERK, PIDSlot.SLOT_0);
+    desiredAngle = angle.magnitude();
   }
 
   public boolean isIntendedAngle()
   {
-    // Account for tolerance
-    return 
-    _pivotIO.getPosition().lt(Constants.IntakeConstants.MAX_ANGLE) && 
-    _pivotIO.getPosition().gt(Constants.IntakeConstants.MIN_ANGLE);
+    return Math.abs(desiredAngle - _pivotIO.getVelocity().in(RotationsPerSecond))
+        <= IntakePivotConstants.TOLERANCE.magnitude();
   }
 
   @Override
