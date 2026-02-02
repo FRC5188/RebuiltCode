@@ -36,6 +36,8 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.lib.W8.mechanisms.linear.LinearMechanism.LinearMechCharacteristics;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism.RotaryMechCharacteristics;
+import com.ctre.phoenix6.signals.RGBWColor;
+import com.ctre.phoenix6.controls.*;
 import frc.lib.W8.util.Device;
 import frc.lib.W8.util.Device.CAN;
 import frc.lib.W8.util.MechanismUtil.DistanceAngleConverter;
@@ -62,6 +64,12 @@ public final class Constants {
 
     /** Replaying from a log file. */
     REPLAY
+  }
+
+  public class LEDConstants {
+    public static final RainbowAnimation rainbowAnim = new RainbowAnimation(0, 2);
+    public static final RGBWColor colorPaleBlue = new RGBWColor(165, 180, 208, 0);
+    public static final RGBWColor colorWheezerBlue = new RGBWColor(24, 155, 204, 0);
   }
 
   public class FieldConstants {
