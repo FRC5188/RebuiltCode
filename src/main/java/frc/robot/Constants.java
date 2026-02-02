@@ -21,6 +21,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -97,6 +98,9 @@ public final class Constants {
     public static final AngularVelocity ANGULAR_VELOCITY = RotationsPerSecond.of(1);
     public static final AngularAcceleration ANGULAR_ACCELERATION =
         RotationsPerSecondPerSecond.of(1);
+    public static final int CAN_ID = 0;
+    public static final SparkMaxConfig MOTOR_CONFIG = new SparkMaxConfig();
+    public static final int HOPPER_POSITION = 1;
   }
 
   public class Ports {

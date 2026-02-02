@@ -13,16 +13,23 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.hardware.TalonFX;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.lib.W8.io.motor.*;
+import frc.lib.W8.mechanisms.flywheel.*;
+import frc.lib.W8.util.Device.CAN;
+import frc.robot.Constants.HopperConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -31,6 +38,7 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.hopper.Hopper;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -42,6 +50,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final Hopper hopper;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -61,6 +70,15 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
+
+        hopper =
+            new Hopper(
+                new FlywheelMechanismReal(
+                    new MotorIORev(
+                        "HopperMotor",
+                        new CAN(HopperConstants.CAN_ID, "rio"),
+                        false,
+                        HopperConstants.MOTOR_CONFIG)));
         break;
 
       case SIM:
@@ -72,6 +90,21 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
+
+        hopper =
+            new Hopper(
+                new FlywheelMechanismSim(
+                    new MotorIORevSim(
+                        "Simulated Rev Motor",
+                        new CAN(HopperConstants.CAN_ID, "rio"),
+                        false,
+                        1,
+                        1,
+                        DCMotor.getNEO(1),
+                        HopperConstants.MOTOR_CONFIG),
+                    DCMotor.getNEO(1),
+                    KilogramSquareMeters.of(0.5),
+                    RotationsPerSecond.of(0.1)));
         break;
 
       default:
@@ -83,6 +116,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
+        hopper = new Hopper(new FlywheelMechanism() {});
         break;
     }
 
@@ -147,6 +181,10 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    controller
+        .x()
+        .onTrue(Commands.runOnce(() -> hopper.setGoal(HopperConstants.HOPPER_POSITION), hopper));
   }
 
   /**
@@ -157,6 +195,4 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return autoChooser.get();
   }
-
-  TalonFX billyBob = new TalonFX(30, TunerConstants.DrivetrainConstants.CANBusName);
 }
