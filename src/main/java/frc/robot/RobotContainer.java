@@ -30,6 +30,7 @@ import frc.lib.W8.io.motor.*;
 import frc.lib.W8.mechanisms.flywheel.*;
 import frc.lib.W8.util.Device.CAN;
 import frc.robot.Constants.HopperConstants;
+import frc.robot.Constants.Ports;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -51,7 +52,6 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Hopper hopper;
-//   private final
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -75,11 +75,11 @@ public class RobotContainer {
         hopper =
             new Hopper(
                 new FlywheelMechanismReal(
-                    new MotorIORev(
-                        "HopperMotor",
-                        new CAN(HopperConstants.CAN_ID, "rio"),
-                        false,
-                        HopperConstants.MOTOR_CONFIG)));
+                    new MotorIOTalonFX(
+                        HopperConstants.MOTOR_NAME,
+                        HopperConstants.getFXConfig(),
+                        Ports.HopperRoller
+                    )));
         break;
 
       case SIM:
@@ -95,17 +95,10 @@ public class RobotContainer {
         hopper =
             new Hopper(
                 new FlywheelMechanismSim(
-                    new MotorIORevSim(
-                        "Simulated Rev Motor",
-                        new CAN(HopperConstants.CAN_ID, "rio"),
-                        false,
-                        1,
-                        1,
-                        DCMotor.getNEO(1),
-                        HopperConstants.MOTOR_CONFIG),
-                    DCMotor.getNEO(1),
-                    KilogramSquareMeters.of(0.5),
-                    RotationsPerSecond.of(0.1)));
+                    new MotorIOTalonFXSim(HopperConstants.MOTOR_NAME, HopperConstants.getFXConfig(), Ports.HopperRoller),
+                    HopperConstants.DCMOTOR,
+                    HopperConstants.MOI, 
+                    HopperConstants.TOLERANCE));
         break;
 
       default:
@@ -117,6 +110,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
+                
         hopper = new Hopper(new FlywheelMechanism() {});
         break;
     }
