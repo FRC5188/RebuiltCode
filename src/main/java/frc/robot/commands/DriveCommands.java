@@ -62,7 +62,7 @@ public class DriveCommands {
         .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
         .getTranslation();
   }
-
+  
   /**
    * Field relative drive command using two joysticks (controlling linear and angular velocities).
    */
