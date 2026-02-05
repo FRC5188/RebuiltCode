@@ -13,13 +13,9 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.KilogramSquareMeters;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,18 +24,17 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.W8.io.motor.*;
 import frc.lib.W8.mechanisms.flywheel.*;
-import frc.lib.W8.util.Device.CAN;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.Hopper;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -78,8 +73,7 @@ public class RobotContainer {
                     new MotorIOTalonFX(
                         HopperConstants.MOTOR_NAME,
                         HopperConstants.getFXConfig(),
-                        Ports.HopperRoller
-                    )));
+                        Ports.HopperRoller)));
         break;
 
       case SIM:
@@ -95,9 +89,12 @@ public class RobotContainer {
         hopper =
             new Hopper(
                 new FlywheelMechanismSim(
-                    new MotorIOTalonFXSim(HopperConstants.MOTOR_NAME, HopperConstants.getFXConfig(), Ports.HopperRoller),
+                    new MotorIOTalonFXSim(
+                        HopperConstants.MOTOR_NAME,
+                        HopperConstants.getFXConfig(),
+                        Ports.HopperRoller),
                     HopperConstants.DCMOTOR,
-                    HopperConstants.MOI, 
+                    HopperConstants.MOI,
                     HopperConstants.TOLERANCE));
         break;
 
@@ -110,7 +107,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-                
+
         hopper = new Hopper(new FlywheelMechanism() {});
         break;
     }
