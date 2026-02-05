@@ -15,7 +15,6 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 import static edu.wpi.first.units.Units.Inches;
-<<<<<<< HEAD
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
@@ -25,17 +24,6 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
-=======
-import static edu.wpi.first.units.Units.Volts;
-
-import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-
-import static edu.wpi.first.units.Units.*;
->>>>>>> fd283d6 (Implemented Pivot Methods 2/2/26)
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -56,10 +44,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
-<<<<<<< HEAD
 import edu.wpi.first.units.measure.Mass;
-=======
->>>>>>> fd283d6 (Implemented Pivot Methods 2/2/26)
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
@@ -406,17 +391,91 @@ public final class Constants {
 
   public class IntakeConstants {
     // Constants for Intake
-    public static final AngularVelocity TOLERANCE = RotationsPerSecond.of(0.0);
-    public static final AngularVelocity CRUISE_VELOCITY = RotationsPerSecond.of(0.0);
-    public static final AngularAcceleration ACCELERATION = RotationsPerSecondPerSecond.of(0.0);
-    public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
     public static final Angle MIN_ANGLE = Rotations.of(0.0);
     public static final Angle MAX_ANGLE = Rotations.of(1);
     public static final Angle STARTING_ANGLE = Rotations.of(0.0);
     public static final Distance WHEEL_RADIUS = Meters.of(0.05);
     public static final Translation3d OFFSET = Translation3d.kZero;
+    public static final MomentOfInertia MOI = KilogramSquareMeters.of(0.0028125);
     public static final RotaryMechCharacteristics CONSTANTS =
         new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
+    public static final String MOTOR_NAME = "Intake Flywheel";
+
+    // Mechanism Constants
+    public static final AngularVelocity MAX_VELOCITY = RotationsPerSecond.of(3200 / 60);
+    public static final AngularAcceleration MAX_ACCELERATION =
+        RotationsPerSecondPerSecond.of(3200 / 60 * 10);
+    public static final AngularVelocity TOLERANCE = MAX_VELOCITY.times(0.1);
+
+    public static final AngularVelocity CRUISE_VELOCITY =
+        RadiansPerSecond.of(2 * Math.PI).times(10.0);
+    public static final AngularAcceleration ACCELERATION = CRUISE_VELOCITY.div(0.1).per(Second);
+    public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
+
+    public static final double GEARING = (5.0 / 1.0);
+    public static final Distance MIN_DISTANCE = Inches.of(0.0);
+    public static final Distance MAX_DISTANCE = Inches.of(10.0);
+    public static final Distance STARTING_DISTANCE = Inches.of(0.0);
+
+    public static final DCMotor DCMOTOR = DCMotor.getKrakenX60(1);
+
+    public static final Distance DRUM_RADIUS = Inches.of(2.0);
+    public static final DistanceAngleConverter CONVERTER = new DistanceAngleConverter(DRUM_RADIUS);
+    private static final Angle ENCODER_OFFSET = Rotations.of(0.0);
+
+    public static final LinearMechCharacteristics CHARACTERISTICS =
+        new LinearMechCharacteristics(
+            new Translation3d(0.0, 0.0, 0.0),
+            MIN_DISTANCE,
+            MAX_DISTANCE,
+            STARTING_DISTANCE,
+            CONVERTER);
+
+    public static CANcoderConfiguration getCANcoderConfig(boolean sim) {
+      CANcoderConfiguration config = new CANcoderConfiguration();
+
+      config.MagnetSensor.MagnetOffset = sim ? 0.0 : ENCODER_OFFSET.in(Rotations);
+
+      return config;
+    }
+
+    public static TalonFXConfiguration getFXConfig() {
+      TalonFXConfiguration config = new TalonFXConfiguration();
+
+      config.CurrentLimits.SupplyCurrentLimitEnable = Robot.isReal();
+      config.CurrentLimits.SupplyCurrentLimit = 40.0;
+      config.CurrentLimits.SupplyCurrentLowerLimit = 40.0;
+      config.CurrentLimits.SupplyCurrentLowerTime = 0.1;
+
+      config.CurrentLimits.StatorCurrentLimitEnable = Robot.isReal();
+      config.CurrentLimits.StatorCurrentLimit = 80.0;
+
+      config.Voltage.PeakForwardVoltage = 12.0;
+      config.Voltage.PeakReverseVoltage = -12.0;
+
+      config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+      config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+      config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+      config.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+          CONVERTER.toAngle(MAX_DISTANCE).in(Rotations);
+
+      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+      config.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+          CONVERTER.toAngle(MIN_DISTANCE).in(Rotations);
+
+      config.Feedback.RotorToSensorRatio = 1.0;
+
+      config.Feedback.SensorToMechanismRatio = GEARING;
+
+      config.Slot0 = new Slot0Configs().withKP(0.75).withKI(0.0).withKD(0.0);
+
+      config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY.in(RotationsPerSecond);
+      config.MotionMagic.MotionMagicAcceleration = ACCELERATION.in(RotationsPerSecondPerSecond);
+      config.MotionMagic.MotionMagicJerk = JERK.in(RotationsPerSecondPerSecond.per(Second));
+
+      return config;
+    }
   }
 
   public class IntakePivotConstants {
@@ -424,10 +483,8 @@ public final class Constants {
 
     public static final Angle TOLERANCE = Degrees.of(1.0);
 
-    public static final AngularVelocity CRUISE_VELOCITY =
-        RadiansPerSecond.of(10);
-    public static final AngularAcceleration ACCELERATION =
-        RadiansPerSecondPerSecond.of(100);
+    public static final AngularVelocity CRUISE_VELOCITY = RadiansPerSecond.of(10);
+    public static final AngularAcceleration ACCELERATION = RadiansPerSecondPerSecond.of(100);
     public static final Velocity<AngularAccelerationUnit> JERK =
         RadiansPerSecondPerSecond.per(Second).of(0);
 
@@ -441,59 +498,49 @@ public final class Constants {
 
     public static final RotaryMechCharacteristics CONSTANTS =
         new RotaryMechCharacteristics(
-          new Translation3d(),
-            ARM_LENGTH,
-            MIN_ANGLE,
-            MAX_ANGLE,
-            STARTING_ANGLE
-            );
+            new Translation3d(), ARM_LENGTH, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
 
     public static final DCMotor DCMOTOR = DCMotor.getKrakenX60(1);
     public static final MomentOfInertia MOI = KilogramSquareMeters.of(0.25);
 
     // Positional PID
-    public static final Slot0Configs SLOT_0_CONFIG = new Slot0Configs()
-        .withKP(10.0)
-        .withKI(2.0)
-        .withKD(8)
-        .withKS(0.07)
-        .withKV(0.1);
+    public static final Slot0Configs SLOT_0_CONFIG =
+        new Slot0Configs().withKP(10.0).withKI(2.0).withKD(8).withKS(0.07).withKV(0.1);
 
-    public static TalonFXConfiguration getFXConfig()
-    {
-        TalonFXConfiguration config = new TalonFXConfiguration();
+    public static TalonFXConfiguration getFXConfig() {
+      TalonFXConfiguration config = new TalonFXConfiguration();
 
-        config.CurrentLimits.SupplyCurrentLimitEnable = false;
-        config.CurrentLimits.SupplyCurrentLimit = 40.0;
-        config.CurrentLimits.SupplyCurrentLowerLimit = 40.0;
-        config.CurrentLimits.SupplyCurrentLowerTime = 0.1;
+      config.CurrentLimits.SupplyCurrentLimitEnable = false;
+      config.CurrentLimits.SupplyCurrentLimit = 40.0;
+      config.CurrentLimits.SupplyCurrentLowerLimit = 40.0;
+      config.CurrentLimits.SupplyCurrentLowerTime = 0.1;
 
-        config.CurrentLimits.StatorCurrentLimitEnable = false;
-        config.CurrentLimits.StatorCurrentLimit = 120.0;
+      config.CurrentLimits.StatorCurrentLimitEnable = false;
+      config.CurrentLimits.StatorCurrentLimit = 120.0;
 
-        config.Voltage.PeakForwardVoltage = 12.0;
-        config.Voltage.PeakReverseVoltage = -12.0;
+      config.Voltage.PeakForwardVoltage = 12.0;
+      config.Voltage.PeakReverseVoltage = -12.0;
 
-        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+      config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = MAX_ANGLE.in(Rotations);
+      config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+      config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = MAX_ANGLE.in(Rotations);
 
-        config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = MIN_ANGLE.in(Rotations);
+      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+      config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = MIN_ANGLE.in(Rotations);
 
-        config.Feedback.RotorToSensorRatio = ROTOR_TO_SENSOR;
-        config.Feedback.SensorToMechanismRatio = SENSOR_TO_MECHANISM;
+      config.Feedback.RotorToSensorRatio = ROTOR_TO_SENSOR;
+      config.Feedback.SensorToMechanismRatio = SENSOR_TO_MECHANISM;
 
-        config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+      config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
 
-        config.Slot0 = SLOT_0_CONFIG;
-        config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY.in(RotationsPerSecond);
-        config.MotionMagic.MotionMagicAcceleration = ACCELERATION.in(RotationsPerSecondPerSecond);
-        config.MotionMagic.MotionMagicJerk = JERK.in(RotationsPerSecondPerSecond.per(Second));
+      config.Slot0 = SLOT_0_CONFIG;
+      config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY.in(RotationsPerSecond);
+      config.MotionMagic.MotionMagicAcceleration = ACCELERATION.in(RotationsPerSecondPerSecond);
+      config.MotionMagic.MotionMagicJerk = JERK.in(RotationsPerSecondPerSecond.per(Second));
 
-        return config;
+      return config;
     }
   }
 
