@@ -16,6 +16,8 @@ package frc.robot;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.util.Optional;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -26,10 +28,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.lib.W8.devices.AbsoluteEncoder;
+import frc.lib.W8.io.absoluteencoder.AbsoluteEncoderIO;
+import frc.lib.W8.io.absoluteencoder.AbsoluteEncoderIOCANCoder;
+import frc.lib.W8.io.absoluteencoder.AbsoluteEncoderIOCANCoderSim;
 import frc.lib.W8.io.motor.*;
 import frc.lib.W8.mechanisms.flywheel.*;
+import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
+import frc.lib.W8.mechanisms.rotary.RotaryMechanismReal;
+import frc.lib.W8.mechanisms.rotary.RotaryMechanismSim;
 import frc.lib.W8.util.Device.CAN;
 import frc.robot.Constants.HopperConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
@@ -40,6 +50,8 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.Intake;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -52,6 +64,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Hopper hopper;
+  private final Intake intake;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -80,6 +93,19 @@ public class RobotContainer {
                         HopperConstants.getFXConfig(),
                         Ports.HopperRoller
                     )));
+
+        intake =
+            new Intake(
+                new FlywheelMechanismReal(
+                    new MotorIOTalonFX(IntakeConstants.MOTOR_NAME, IntakeConstants.getFXConfig(), Ports.IntakeRoller)
+                ),
+                new RotaryMechanismReal(new MotorIOTalonFX(IntakeConstants.MOTOR_NAME, IntakeConstants.getFXConfig(),
+                Ports.IntakeRoller),
+                IntakeConstants.CONSTANTS,
+                Optional.of(new AbsoluteEncoderIOCANCoderSim(Ports.IntakeRoller,
+                IntakeConstants.MOTOR_NAME + " Encoder",
+                IntakeConstants.getCANcoderConfig(false))))
+                );
         break;
 
       case SIM:
@@ -99,6 +125,26 @@ public class RobotContainer {
                     HopperConstants.DCMOTOR,
                     HopperConstants.MOI, 
                     HopperConstants.TOLERANCE));
+
+        intake =
+            new Intake(
+                new FlywheelMechanismSim(
+                    new MotorIOTalonFXSim(IntakeConstants.MOTOR_NAME, IntakeConstants.getFXConfig(), Ports.IntakeRoller),
+                    IntakeConstants.DCMOTOR,
+                    IntakeConstants.MOI,
+                    IntakeConstants.TOLERANCE
+                ),
+                new RotaryMechanismSim(
+                    new MotorIOTalonFXSim(IntakeConstants.MOTOR_NAME, IntakeConstants.getFXConfig(), Ports.IntakeRoller),
+                    IntakeConstants.DCMOTOR,
+                    IntakeConstants.MOI,
+                    false,
+                    IntakeConstants.CONSTANTS,
+                    Optional.of(new AbsoluteEncoderIOCANCoderSim(Ports.IntakeRoller,
+                    IntakeConstants.MOTOR_NAME + " Encoder",
+                    IntakeConstants.getCANcoderConfig(false)))
+                )
+            );
         break;
 
       default:
@@ -112,6 +158,8 @@ public class RobotContainer {
                 new ModuleIO() {});
                 
         hopper = new Hopper(new FlywheelMechanism() {});
+
+        intake = new Intake(new FlywheelMechanism() {}, new RotaryMechanism(IntakeConstants.MOTOR_NAME, IntakeConstants.CONSTANTS) {});
         break;
     }
 
