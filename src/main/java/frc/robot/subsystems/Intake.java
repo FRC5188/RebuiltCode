@@ -2,12 +2,9 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.W8.io.absoluteencoder.AbsoluteEncoderIO;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.flywheel.FlywheelMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
