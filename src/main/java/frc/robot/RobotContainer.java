@@ -28,7 +28,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.W8.io.motor.*;
 import frc.lib.W8.mechanisms.flywheel.*;
+import frc.lib.W8.mechanisms.linear.LinearMechanism;
+import frc.lib.W8.mechanisms.linear.LinearMechanismReal;
+import frc.lib.W8.mechanisms.linear.LinearMechanismSim;
 import frc.lib.W8.util.Device.CAN;
+import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.DriveCommands;
@@ -39,6 +43,7 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Hopper;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -52,6 +57,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Hopper hopper;
+  private final Climber climber;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -80,6 +86,15 @@ public class RobotContainer {
                         HopperConstants.getFXConfig(),
                         Ports.HopperRoller
                     )));
+        climber = 
+            new Climber(
+                new LinearMechanismReal(
+                    new MotorIOTalonFX(
+                        ClimberConstants.MOTOR_NAME,
+                        ClimberConstants.getFXConfig(),
+                        Ports.ClimberLinearMechanism
+
+                    ),ClimberConstants.CHARACTERISTICS));
         break;
 
       case SIM:
@@ -95,10 +110,18 @@ public class RobotContainer {
         hopper =
             new Hopper(
                 new FlywheelMechanismSim(
-                    new MotorIOTalonFXSim(HopperConstants.MOTOR_NAME, HopperConstants.getFXConfig(), Ports.HopperRoller),
+                    new MotorIOTalonFXSim(HopperConstants.MOTOR_NAME, HopperConstants.getFXConfig(),Ports.HopperRoller),
                     HopperConstants.DCMOTOR,
                     HopperConstants.MOI, 
                     HopperConstants.TOLERANCE));
+        climber =
+            new Climber(
+                new LinearMechanismSim(
+                    new MotorIOTalonFXSim(ClimberConstants.MOTOR_NAME,ClimberConstants.getFXConfig(),Ports.ClimberLinearMechanism),
+                    ClimberConstants.DCMOTOR,
+                    ClimberConstants.CARRIAGE_MASS,
+                    ClimberConstants.CHARACTERISTICS,
+                    true));
         break;
 
       default:
@@ -112,6 +135,7 @@ public class RobotContainer {
                 new ModuleIO() {});
                 
         hopper = new Hopper(new FlywheelMechanism() {});
+        climber = new Climber(new LinearMechanism(ClimberConstants.MOTOR_NAME,ClimberConstants.CHARACTERISTICS) {});
         break;
     }
 

@@ -265,6 +265,9 @@ public final class Constants {
   }
 
   public class ClimberConstants {
+    public static final DCMotor DCMOTOR = DCMotor.getKrakenX60(1);
+    public static final Mass CARRIAGE_MASS = Kilograms.of(2.5);
+    public static final String MOTOR_NAME = "Climber motor";
     public static final Distance TOLERANCE = Inches.of(0.1);
     public static final double GEARING = (5.0 / 1.0);
     public static final Distance MIN_DISTANCE = Inches.of(0.0);
@@ -272,12 +275,58 @@ public final class Constants {
     public static final Distance STARTING_DISTANCE = Inches.of(0.0);
     public static final Distance DRUM_RADIUS = Inches.of(2.0);
     public static final DistanceAngleConverter CONVERTER = new DistanceAngleConverter(DRUM_RADIUS);
-    public static final LinearMechCharacteristics CHARACTERISTICS =
-        new LinearMechCharacteristics(
-            new Translation3d(0.0, 0.0, 0.0),
-            MIN_DISTANCE,
-            MAX_DISTANCE,
-            STARTING_DISTANCE,
-            CONVERTER);
+     public static final AngularVelocity CRUISE_VELOCITY =
+        RadiansPerSecond.of(2 * Math.PI).times(10.0);
+    public static final AngularAcceleration ACCELERATION =
+        CRUISE_VELOCITY.div(0.1).per(Second);
+    public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
+   
+             public static final LinearMechCharacteristics CHARACTERISTICS =
+        new LinearMechCharacteristics(new Translation3d(0.0, 0.0, 0.0), MIN_DISTANCE, MAX_DISTANCE,
+            STARTING_DISTANCE, CONVERTER);
+
+
+    public static TalonFXConfiguration getFXConfig()
+    {
+        TalonFXConfiguration config = new TalonFXConfiguration();
+
+        config.CurrentLimits.SupplyCurrentLimitEnable = Robot.isReal();
+        config.CurrentLimits.SupplyCurrentLimit = 40.0;
+        config.CurrentLimits.SupplyCurrentLowerLimit = 40.0;
+        config.CurrentLimits.SupplyCurrentLowerTime = 0.1;
+
+        config.CurrentLimits.StatorCurrentLimitEnable = Robot.isReal();
+        config.CurrentLimits.StatorCurrentLimit = 80.0;
+
+        config.Voltage.PeakForwardVoltage = 12.0;
+        config.Voltage.PeakReverseVoltage = -12.0;
+
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+            CONVERTER.toAngle(MAX_DISTANCE).in(Rotations);
+
+        config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+            CONVERTER.toAngle(MIN_DISTANCE).in(Rotations);
+
+
+        config.Feedback.RotorToSensorRatio = 1.0;
+
+        config.Feedback.SensorToMechanismRatio = GEARING;
+
+        config.Slot0 =  new Slot0Configs()
+        .withKP(0.75)
+        .withKI(0.0)
+        .withKD(0.0);
+
+        config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY.in(RotationsPerSecond);
+        config.MotionMagic.MotionMagicAcceleration = ACCELERATION.in(RotationsPerSecondPerSecond);
+        config.MotionMagic.MotionMagicJerk = JERK.in(RotationsPerSecondPerSecond.per(Second));
+
+        return config;
+    } // End here            
   }
 }
