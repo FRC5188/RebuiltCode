@@ -104,6 +104,7 @@ public class RobotContainer {
                         Ports.ShooterRoller),
                     Constants.ShooterRotaryConstants.CONSTANTS,
                     java.util.Optional.empty()));
+
         intake =
             new Intake(
                 new FlywheelMechanismReal(
