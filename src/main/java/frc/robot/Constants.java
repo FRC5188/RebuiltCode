@@ -99,7 +99,7 @@ public final class Constants {
         Meters.of(aprilTagLayout.getTagPose(4).get().getX() + (HUBWIDTH / 2.0));
     public static final Distance oppAllianceZone =
         Meters.of(aprilTagLayout.getTagPose(10).get().getX());
-         public static final double BUMPWIDTH = Units.inchesToMeters(73.0);
+    public static final double BUMPWIDTH = Units.inchesToMeters(73.0);
     public static final double BUMPHIGHT = Units.inchesToMeters(6.513);
     public static final double BUMPDEPTH = Units.inchesToMeters(44.4);
     public static final double RBUMPSTART = hubCenter + (HUBWIDTH / 2.0);
