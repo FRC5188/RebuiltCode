@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import au.grapplerobotics.LaserCan;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -100,7 +101,8 @@ public class RobotContainer {
                         new AbsoluteEncoderIOCANCoderSim(
                             Ports.IntakeRoller,
                             IntakeConstants.MOTOR_NAME + " Encoder",
-                            IntakeConstants.getCANcoderConfig(false)))));
+                            IntakeConstants.getCANcoderConfig(false)))),
+                new LaserCan(0));
         break;
 
       case SIM:
@@ -147,7 +149,8 @@ public class RobotContainer {
                         new AbsoluteEncoderIOCANCoderSim(
                             Ports.IntakeRoller,
                             IntakeConstants.MOTOR_NAME + " Encoder",
-                            IntakeConstants.getCANcoderConfig(false)))));
+                            IntakeConstants.getCANcoderConfig(false)))),
+                new LaserCan(0));
         break;
 
       default:
@@ -165,7 +168,8 @@ public class RobotContainer {
         intake =
             new Intake(
                 new FlywheelMechanism() {},
-                new RotaryMechanism(IntakeConstants.MOTOR_NAME, IntakeConstants.CONSTANTS) {});
+                new RotaryMechanism(IntakeConstants.MOTOR_NAME, IntakeConstants.CONSTANTS) {},
+                new LaserCan(0));
         break;
     }
 
@@ -219,6 +223,8 @@ public class RobotContainer {
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+
+    controller.y().onTrue(Commands.runOnce(() -> intake.printTargetDistance()));
 
     // Reset gyro to 0° when B button is pressed
     controller
