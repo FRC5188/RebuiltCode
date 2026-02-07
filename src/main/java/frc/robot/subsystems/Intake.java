@@ -1,4 +1,4 @@
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
@@ -35,7 +35,7 @@ public class Intake extends SubsystemBase {
   }
 
   public Angle getPosition() {
-    return _rollerIO.getPosition();
+    return _pivotIO.getPosition();
   }
 
   public void stop() {
