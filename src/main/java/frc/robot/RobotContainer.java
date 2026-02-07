@@ -34,6 +34,7 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.BallCounter;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.drive.Drive;
@@ -52,10 +53,14 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
+    // ! ! ! ! CODE IS CURRENTLY 'gutted' PER CAL'S REQUEST yoohoo
+
   // Subsystems
   private final Drive drive;
-  private final Hopper hopper;
-  private final Intake intake;
+//   private final Hopper hopper;
+//   private final Intake intake;
+  private final BallCounter ballCounter;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -65,6 +70,10 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    // Check if the robot is real before using the ball counter!
+    if (Robot.isReal()) ballCounter = new BallCounter(new LaserCan(0));
+    else ballCounter = null;
+
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -76,33 +85,32 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
-        hopper =
-            new Hopper(
-                new FlywheelMechanismReal(
-                    new MotorIOTalonFX(
-                        HopperConstants.MOTOR_NAME,
-                        HopperConstants.getFXConfig(),
-                        Ports.HopperRoller)));
+        // hopper =
+        //     new Hopper(
+        //         new FlywheelMechanismReal(
+        //             new MotorIOTalonFX(
+        //                 HopperConstants.MOTOR_NAME,
+        //                 HopperConstants.getFXConfig(),
+        //                 Ports.HopperRoller)));
 
-        intake =
-            new Intake(
-                new FlywheelMechanismReal(
-                    new MotorIOTalonFX(
-                        IntakeConstants.MOTOR_NAME,
-                        IntakeConstants.getFXConfig(),
-                        Ports.IntakeRoller)),
-                new RotaryMechanismReal(
-                    new MotorIOTalonFX(
-                        IntakeConstants.MOTOR_NAME,
-                        IntakeConstants.getFXConfig(),
-                        Ports.IntakeRoller),
-                    IntakeConstants.CONSTANTS,
-                    Optional.of(
-                        new AbsoluteEncoderIOCANCoderSim(
-                            Ports.IntakeRoller,
-                            IntakeConstants.MOTOR_NAME + " Encoder",
-                            IntakeConstants.getCANcoderConfig(false)))),
-                new LaserCan(0));
+        // intake =
+        //     new Intake(
+        //         new FlywheelMechanismReal(
+        //             new MotorIOTalonFX(
+        //                 IntakeConstants.MOTOR_NAME,
+        //                 IntakeConstants.getFXConfig(),
+        //                 Ports.IntakeRoller)),
+        //         new RotaryMechanismReal(
+        //             new MotorIOTalonFX(
+        //                 IntakeConstants.MOTOR_NAME,
+        //                 IntakeConstants.getFXConfig(),
+        //                 Ports.IntakeRoller),
+        //             IntakeConstants.CONSTANTS,
+        //             Optional.of(
+        //                 new AbsoluteEncoderIOCANCoderSim(
+        //                     Ports.IntakeRoller,
+        //                     IntakeConstants.MOTOR_NAME + " Encoder",
+        //                     IntakeConstants.getCANcoderConfig(false)))));
         break;
 
       case SIM:
@@ -115,42 +123,41 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
 
-        hopper =
-            new Hopper(
-                new FlywheelMechanismSim(
-                    new MotorIOTalonFXSim(
-                        HopperConstants.MOTOR_NAME,
-                        HopperConstants.getFXConfig(),
-                        Ports.HopperRoller),
-                    HopperConstants.DCMOTOR,
-                    HopperConstants.MOI,
-                    HopperConstants.TOLERANCE));
+        // hopper =
+        //     new Hopper(
+        //         new FlywheelMechanismSim(
+        //             new MotorIOTalonFXSim(
+        //                 HopperConstants.MOTOR_NAME,
+        //                 HopperConstants.getFXConfig(),
+        //                 Ports.HopperRoller),
+        //             HopperConstants.DCMOTOR,
+        //             HopperConstants.MOI,
+        //             HopperConstants.TOLERANCE));
 
-        intake =
-            new Intake(
-                new FlywheelMechanismSim(
-                    new MotorIOTalonFXSim(
-                        IntakeConstants.MOTOR_NAME,
-                        IntakeConstants.getFXConfig(),
-                        Ports.IntakeRoller),
-                    IntakeConstants.DCMOTOR,
-                    IntakeConstants.MOI,
-                    IntakeConstants.TOLERANCE),
-                new RotaryMechanismSim(
-                    new MotorIOTalonFXSim(
-                        IntakeConstants.MOTOR_NAME,
-                        IntakeConstants.getFXConfig(),
-                        Ports.IntakeRoller),
-                    IntakeConstants.DCMOTOR,
-                    IntakeConstants.MOI,
-                    false,
-                    IntakeConstants.CONSTANTS,
-                    Optional.of(
-                        new AbsoluteEncoderIOCANCoderSim(
-                            Ports.IntakeRoller,
-                            IntakeConstants.MOTOR_NAME + " Encoder",
-                            IntakeConstants.getCANcoderConfig(false)))),
-                new LaserCan(0));
+        // intake =
+        //     new Intake(
+        //         new FlywheelMechanismSim(
+        //             new MotorIOTalonFXSim(
+        //                 IntakeConstants.MOTOR_NAME,
+        //                 IntakeConstants.getFXConfig(),
+        //                 Ports.IntakeRoller),
+        //             IntakeConstants.DCMOTOR,
+        //             IntakeConstants.MOI,
+        //             IntakeConstants.TOLERANCE),
+        //         new RotaryMechanismSim(
+        //             new MotorIOTalonFXSim(
+        //                 IntakeConstants.MOTOR_NAME,
+        //                 IntakeConstants.getFXConfig(),
+        //                 Ports.IntakeRoller),
+        //             IntakeConstants.DCMOTOR,
+        //             IntakeConstants.MOI,
+        //             false,
+        //             IntakeConstants.CONSTANTS,
+        //             Optional.of(
+        //                 new AbsoluteEncoderIOCANCoderSim(
+        //                     Ports.IntakeRoller,
+        //                     IntakeConstants.MOTOR_NAME + " Encoder",
+        //                     IntakeConstants.getCANcoderConfig(false)))));
         break;
 
       default:
@@ -163,13 +170,12 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
 
-        hopper = new Hopper(new FlywheelMechanism() {});
+        // hopper = new Hopper(new FlywheelMechanism() {});
 
-        intake =
-            new Intake(
-                new FlywheelMechanism() {},
-                new RotaryMechanism(IntakeConstants.MOTOR_NAME, IntakeConstants.CONSTANTS) {},
-                new LaserCan(0));
+        // intake =
+        //     new Intake(
+        //         new FlywheelMechanism() {},
+        //         new RotaryMechanism(IntakeConstants.MOTOR_NAME, IntakeConstants.CONSTANTS) {});
         break;
     }
 
@@ -224,8 +230,6 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    controller.y().onTrue(Commands.runOnce(() -> intake.printTargetDistance()));
-
     // Reset gyro to 0° when B button is pressed
     controller
         .b()
@@ -237,9 +241,9 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller
-        .x()
-        .onTrue(Commands.runOnce(() -> hopper.setGoal(HopperConstants.HOPPER_POSITION), hopper));
+    // controller
+    //     .x()
+    //     .onTrue(Commands.runOnce(() -> hopper.setGoal(HopperConstants.HOPPER_POSITION), hopper));
   }
 
   /**
