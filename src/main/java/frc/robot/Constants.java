@@ -23,6 +23,9 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Degree;
+import java.util.Optional;
 
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -31,6 +34,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.AngularAccelerationUnit;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -40,17 +44,25 @@ import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import frc.lib.W8.io.absoluteencoder.AbsoluteEncoderIOCANCoderSim;
 import frc.lib.W8.io.motor.MotorIOTalonFX;
+import frc.lib.W8.io.motor.MotorIOTalonFX.TalonFXFollower;
 import frc.lib.W8.io.motor.MotorIOTalonFXSim;
 import frc.lib.W8.mechanisms.linear.LinearMechanism;
 import frc.lib.W8.mechanisms.linear.LinearMechanism.LinearMechCharacteristics;
 import frc.lib.W8.mechanisms.linear.LinearMechanismReal;
 import frc.lib.W8.mechanisms.linear.LinearMechanismSim;
+import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism.RotaryMechCharacteristics;
+import frc.lib.W8.mechanisms.rotary.RotaryMechanismReal;
+import frc.lib.W8.mechanisms.rotary.RotaryMechanismSim;
 
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.RGBWColor;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.*;
@@ -113,6 +125,7 @@ public final class Constants {
     public static final Device.CAN LEDs = new CAN(2, "rio");
     public static final Device.CAN HopperRoller = new CAN(3, "rio");
     public static final Device.CAN ClimberLinearMechanism = new CAN(4, "rio");
+    public static final Device.CAN ShooterRoller = new CAN(5, "rio");
   }
 
   public class HopperConstants {
@@ -241,6 +254,173 @@ public final class Constants {
 
     
   }
+  public class ShooterFlywheelConstants {
+
+    public static String NAME = "ShooterFlywheel";
+
+    public static final AngularVelocity MAX_VELOCITY =
+        RadiansPerSecond.of(2 * Math.PI);
+    public static final AngularAcceleration MAX_ACCELERATION = MAX_VELOCITY.per(Second);
+
+    private static final double GEARING = (2.0 / 1.0);
+
+    public static final AngularVelocity TOLERANCE = MAX_VELOCITY.times(0.1);
+
+    private static final DCMotor DCMOTOR = DCMotor.getKrakenX60(1);
+    public static final MomentOfInertia MOI = KilogramSquareMeters.of(1.0);
+
+    // Velocity PID
+    private static Slot0Configs SLOT0CONFIG = new Slot0Configs()
+        .withKP(1000.0)
+        .withKI(0.0)
+        .withKD(0.0);
+
+    public static TalonFXConfiguration getFXConfig()
+    {
+        TalonFXConfiguration config = new TalonFXConfiguration();
+
+        config.CurrentLimits.SupplyCurrentLimitEnable = Robot.isReal();
+        config.CurrentLimits.SupplyCurrentLimit = 40.0;
+        config.CurrentLimits.SupplyCurrentLowerLimit = 40.0;
+        config.CurrentLimits.SupplyCurrentLowerTime = 0.1;
+
+        config.CurrentLimits.StatorCurrentLimitEnable = Robot.isReal();
+        config.CurrentLimits.StatorCurrentLimit = 80.0;
+
+        config.Voltage.PeakForwardVoltage = 12.0;
+        config.Voltage.PeakReverseVoltage = -12.0;
+
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+
+        config.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
+
+        config.Feedback.RotorToSensorRatio = 1.0;
+
+        config.Feedback.SensorToMechanismRatio = GEARING;
+
+        config.Slot0 = SLOT0CONFIG;
+
+        return config;
+    }
+  }
+
+public class ShooterRotaryConstants {
+    public static String NAME = "ShooterRotary";
+
+    public static final Angle TOLERANCE = Degrees.of(2.0);
+
+    public static final AngularVelocity CRUISE_VELOCITY =
+        Units.RadiansPerSecond.of(1);
+    public static final AngularAcceleration ACCELERATION =
+        CRUISE_VELOCITY.div(0.1).per(Units.Second);
+    public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
+
+    private static final double ROTOR_TO_SENSOR = (2.0 / 1.0);
+    private static final double SENSOR_TO_MECHANISM = (2.0 / 1.0);
+
+    public static final Translation3d OFFSET = Translation3d.kZero;
+
+    public static final Angle MIN_ANGLE = Degrees.of(-130.0);
+    public static final Angle MAX_ANGLE = Rotations.of(.5);
+    public static final Angle STARTING_ANGLE = Rotations.of(0.0);
+    public static final Distance ARM_LENGTH = Meters.of(1.0);
+
+    public static final RotaryMechCharacteristics CONSTANTS =
+        new RotaryMechCharacteristics(
+            OFFSET,
+            ARM_LENGTH,
+            MIN_ANGLE,
+            MAX_ANGLE,
+            STARTING_ANGLE);
+
+    public static final Mass ARM_MASS = Kilograms.of(.01);
+    public static final DCMotor DCMOTOR = DCMotor.getKrakenX60(1);
+    public static final MomentOfInertia MOI = KilogramSquareMeters
+        .of(SingleJointedArmSim.estimateMOI(ARM_LENGTH.in(Meters), ARM_MASS.in(Kilograms)));
+
+    private static final Angle ENCODER_OFFSET = Rotations.of(0.0);
+
+    // Positional PID
+    private static Slot0Configs SLOT0CONFIG = new Slot0Configs()
+        .withKP(30.0)
+        .withKI(0.0)
+        .withKD(5.0);
+
+    /**
+     * Creates and returns the TalonFX motor controller configuration for the rotary mechanism.
+     * 
+     * <p>
+     * This configuration includes:
+     * <ul>
+     * <li>Current limits to prevent motor damage and brownouts</li>
+     * <li>Voltage limits for power output</li>
+     * <li>Brake mode to hold position when not moving</li>
+     * <li>Software limit switches to prevent mechanism damage</li>
+     * <li>Gear ratios for proper position/velocity feedback</li>
+     * <li>Remote CANcoder feedback for absolute positioning</li>
+     * <li>PID gains for control</li>
+     * </ul>
+     * 
+     * @return A configured TalonFXConfiguration object ready to apply to a motor controller
+     */
+    public static TalonFXConfiguration getFXConfig()
+    {
+        TalonFXConfiguration config = new TalonFXConfiguration();
+
+        config.CurrentLimits.SupplyCurrentLimitEnable = false;
+        config.CurrentLimits.SupplyCurrentLimit = 40.0;
+        config.CurrentLimits.SupplyCurrentLowerLimit = 40.0;
+        config.CurrentLimits.SupplyCurrentLowerTime = 0.1;
+
+        config.CurrentLimits.StatorCurrentLimitEnable = false;
+        config.CurrentLimits.StatorCurrentLimit = 80.0;
+
+        config.Voltage.PeakForwardVoltage = 12.0;
+        config.Voltage.PeakReverseVoltage = -12.0;
+
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = MAX_ANGLE.in(Units.Rotations);
+
+        config.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
+        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = MIN_ANGLE.in(Units.Rotations);
+
+        config.Feedback.RotorToSensorRatio = ROTOR_TO_SENSOR;
+        config.Feedback.SensorToMechanismRatio = SENSOR_TO_MECHANISM;
+
+        config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+
+        config.Slot0 = SLOT0CONFIG;
+
+        return config;
+    }
+
+    /**
+     * Creates and returns the CANcoder absolute encoder configuration.
+     * 
+     * <p>
+     * The CANcoder provides absolute position feedback, meaning it knows the true position of the
+     * mechanism even after power cycling. The magnet offset calibrates the encoder's zero position.
+     * 
+     * @param sim Whether this configuration is for simulation (true) or real robot (false). In
+     *        simulation, the offset is set to 0.0 since it's not needed.
+     * @return A configured CANcoderConfiguration object
+     */
+    public static CANcoderConfiguration getCANcoderConfig(boolean sim)
+    {
+        CANcoderConfiguration config = new CANcoderConfiguration();
+
+        config.MagnetSensor.MagnetOffset = sim ? 0.0 : ENCODER_OFFSET.in(Rotations);
+
+        return config;
+    }
+
+}
 
   public static final int CANDLE_ID = 50;
 

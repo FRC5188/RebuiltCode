@@ -28,9 +28,13 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.W8.io.motor.*;
 import frc.lib.W8.mechanisms.flywheel.*;
+import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
+import frc.lib.W8.mechanisms.rotary.RotaryMechanismReal;
 import frc.lib.W8.util.Device.CAN;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.Constants.Ports;
+import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.ShooterFlywheelConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -40,6 +44,8 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.Shooter;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -52,6 +58,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Hopper hopper;
+  private final Shooter shooter;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -71,7 +78,6 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
-
         hopper =
             new Hopper(
                 new FlywheelMechanismReal(
@@ -80,6 +86,30 @@ public class RobotContainer {
                         HopperConstants.getFXConfig(),
                         Ports.HopperRoller
                     )));
+        shooter = 
+            new Shooter(
+                new FlywheelMechanismReal(
+                    new MotorIOTalonFX(
+                        ShooterFlywheelConstants.NAME,
+                        ShooterFlywheelConstants.getFXConfig(),
+                        Ports.ShooterRoller
+                    )
+                ),
+                new FlywheelMechanismReal(
+                    new MotorIOTalonFX(
+                        ShooterFlywheelConstants.NAME,
+                        ShooterFlywheelConstants.getFXConfig(),
+                        Ports.ShooterRoller
+                    )
+                ),
+                new RotaryMechanismReal(
+                    new MotorIOTalonFX(
+                        ShooterFlywheelConstants.NAME,
+                        ShooterFlywheelConstants.getFXConfig(),
+                        Ports.ShooterRoller
+                    ), Constants.ShooterRotaryConstants.CONSTANTS, java.util.Optional.empty()
+                )
+            );
         break;
 
       case SIM:
