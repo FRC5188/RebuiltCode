@@ -16,8 +16,8 @@ import frc.robot.Constants.IntakeConstants;
 public class Intake extends SubsystemBase {
   private FlywheelMechanism _rollerIO;
   private RotaryMechanism _pivotIO;
-double velocity; 
-double pivotAngle; 
+  double velocity;
+  double pivotAngle;
 
   public Intake(FlywheelMechanism rollerIO, RotaryMechanism pivotIO) {
     _rollerIO = rollerIO;
@@ -29,16 +29,20 @@ double pivotAngle;
     AngularVelocity angVelo = RotationsPerSecond.of(velocity);
 
     _rollerIO.runVelocity(angVelo, Constants.IntakeConstants.ACCELERATION, PIDSlot.SLOT_0);
-  } 
- public Command setPivotAngle(Angle pivotAngle)
-    {
-        return this.runOnce(
-            () -> _pivotIO.runPosition(pivotAngle, IntakeConstants.CRUISE_VELOCITY,
-                IntakeConstants.ACCELERATION, IntakeConstants.JERK,
-                PIDSlot.SLOT_0))
-            .withName("Go To " + setpoint.toString() + " Setpoint");
-    };
-    
+  }
+
+  public Command setPivotAngle(Angle pivotAngle) {
+    return this.runOnce(
+            () ->
+                _pivotIO.runPosition(
+                    pivotAngle,
+                    IntakeConstants.CRUISE_VELOCITY,
+                    IntakeConstants.ACCELERATION,
+                    IntakeConstants.JERK,
+                    PIDSlot.SLOT_0))
+        .withName("Go To " + setpoint.toString() + " Setpoint");
+  }
+  ;
 
   public AngularVelocity getVelocity() {
     return _rollerIO.getVelocity();
@@ -52,16 +56,11 @@ double pivotAngle;
     setVelocity(0);
   }
 
-public Command intake() { 
-  return Commands.sequence( 
-    Commands.run(() -> setVelocity(velocity)), 
-    Commands.run(() -> setPivotAngle(pivotAngle))); 
-        }
-        
-        
-         
-        
+  public Command intake() {
+    return Commands.sequence(
+        Commands.run(() -> setVelocity(velocity)), Commands.run(() -> setPivotAngle(pivotAngle)));
+  }
 
-          @Override
+  @Override
   public void periodic() {}
 }

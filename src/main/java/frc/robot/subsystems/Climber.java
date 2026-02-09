@@ -10,8 +10,8 @@ import frc.lib.W8.mechanisms.linear.LinearMechanism;
 import frc.robot.Constants.ClimberConstants;
 
 public class Climber extends SubsystemBase {
-  private LinearMechanism _io; 
-  Distance goalDistance; 
+  private LinearMechanism _io;
+  Distance goalDistance;
 
   public Climber(LinearMechanism io) {
     io = _io;
@@ -29,19 +29,20 @@ public class Climber extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {} 
-  
-  public void runClimber(){ 
-    runClimber(); 
-  } 
+  public void periodic() {}
 
-  public boolean nearGoalposition(){ 
-    if(Math.abs(goalDistance.in(Meters) - ClimberConstants.CONVERTER.toDistance(_io.getPosition()).in(Meters) ) < ClimberConstants.TOLERANCE.in(Meters) ) { 
-      return true; 
-    } 
-   else{ 
-      return false; 
-   }
+  public void runClimber() {
+    runClimber();
   }
 
+  public boolean nearGoalposition() {
+    if (Math.abs(
+            goalDistance.in(Meters)
+                - ClimberConstants.CONVERTER.toDistance(_io.getPosition()).in(Meters))
+        < ClimberConstants.TOLERANCE.in(Meters)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
