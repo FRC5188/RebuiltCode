@@ -444,7 +444,6 @@ public final class Constants {
     public static final Distance MAX_DISTANCE = Inches.of(10.0);
     public static final Distance STARTING_DISTANCE = Inches.of(0.0);
 
-
     public static final DCMotor DCMOTOR = DCMotor.getKrakenX60(1);
 
     public static final Distance DRUM_RADIUS = Inches.of(2.0);
@@ -505,8 +504,8 @@ public final class Constants {
         config.MotionMagic.MotionMagicJerk = JERK.in(RotationsPerSecondPerSecond.per(Second));
 
         return config;
+    }
   }
-}
 
   public class IntakePivotConstants {
     public static final String NAME = "Intake";
