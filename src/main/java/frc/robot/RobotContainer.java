@@ -13,13 +13,9 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.KilogramSquareMeters;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,20 +27,19 @@ import frc.lib.W8.mechanisms.flywheel.*;
 import frc.lib.W8.mechanisms.linear.LinearMechanism;
 import frc.lib.W8.mechanisms.linear.LinearMechanismReal;
 import frc.lib.W8.mechanisms.linear.LinearMechanismSim;
-import frc.lib.W8.util.Device.CAN;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.Hopper;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -84,17 +79,15 @@ public class RobotContainer {
                     new MotorIOTalonFX(
                         HopperConstants.MOTOR_NAME,
                         HopperConstants.getFXConfig(),
-                        Ports.HopperRoller
-                    )));
-        climber = 
+                        Ports.HopperRoller)));
+        climber =
             new Climber(
                 new LinearMechanismReal(
                     new MotorIOTalonFX(
                         ClimberConstants.MOTOR_NAME,
                         ClimberConstants.getFXConfig(),
-                        Ports.ClimberLinearMechanism
-
-                    ),ClimberConstants.CHARACTERISTICS));
+                        Ports.ClimberLinearMechanism),
+                    ClimberConstants.CHARACTERISTICS));
         break;
 
       case SIM:
@@ -110,14 +103,20 @@ public class RobotContainer {
         hopper =
             new Hopper(
                 new FlywheelMechanismSim(
-                    new MotorIOTalonFXSim(HopperConstants.MOTOR_NAME, HopperConstants.getFXConfig(),Ports.HopperRoller),
+                    new MotorIOTalonFXSim(
+                        HopperConstants.MOTOR_NAME,
+                        HopperConstants.getFXConfig(),
+                        Ports.HopperRoller),
                     HopperConstants.DCMOTOR,
-                    HopperConstants.MOI, 
+                    HopperConstants.MOI,
                     HopperConstants.TOLERANCE));
         climber =
             new Climber(
                 new LinearMechanismSim(
-                    new MotorIOTalonFXSim(ClimberConstants.MOTOR_NAME,ClimberConstants.getFXConfig(),Ports.ClimberLinearMechanism),
+                    new MotorIOTalonFXSim(
+                        ClimberConstants.MOTOR_NAME,
+                        ClimberConstants.getFXConfig(),
+                        Ports.ClimberLinearMechanism),
                     ClimberConstants.DCMOTOR,
                     ClimberConstants.CARRIAGE_MASS,
                     ClimberConstants.CHARACTERISTICS,
@@ -133,9 +132,12 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-                
+
         hopper = new Hopper(new FlywheelMechanism() {});
-        climber = new Climber(new LinearMechanism(ClimberConstants.MOTOR_NAME,ClimberConstants.CHARACTERISTICS) {});
+        climber =
+            new Climber(
+                new LinearMechanism(
+                    ClimberConstants.MOTOR_NAME, ClimberConstants.CHARACTERISTICS) {});
         break;
     }
 
