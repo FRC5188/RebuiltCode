@@ -26,10 +26,10 @@ public class Intake extends SubsystemBase {
     AngularVelocity angVelo = RotationsPerSecond.of(velocity);
 
     _rollerIO.runVelocity(angVelo, Constants.IntakeConstants.ACCELERATION, PIDSlot.SLOT_0);
-  } 
-  public Command setPivotAngle(double pivotAngle) { 
-    return Commands.run(() -> setPivotAngle(pivotAngle));  
-    
+  }
+
+  public Command setPivotAngle(double pivotAngle) {
+    return Commands.run(() -> setPivotAngle(pivotAngle));
   }
 
   public AngularVelocity getVelocity() {
@@ -46,4 +46,4 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {}
-} 
+}
