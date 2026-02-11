@@ -24,17 +24,21 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.W8.io.absoluteencoder.AbsoluteEncoderIOCANCoderSim;
 import frc.lib.W8.io.motor.*;
+import frc.lib.W8.io.vision.VisionIOPhotonVision;
+import frc.lib.W8.io.vision.VisionIOPhotonVisionSim;
 import frc.lib.W8.mechanisms.flywheel.*;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanismReal;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanismSim;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.IntakeConstants.VisionConstants;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -43,6 +47,7 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import java.util.Optional;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -55,6 +60,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Hopper hopper;
   private final Intake intake;
+  private final Vision vision;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -101,6 +107,13 @@ public class RobotContainer {
                             Ports.IntakeRoller,
                             IntakeConstants.MOTOR_NAME + " Encoder",
                             IntakeConstants.getCANcoderConfig(false)))));
+        vision =
+            new Vision(
+                new VisionIOPhotonVision(
+                    VisionConstants.camera0Name,
+                    VisionConstants.robotToCamera0,
+                    VisionConstants.aprilTagLayout,
+                    PoseStrategy.CONSTRAINED_SOLVEPNP));
         break;
 
       case SIM:
@@ -148,6 +161,15 @@ public class RobotContainer {
                             Ports.IntakeRoller,
                             IntakeConstants.MOTOR_NAME + " Encoder",
                             IntakeConstants.getCANcoderConfig(false)))));
+        vision =
+            new Vision(
+                new VisionIOPhotonVisionSim(
+                    () -> drive.getPose(),
+                    VisionConstants.camera0Name,
+                    VisionConstants.robotToCamera0,
+                    VisionConstants.aprilTagLayout,
+                    PoseStrategy.CONSTRAINED_SOLVEPNP,
+                    VisionConstants.getSystemSim()));
         break;
 
       default:
@@ -166,6 +188,7 @@ public class RobotContainer {
             new Intake(
                 new FlywheelMechanism() {},
                 new RotaryMechanism(IntakeConstants.MOTOR_NAME, IntakeConstants.CONSTANTS) {});
+        vision = new Vision(null);
         break;
     }
 
