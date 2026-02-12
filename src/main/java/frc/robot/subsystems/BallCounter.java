@@ -66,7 +66,6 @@ public class BallCounter extends SubsystemBase {
     return ballsData.size() / observationTime;
   }
 
-  // Getter Methods
   public int getBallsShot() {
     return ballsFired;
   }
@@ -89,4 +88,3 @@ public class BallCounter extends SubsystemBase {
     // else System.out.println("No target found!");
   }
 }
-// (ballsData.isEmpty() ? 0 : ballsData.size()+1) {ignore}
