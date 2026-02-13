@@ -36,6 +36,7 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -47,9 +48,9 @@ public class RobotContainer {
   // ! ! ! ! CODE IS CURRENTLY 'gutted' PER CAL'S REQUEST yoohoo
 
   // Subsystems
-//   private final Drive drive;
-  //   private final Hopper hopper;
-  //   private final Intake intake;
+//  private final Drive drive;
+//   private final Hopper hopper;
+//   private final Intake intake;
   private final BallCounter ballCounter;
 
   // Controller
@@ -61,7 +62,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Check if the robot is real before using the ball counter!
-    if (Robot.isReal()) ballCounter = new BallCounter(new LaserCan(0));
+    if (Robot.isReal()) ballCounter = new BallCounter(new LaserCan(1));
     else ballCounter = null;
 
     switch (Constants.currentMode) {
@@ -172,7 +173,7 @@ public class RobotContainer {
     // Set up auto routines
     // autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
-    // // Set up SysId routines
+    // Set up SysId routines
     // autoChooser.addOption(
     //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
     // autoChooser.addOption(
@@ -198,29 +199,29 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-   private void configureButtonBindings() {
-//     // Default command, normal field-relative drive
-//     drive.setDefaultCommand(
-//         DriveCommands.joystickDrive(
-//             drive,
-//             () -> controller.getLeftY(),
-//             () -> controller.getLeftX(),
-//             () -> -controller.getRightX()));
+  private void configureButtonBindings() {
+    // Default command, normal field-relative drive
+    // drive.setDefaultCommand(
+    //     DriveCommands.joystickDrive(
+    //         drive,
+    //         () -> controller.getLeftY(),
+    //         () -> controller.getLeftX(),
+    //         () -> -controller.getRightX()));
 
-//     // Lock to 0° when A button is held
-//     controller
-//         .a()
-//         .whileTrue(
-//             DriveCommands.joystickDriveAtAngle(
-//                 drive,
-//                 () -> -controller.getLeftY(),
-//                 () -> -controller.getLeftX(),
-//                 () -> new Rotation2d()));
+    // Lock to 0° when A button is held
+    // controller
+    //     .a()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -controller.getLeftY(),
+    //             () -> -controller.getLeftX(),
+    //             () -> new Rotation2d()));
 
-//     // Switch to X pattern when X button is pressed
-//     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // Switch to X pattern when X button is pressed
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // Reset gyro to 0° when B button is pressed
+    // // Reset gyro to 0° when B button is pressed
     // controller
     //     .b()
     //     .onTrue(
