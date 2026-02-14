@@ -61,7 +61,6 @@ public class RobotContainer {
   private final Hopper hopper;
   private final Shooter shooter;
   private final Intake intake;
-  private final Climber climber;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
