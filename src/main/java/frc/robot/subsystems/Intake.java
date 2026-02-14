@@ -4,6 +4,8 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.flywheel.FlywheelMechanism;
@@ -26,6 +28,10 @@ public class Intake extends SubsystemBase {
     AngularVelocity angVelo = RotationsPerSecond.of(velocity);
 
     _rollerIO.runVelocity(angVelo, Constants.IntakeConstants.ACCELERATION, PIDSlot.SLOT_0);
+  }
+
+  public Command setPivotAngle(double pivotAngle) {
+    return Commands.run(() -> setPivotAngle(pivotAngle));
   }
 
   public AngularVelocity getVelocity() {
