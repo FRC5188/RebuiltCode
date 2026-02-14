@@ -18,6 +18,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.lib.Rebuilt2026.FuelSim;
 import frc.robot.generated.TunerConstants;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -171,9 +172,17 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    robotContainer.FuelSim.spawnStartingFuel();
+    robotContainer.FuelSim.registerRobot(
+        0.9, // from left to right in meters
+        0.93, // from front to back in meters
+        0.21, // from floor to top of bumpers in meters
+        poseSupplier, // Supplier<Pose2d> of robot pose
+        fieldSpeedsSupplier); // Supplier<ChassisSpeeds> of field-centric chassis speeds
+  }
 
   /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {robotContainer.FuelSim.updateSim();}
 }
