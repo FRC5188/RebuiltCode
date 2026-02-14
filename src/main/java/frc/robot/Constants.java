@@ -118,6 +118,7 @@ public final class Constants {
     public static final double REVERSE_SPEED_RPM = 0.0;
     public static final Voltage VOLTAGE = Volts.of(12.0);
     private static final Distance DRUM_RADIUS = Inches.of(2.0);
+    private static final Distance DRUM_RADIUS = Inches.of(2.0);
     public static final DistanceAngleConverter CONVERTER = new DistanceAngleConverter(DRUM_RADIUS);
     public static final AngularVelocity ANGULAR_VELOCITY = RotationsPerSecond.of(1);
     public static final AngularAcceleration ANGULAR_ACCELERATION =
@@ -255,6 +256,8 @@ public final class Constants {
     public static final double HOOD_TOLERANCE = 1.0; // In degrees
     public static final double GRAVITY = 9.81; // m/s^2
     public static final double IDLE_HOOD_ANGLE = 25.0; // degrees
+    public static final RotaryMechCharacteristics CONSTANTS =
+        new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
   }
 
   public static final int CANDLE_ID = 50;
@@ -434,6 +437,7 @@ public final class Constants {
             MAX_DISTANCE,
             STARTING_DISTANCE,
             CONVERTER);
+    public static final double CLIMB_SPEED = 1.0;
     public static final double CLIMB_SPEED = 1.0;
   }
 }
