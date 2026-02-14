@@ -35,11 +35,14 @@ import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.Ports;
+import frc.robot.Constants.ShooterFlywheelConstants;
+import frc.robot.Constants.ShooterRotaryConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -59,6 +62,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Hopper hopper;
+  private final Shooter shooter;
   private final Climber climber;
   private final Intake intake;
 
@@ -80,7 +84,6 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
-
         hopper =
             new Hopper(
                 new FlywheelMechanismReal(
@@ -88,6 +91,25 @@ public class RobotContainer {
                         HopperConstants.MOTOR_NAME,
                         HopperConstants.getFXConfig(),
                         Ports.HopperRoller)));
+        shooter =
+            new Shooter(
+                new FlywheelMechanismReal(
+                    new MotorIOTalonFX(
+                        ShooterFlywheelConstants.NAME,
+                        ShooterFlywheelConstants.getFXConfig(),
+                        Ports.ShooterRoller)),
+                new FlywheelMechanismReal(
+                    new MotorIOTalonFX(
+                        ShooterFlywheelConstants.NAME,
+                        ShooterFlywheelConstants.getFXConfig(),
+                        Ports.ShooterRoller)),
+                new RotaryMechanismReal(
+                    new MotorIOTalonFX(
+                        ShooterFlywheelConstants.NAME,
+                        ShooterFlywheelConstants.getFXConfig(),
+                        Ports.ShooterRoller),
+                    Constants.ShooterRotaryConstants.CONSTANTS,
+                    java.util.Optional.empty()));
         climber =
             new Climber(
                 new LinearMechanismReal(
@@ -137,6 +159,34 @@ public class RobotContainer {
                     HopperConstants.DCMOTOR,
                     HopperConstants.MOI,
                     HopperConstants.TOLERANCE));
+        shooter =
+            new Shooter(
+                new FlywheelMechanismSim(
+                    new MotorIOTalonFXSim(
+                        ShooterFlywheelConstants.NAME,
+                        ShooterFlywheelConstants.getFXConfig(),
+                        Ports.ShooterRoller),
+                    ShooterFlywheelConstants.DCMOTOR,
+                    ShooterFlywheelConstants.MOI,
+                    ShooterFlywheelConstants.TOLERANCE),
+                new FlywheelMechanismSim(
+                    new MotorIOTalonFXSim(
+                        ShooterFlywheelConstants.NAME,
+                        ShooterFlywheelConstants.getFXConfig(),
+                        Ports.ShooterRoller),
+                    ShooterFlywheelConstants.DCMOTOR,
+                    ShooterFlywheelConstants.MOI,
+                    ShooterFlywheelConstants.TOLERANCE),
+                new RotaryMechanismSim(
+                    new MotorIOTalonFXSim(
+                        ShooterFlywheelConstants.NAME,
+                        ShooterFlywheelConstants.getFXConfig(),
+                        Ports.ShooterRoller),
+                    ShooterRotaryConstants.DCMOTOR,
+                    ShooterRotaryConstants.MOI,
+                    true,
+                    ShooterRotaryConstants.CONSTANTS,
+                    java.util.Optional.empty()));
         climber =
             new Climber(
                 new LinearMechanismSim(
@@ -190,6 +240,12 @@ public class RobotContainer {
             new Climber(
                 new LinearMechanism(
                     ClimberConstants.MOTOR_NAME, ClimberConstants.CHARACTERISTICS) {});
+
+        shooter =
+            new Shooter(
+                new FlywheelMechanism() {},
+                new FlywheelMechanism() {},
+                new RotaryMechanism(null, null) {});
 
         intake =
             new Intake(

@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Distance;
@@ -12,6 +13,7 @@ import frc.robot.Constants.ClimberConstants;
 
 public class Climber extends SubsystemBase {
   private LinearMechanism _io;
+  Distance goalDistance;
 
   public Climber(LinearMechanism io) {
     io = _io;
@@ -42,4 +44,19 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {}
+
+  public void runClimber() {
+    runClimber();
+  }
+
+  public boolean nearGoalposition() {
+    if (Math.abs(
+            goalDistance.in(Meters)
+                - ClimberConstants.CONVERTER.toDistance(_io.getPosition()).in(Meters))
+        < ClimberConstants.TOLERANCE.in(Meters)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
