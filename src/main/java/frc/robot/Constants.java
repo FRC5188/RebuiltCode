@@ -215,8 +215,6 @@ public final class Constants {
     public static final double TOWER_SPEED_RPM = (1.0);
     public static final double DEFAULT_SPEED_RPM = (1.0);
     public static final double FLYWHEEL_VELOCITY_TOLERANCE = 1.0;
-    public static final RotaryMechCharacteristics CONSTANTS =
-        new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
 
     // Hood Constants
     public static final double HEIGHT_DIFFERENCE =
@@ -228,6 +226,8 @@ public final class Constants {
     public static final double HOOD_TOLERANCE = 1.0; // In degrees
     public static final double GRAVITY = 9.81; // m/s^2
     public static final double IDLE_HOOD_ANGLE = 25.0; // degrees
+    public static final RotaryMechCharacteristics CONSTANTS =
+        new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
   }
 
   public static final int CANDLE_ID = 50;
@@ -407,5 +407,6 @@ public final class Constants {
             MAX_DISTANCE,
             STARTING_DISTANCE,
             CONVERTER);
+    public static final double CLIMB_SPEED = 1.0;
   }
 }

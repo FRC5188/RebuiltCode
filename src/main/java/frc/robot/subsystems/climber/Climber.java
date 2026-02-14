@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.climber;
 
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.LinearVelocity;
