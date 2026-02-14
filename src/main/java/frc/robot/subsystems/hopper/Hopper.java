@@ -1,7 +1,9 @@
 package frc.robot.subsystems.hopper;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.RevolutionsPerSecond;
 
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
@@ -11,6 +13,7 @@ import frc.robot.Constants.HopperConstants;
 public class Hopper extends SubsystemBase {
 
   private FlywheelMechanism _io;
+
   // public enum State {
   //   OFF(RevolutionsPerSecond.of(0.0)),
   //   FORWARD_SLOW(RevolutionsPerSecond.of(HopperConstants.SLOW_SPEED_RPM / 60)),

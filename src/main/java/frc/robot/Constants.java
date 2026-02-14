@@ -33,8 +33,6 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.RGBWColor;
-import static edu.wpi.first.units.Units.Volts;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -48,7 +46,6 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Velocity;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.lib.W8.mechanisms.linear.LinearMechanism.LinearMechCharacteristics;
@@ -102,27 +99,6 @@ public final class Constants {
     public static final Translation2d FIELDCENTER =
         new Translation2d(FIELDLENGTH.in(Meters) / 2, FIELDWIDTH.in(Meters) / 2);
     public static final Distance ALGAEDIAMETER = Meters.of(.41);
-  }
-
-  public class HopperConstants {
-    // holds constants for the hopper
-    public static final Distance TOLERANCE = Inches.of(2.0);
-    public static final Double GEARING = (5.0 / 1.0);
-    public static final Distance MIN_DISTANCE = Inches.of(0.0);
-    public static final Distance MAX_DISTANCE = Inches.of(15.0);
-    public static final Distance STARTING_DISTANCE = Inches.of(0.0);
-
-    // CHANGE TO PROPER RPMS !!!!
-    public static final double SLOW_SPEED_RPM = 0.0;
-    public static final double FAST_SPEED_RPM = 0.0;
-    public static final double REVERSE_SPEED_RPM = 0.0;
-    public static final Voltage VOLTAGE = Volts.of(12.0);
-    private static final Distance DRUM_RADIUS = Inches.of(2.0);
-    private static final Distance DRUM_RADIUS = Inches.of(2.0);
-    public static final DistanceAngleConverter CONVERTER = new DistanceAngleConverter(DRUM_RADIUS);
-    public static final AngularVelocity ANGULAR_VELOCITY = RotationsPerSecond.of(1);
-    public static final AngularAcceleration ANGULAR_ACCELERATION =
-        RotationsPerSecondPerSecond.of(1);
   }
 
   public class Ports {
@@ -238,13 +214,7 @@ public final class Constants {
     public static final double HUB_SPEED_RPM = (1.0);
     public static final double TOWER_SPEED_RPM = (1.0);
     public static final double DEFAULT_SPEED_RPM = (1.0);
-    public static final double IDLE_SPEED_RPM = (1.0);
-    public static final double HUB_SPEED_RPM = (1.0);
-    public static final double TOWER_SPEED_RPM = (1.0);
-    public static final double DEFAULT_SPEED_RPM = (1.0);
     public static final double FLYWHEEL_VELOCITY_TOLERANCE = 1.0;
-    public static final RotaryMechCharacteristics CONSTANTS =
-        new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
 
     // Hood Constants
     public static final double HEIGHT_DIFFERENCE =
@@ -437,7 +407,6 @@ public final class Constants {
             MAX_DISTANCE,
             STARTING_DISTANCE,
             CONVERTER);
-    public static final double CLIMB_SPEED = 1.0;
     public static final double CLIMB_SPEED = 1.0;
   }
 }
