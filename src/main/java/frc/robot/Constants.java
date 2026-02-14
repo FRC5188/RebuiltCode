@@ -40,7 +40,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.AngularAccelerationUnit;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -307,9 +306,8 @@ public final class Constants {
 
     public static final Angle TOLERANCE = Degrees.of(2.0);
 
-    public static final AngularVelocity CRUISE_VELOCITY = Units.RadiansPerSecond.of(1);
-    public static final AngularAcceleration ACCELERATION =
-        CRUISE_VELOCITY.div(0.1).per(Units.Second);
+    public static final AngularVelocity CRUISE_VELOCITY = RadiansPerSecond.of(1);
+    public static final AngularAcceleration ACCELERATION = CRUISE_VELOCITY.div(0.1).per(Second);
     public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
 
     private static final double ROTOR_TO_SENSOR = (2.0 / 1.0);
@@ -372,10 +370,10 @@ public final class Constants {
       config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
       config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
-      config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = MAX_ANGLE.in(Units.Rotations);
+      config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = MAX_ANGLE.in(Rotations);
 
       config.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
-      config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = MIN_ANGLE.in(Units.Rotations);
+      config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = MIN_ANGLE.in(Rotations);
 
       config.Feedback.RotorToSensorRatio = ROTOR_TO_SENSOR;
       config.Feedback.SensorToMechanismRatio = SENSOR_TO_MECHANISM;
