@@ -17,6 +17,7 @@ public class BallCounter extends SubsystemBase {
   private List<Double> ballsData;
   private boolean isBlocked;
   private boolean canFire;
+  private double fireRate;
 
   public BallCounter(LaserCan laserCan) {
     _laserCAN = laserCan;
@@ -29,6 +30,8 @@ public class BallCounter extends SubsystemBase {
 
     isBlocked = false;
     canFire = false;
+
+    fireRate = 0.0;
 
     ballsData = new ArrayList<>();
 
@@ -45,6 +48,7 @@ public class BallCounter extends SubsystemBase {
   public void shootBall() {
     ballsFired++;
     secondsSinceLastFire.reset();
+    secondsSinceLastFire.start();
 
     ballsData.add(timer.get());
 
@@ -57,15 +61,12 @@ public class BallCounter extends SubsystemBase {
   }
 
   public double calculateFireRate() {
-    double observationTime = 3.0;
+    double observationTime = 1.0;
 
-    for (Iterator<Double> iterator = ballsData.iterator(); iterator.hasNext(); ) {
-    double value = iterator.next();
-    if ((timer.get() - value) <= observationTime) {
-        iterator.remove();
-    }
-}
+    if (ballsData.size() <= 0) return fireRate;
+    if (timer.get() - ballsData.get(0) > observationTime) ballsData.remove(0);
 
+    fireRate = ballsData.size() / observationTime;
     return ballsData.size() / observationTime;
   }
 
@@ -80,12 +81,13 @@ public class BallCounter extends SubsystemBase {
   @Override
   public void periodic() {
     isBlocked = ballShot();
+    fireRate = calculateFireRate();
 
     secondsSinceLastFire.get();
 
     SmartDashboard.putNumber("Balls Fired", getBallsShot());
-    SmartDashboard.putNumber("Ball Fire Rate (per second)", calculateFireRate());
-    SmartDashboard.putNumber("Seconds Since Last Fire", secondsSinceLastFired());
+    SmartDashboard.putNumber("Ball Fire Rate (per second)", Math.round(fireRate * 100.0) / 100.0);
+    SmartDashboard.putNumber("Seconds Since Last Fire", Math.round(secondsSinceLastFired() * 100.0) / 100.0);
 
     if (!isBlocked && !canFire) {
       canFire = true;
