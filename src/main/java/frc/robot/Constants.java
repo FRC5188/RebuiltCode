@@ -427,6 +427,10 @@ public final class Constants {
             MAX_DISTANCE,
             STARTING_DISTANCE,
             CONVERTER);
+    public static final Distance ELEVATOR_RADIUS = Inches.of(2.0);
+    public static final AngularVelocity ANGULAR_VELOCITY = RotationsPerSecond.of(1);
+    public static final AngularAcceleration ANGULAR_ACCELERATION =
+        RotationsPerSecondPerSecond.of(1);
     public static final double CLIMB_SPEED = 1.0;
   }
 }
