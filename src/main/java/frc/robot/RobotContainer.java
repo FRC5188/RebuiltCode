@@ -22,19 +22,32 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.lib.W8.io.absoluteencoder.AbsoluteEncoderIOCANCoderSim;
 import frc.lib.W8.io.motor.*;
 import frc.lib.W8.mechanisms.flywheel.*;
+import frc.lib.W8.mechanisms.linear.LinearMechanism;
+import frc.lib.W8.mechanisms.linear.LinearMechanismReal;
+import frc.lib.W8.mechanisms.linear.LinearMechanismSim;
+import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
+import frc.lib.W8.mechanisms.rotary.RotaryMechanismReal;
+import frc.lib.W8.mechanisms.rotary.RotaryMechanismSim;
+import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.HopperConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import java.util.Optional;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -47,6 +60,8 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Hopper hopper;
+  private final Climber climber;
+  private final Intake intake;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -74,6 +89,33 @@ public class RobotContainer {
                         HopperConstants.MOTOR_NAME,
                         HopperConstants.getFXConfig(),
                         Ports.HopperRoller)));
+        climber =
+            new Climber(
+                new LinearMechanismReal(
+                    new MotorIOTalonFX(
+                        ClimberConstants.MOTOR_NAME,
+                        ClimberConstants.getFXConfig(),
+                        Ports.ClimberLinearMechanism),
+                    ClimberConstants.CHARACTERISTICS));
+
+        intake =
+            new Intake(
+                new FlywheelMechanismReal(
+                    new MotorIOTalonFX(
+                        IntakeConstants.MOTOR_NAME,
+                        IntakeConstants.getFXConfig(),
+                        Ports.IntakeRoller)),
+                new RotaryMechanismReal(
+                    new MotorIOTalonFX(
+                        IntakeConstants.MOTOR_NAME,
+                        IntakeConstants.getFXConfig(),
+                        Ports.IntakeRoller),
+                    IntakeConstants.CONSTANTS,
+                    Optional.of(
+                        new AbsoluteEncoderIOCANCoderSim(
+                            Ports.IntakeRoller,
+                            IntakeConstants.MOTOR_NAME + " Encoder",
+                            IntakeConstants.getCANcoderConfig(false)))));
         break;
 
       case SIM:
@@ -96,6 +138,42 @@ public class RobotContainer {
                     HopperConstants.DCMOTOR,
                     HopperConstants.MOI,
                     HopperConstants.TOLERANCE));
+        climber =
+            new Climber(
+                new LinearMechanismSim(
+                    new MotorIOTalonFXSim(
+                        ClimberConstants.MOTOR_NAME,
+                        ClimberConstants.getFXConfig(),
+                        Ports.ClimberLinearMechanism),
+                    ClimberConstants.DCMOTOR,
+                    ClimberConstants.CARRIAGE_MASS,
+                    ClimberConstants.CHARACTERISTICS,
+                    true));
+
+        intake =
+            new Intake(
+                new FlywheelMechanismSim(
+                    new MotorIOTalonFXSim(
+                        IntakeConstants.MOTOR_NAME,
+                        IntakeConstants.getFXConfig(),
+                        Ports.IntakeRoller),
+                    IntakeConstants.DCMOTOR,
+                    IntakeConstants.MOI,
+                    IntakeConstants.TOLERANCE),
+                new RotaryMechanismSim(
+                    new MotorIOTalonFXSim(
+                        IntakeConstants.MOTOR_NAME,
+                        IntakeConstants.getFXConfig(),
+                        Ports.IntakeRoller),
+                    IntakeConstants.DCMOTOR,
+                    IntakeConstants.MOI,
+                    false,
+                    IntakeConstants.CONSTANTS,
+                    Optional.of(
+                        new AbsoluteEncoderIOCANCoderSim(
+                            Ports.IntakeRoller,
+                            IntakeConstants.MOTOR_NAME + " Encoder",
+                            IntakeConstants.getCANcoderConfig(false)))));
         break;
 
       default:
@@ -109,6 +187,15 @@ public class RobotContainer {
                 new ModuleIO() {});
 
         hopper = new Hopper(new FlywheelMechanism() {});
+        climber =
+            new Climber(
+                new LinearMechanism(
+                    ClimberConstants.MOTOR_NAME, ClimberConstants.CHARACTERISTICS) {});
+
+        intake =
+            new Intake(
+                new FlywheelMechanism() {},
+                new RotaryMechanism(IntakeConstants.MOTOR_NAME, IntakeConstants.CONSTANTS) {});
         break;
     }
 
