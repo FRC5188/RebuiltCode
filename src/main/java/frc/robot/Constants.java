@@ -38,6 +38,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.AngularAccelerationUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
@@ -89,16 +90,35 @@ public final class Constants {
      * Contains various field dimensions and useful reference points. All units are in meters and
      * poses have a blue alliance origin.
      */
-    // TODO: Update to 2026 Field Constants and add HUB Center
     public static final AprilTagFieldLayout aprilTagLayout =
-        AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
+        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
 
+    public static final double HUBWIDTH = Units.inchesToMeters(47.0);
     public static final Distance FIELDLENGTH = Meters.of(aprilTagLayout.getFieldLength());
     public static final Distance FIELDWIDTH = Meters.of(aprilTagLayout.getFieldWidth());
     public static final Distance STARTINGLINEX = Inches.of(299.438);
     public static final Translation2d FIELDCENTER =
         new Translation2d(FIELDLENGTH.in(Meters) / 2, FIELDWIDTH.in(Meters) / 2);
-    public static final Distance ALGAEDIAMETER = Meters.of(.41);
+    public static final Distance CENTERLINE = Meters.of(FIELDLENGTH.in(Meters) / 2);
+    public static final Double starting = (aprilTagLayout.getTagPose(26).get().getX());
+    public static final Double allianceZone = starting;
+    public static final Double hubCenter =
+        (aprilTagLayout.getTagPose(26).get().getX() + (HUBWIDTH / 2.0));
+    public static final Distance neutralZoneNear =
+        Meters.of(CENTERLINE.in(Meters) - (Units.inchesToMeters(120.0)));
+    public static final Distance neutralZoneFar =
+        Meters.of(CENTERLINE.in(Meters) + (Units.inchesToMeters(120.0)));
+    public static final Distance oppHubCenter =
+        Meters.of(aprilTagLayout.getTagPose(4).get().getX() + (HUBWIDTH / 2.0));
+    public static final Distance oppAllianceZone =
+        Meters.of(aprilTagLayout.getTagPose(10).get().getX());
+    public static final double BUMPWIDTH = Units.inchesToMeters(73.0);
+    public static final double BUMPHIGHT = Units.inchesToMeters(6.513);
+    public static final double BUMPDEPTH = Units.inchesToMeters(44.4);
+    public static final double RBUMPSTART = hubCenter + (HUBWIDTH / 2.0);
+    public static final double RBUMPEND = RBUMPSTART + BUMPWIDTH;
+    public static final double LBUMPSTART = hubCenter - (HUBWIDTH / 2.0);
+    public static final double LBUMPEND = RBUMPSTART - BUMPWIDTH;
   }
 
   public class Ports {
