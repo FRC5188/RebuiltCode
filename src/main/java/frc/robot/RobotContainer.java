@@ -24,15 +24,20 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.W8.io.motor.*;
 import frc.lib.W8.mechanisms.flywheel.*;
+import frc.lib.W8.mechanisms.linear.LinearMechanism;
+import frc.lib.W8.mechanisms.linear.LinearMechanismReal;
+import frc.lib.W8.mechanisms.linear.LinearMechanismSim;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanismReal;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanismSim;
+import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.ShooterFlywheelConstants;
 import frc.robot.Constants.ShooterRotaryConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -56,6 +61,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Hopper hopper;
   private final Shooter shooter;
+  private final Climber climber;
   private final Intake intake;
 
   // Controller
@@ -102,6 +108,14 @@ public class RobotContainer {
                         Ports.ShooterRoller),
                     Constants.ShooterRotaryConstants.CONSTANTS,
                     java.util.Optional.empty()));
+        climber =
+            new Climber(
+                new LinearMechanismReal(
+                    new MotorIOTalonFX(
+                        ClimberConstants.MOTOR_NAME,
+                        ClimberConstants.getFXConfig(),
+                        Ports.ClimberLinearMechanism),
+                    ClimberConstants.CHARACTERISTICS));
 
         intake =
             new Intake(
@@ -171,6 +185,17 @@ public class RobotContainer {
                     true,
                     ShooterRotaryConstants.CONSTANTS,
                     java.util.Optional.empty()));
+        climber =
+            new Climber(
+                new LinearMechanismSim(
+                    new MotorIOTalonFXSim(
+                        ClimberConstants.MOTOR_NAME,
+                        ClimberConstants.getFXConfig(),
+                        Ports.ClimberLinearMechanism),
+                    ClimberConstants.DCMOTOR,
+                    ClimberConstants.CARRIAGE_MASS,
+                    ClimberConstants.CHARACTERISTICS,
+                    true));
 
         intake =
             new Intake(
@@ -209,6 +234,10 @@ public class RobotContainer {
                 new ModuleIO() {});
 
         hopper = new Hopper(new FlywheelMechanism() {});
+        climber =
+            new Climber(
+                new LinearMechanism(
+                    ClimberConstants.MOTOR_NAME, ClimberConstants.CHARACTERISTICS) {});
 
         shooter =
             new Shooter(
