@@ -16,10 +16,9 @@ package frc.robot;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
-
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.generated.TunerConstants;
@@ -40,6 +39,7 @@ public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
   private Alert lowBatteryAlert = new Alert("The robot is low on battery!", AlertType.kWarning);
+
   public Robot() {
     // Record metadata
     // Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
@@ -118,7 +118,8 @@ public class Robot extends LoggedRobot {
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    if (0.0 <= RobotController.getBatteryVoltage() && RobotController.getBatteryVoltage() <= 11.01) {
+    if (0.0 <= RobotController.getBatteryVoltage()
+        && RobotController.getBatteryVoltage() <= 11.01) {
       lowBatteryAlert.set(true);
     }
     // Return to non-RT thread priority (do not modify the first argument)
