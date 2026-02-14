@@ -26,13 +26,9 @@ import frc.lib.W8.io.absoluteencoder.AbsoluteEncoderIOCANCoder;
 import frc.lib.W8.io.absoluteencoder.AbsoluteEncoderIOCANCoderSim;
 import frc.lib.W8.io.motor.*;
 import frc.lib.W8.mechanisms.flywheel.*;
-import frc.lib.W8.mechanisms.linear.LinearMechanism;
-import frc.lib.W8.mechanisms.linear.LinearMechanismReal;
-import frc.lib.W8.mechanisms.linear.LinearMechanismSim;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanismReal;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanismSim;
-import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.Ports;
@@ -65,6 +61,7 @@ public class RobotContainer {
   private final Hopper hopper;
   private final Shooter shooter;
   private final Intake intake;
+  private final Climber climber;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -217,10 +214,6 @@ public class RobotContainer {
                 new ModuleIO() {});
 
         hopper = new Hopper(new FlywheelMechanism() {});
-        climber =
-            new Climber(
-                new LinearMechanism(
-                    ClimberConstants.MOTOR_NAME, ClimberConstants.CHARACTERISTICS) {});
 
         shooter =
             new Shooter(
