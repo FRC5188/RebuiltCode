@@ -33,14 +33,13 @@ public class Climber extends SubsystemBase {
   public Command runClimber(double Position) {
     Distance positionInches = Inches.of(Position);
     return this.runOnce(
-          () ->
-      _io.runPosition(
-      ClimberConstants.CONVERTER.toAngle(positionInches),
-      ClimberConstants.ANGULAR_VELOCITY,
-      ClimberConstants.ANGULAR_ACCELERATION,
-      ClimberConstants.JERK,
-      PIDSlot.SLOT_0)
-    );
+        () ->
+            _io.runPosition(
+                ClimberConstants.CONVERTER.toAngle(positionInches),
+                ClimberConstants.ANGULAR_VELOCITY,
+                ClimberConstants.ANGULAR_ACCELERATION,
+                ClimberConstants.JERK,
+                PIDSlot.SLOT_0));
   }
 
   public enum State {
