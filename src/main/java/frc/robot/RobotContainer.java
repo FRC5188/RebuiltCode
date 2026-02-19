@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import au.grapplerobotics.LaserCan;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -42,6 +43,7 @@ import frc.robot.Constants.ShooterFlywheelConstants;
 import frc.robot.Constants.ShooterRotaryConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.BallCounter;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
@@ -53,9 +55,12 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+
 import java.util.Optional;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -64,12 +69,14 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
   // Subsystems
-  private final Drive drive;
+ private final Drive drive;
   private final Hopper hopper;
   private final Shooter shooter;
   private final Climber climber;
   private final Intake intake;
+  private final BallCounter ballCounter;
   private final Vision vision;
 
   // Controller
@@ -80,6 +87,10 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    // Check if the robot is real before using the ball counter!
+    if (Robot.isReal()) ballCounter = new BallCounter(new LaserCan(1));
+    else ballCounter = null;
+
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -248,7 +259,7 @@ public class RobotContainer {
         break;
 
       default:
-        // Replayed robot, disable IO implementations
+        //Replayed robot, disable IO implementations
         drive =
             new Drive(
                 new GyroIO() {},
@@ -315,7 +326,7 @@ public class RobotContainer {
             () -> controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    // Lock to 0° when A button is held
+    //Lock to 0° when A button is held
     controller
         .a()
         .whileTrue(
@@ -325,7 +336,7 @@ public class RobotContainer {
                 () -> -controller.getLeftX(),
                 () -> new Rotation2d()));
 
-    // Switch to X pattern when X button is pressed
+    //Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
