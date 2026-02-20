@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Windham Windup
+ * Copyright (C) 2026 Windham Windup
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
  * GNU General Public License as published by the Free Software Foundation, either version 3 of the
@@ -15,28 +15,100 @@
 
 package frc.lib.W8.io.vision;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.Time;
-import frc.lib.W8.util.Timestamped;
-import org.littletonrobotics.junction.AutoLog;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.numbers.N8;
+import org.littletonrobotics.junction.LogTable;
+import org.littletonrobotics.junction.inputs.LoggableInputs;
+import org.photonvision.targeting.PhotonPipelineResult;
 
+/**
+ * Hardware interface for vision cameras that detect AprilTags for robot localization.
+ *
+ * <p>This interface defines the contract for vision camera hardware, allowing the robot to read
+ * camera results for pose estimation. Implementations handle vendor-specific camera APIs
+ * (PhotonVision, Limelight, etc.) while the rest of the robot code remains hardware-agnostic.
+ */
 public interface VisionIO {
-  @AutoLog
-  public static class VisionIOInputs {
-    public boolean connected = false;
-    public PoseObservation[] poseObservations = new PoseObservation[0];
-    public TagObservation[] allTargets = new TagObservation[0];
-    public int[] tagIds = new int[0];
-  }
+    /**
+     * Container for vision camera sensor readings and camera intrinsics. Logged automatically by
+     * AdvantageKit for replay and analysis.
+     */
+    public static class VisionIOInputs implements LoggableInputs {
+        /** Whether the camera is connected and responding */
+        public boolean connected = false;
 
-  /** Represents a robot pose sample used for pose estimation. */
-  public static record PoseObservation(
-      Time timestamp, Pose3d pose, double ambiguity, int tagCount, Distance averageTagDistance) {}
+        /** Array of pipeline results from the camera since last update */
+        public PhotonPipelineResult[] results = new PhotonPipelineResult[0];
 
-  public static record TagObservation(int id, double ptich, double yaw, double area) {}
+        private boolean hasLoggedIntrinsics = false;
 
-  public default void updateInputs(
-      VisionIOInputs inputs, Timestamped<Rotation2d> timestampedHeading) {}
+        /** Camera intrinsic matrix (3x3) */
+        public double[] cameraMatrix = null;
+
+        /** Camera distortion coefficients (8x1) */
+        public double[] distCoeffs = null;
+
+        /**
+         * Constructs vision inputs with camera intrinsic parameters.
+         *
+         * @param cameraMatrix 3x3 camera intrinsic matrix
+         * @param distCoeffs 8x1 distortion coefficients
+         */
+        public VisionIOInputs(Matrix<N3, N3> cameraMatrix, Matrix<N8, N1> distCoeffs) {
+            this.cameraMatrix = cameraMatrix.getData();
+            this.distCoeffs = distCoeffs.getData();
+        }
+
+        @Override
+        public void toLog(LogTable table) {
+            if (!hasLoggedIntrinsics) {
+                table.put("CameraMatrix", cameraMatrix);
+                table.put("DistCoeffs", distCoeffs);
+
+                hasLoggedIntrinsics = true;
+            }
+
+            table.put("Connected", connected);
+
+            int resultsLength = results.length;
+            table.put("ResultsLength", resultsLength);
+            String resultsPrefix = "Results/";
+            for (int i = 0; i < resultsLength; i++) {
+                String key = resultsPrefix + i;
+                table.put(key, results[i]);
+            }
+        }
+
+        @Override
+        public void fromLog(LogTable table) {
+            if (!hasLoggedIntrinsics) {
+                cameraMatrix = table.get("CameraMatrix", (double[]) null);
+                distCoeffs = table.get("DistCoeffs", (double[]) null);
+
+                if (cameraMatrix != null && distCoeffs != null) {
+                    hasLoggedIntrinsics = true;
+                }
+            }
+
+            connected = table.get("Connected", false);
+
+            int resultsLength = table.get("ResultsLength", 0);
+            String resultsPrefix = "Results/";
+            results = new PhotonPipelineResult[resultsLength];
+            for (int i = 0; i < resultsLength; i++) {
+                String key = resultsPrefix + i;
+                results[i] = table.get(key, new PhotonPipelineResult());
+            }
+        }
+    }
+
+    /**
+     * Updates the vision inputs with the latest readings from the camera. Called periodically by
+     * the vision device layer.
+     *
+     * @param inputs The input object to populate with sensor data
+     */
+    public default void updateInputs(VisionIOInputs inputs) {}
 }

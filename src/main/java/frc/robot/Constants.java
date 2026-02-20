@@ -14,16 +14,6 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.KilogramSquareMeters;
-import static edu.wpi.first.units.Units.Kilograms;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CANdleConfiguration;
@@ -43,10 +33,17 @@ import com.ctre.phoenix6.signals.StripTypeValue;
 import com.ctre.phoenix6.signals.VBatOutputModeValue;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.MatBuilder;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.numbers.N8;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.AngularAccelerationUnit;
@@ -56,17 +53,26 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import frc.lib.W8.devices.AprilTagCamera.CameraProperties;
+import frc.lib.W8.io.vision.VisionIOPhotonVision;
+import frc.lib.W8.io.vision.VisionIOPhotonVisionSim;
 import frc.lib.W8.mechanisms.linear.LinearMechanism.LinearMechCharacteristics;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism.RotaryMechCharacteristics;
 import frc.lib.W8.util.Device;
 import frc.lib.W8.util.Device.CAN;
 import frc.lib.W8.util.MechanismUtil.DistanceAngleConverter;
+import frc.robot.FieldConstants.AprilTagLayoutType;
+
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 import org.photonvision.simulation.VisionSystemSim;
 
 /**
@@ -482,7 +488,56 @@ public final class Constants {
       return config;
     }
 
-    public class VisionConstants {
+    public static TalonFXConfiguration getFXConfig() {
+      TalonFXConfiguration config = new TalonFXConfiguration();
+
+      config.CurrentLimits.SupplyCurrentLimitEnable = Robot.isReal();
+      config.CurrentLimits.SupplyCurrentLimit = 40.0;
+      config.CurrentLimits.SupplyCurrentLowerLimit = 40.0;
+      config.CurrentLimits.SupplyCurrentLowerTime = 0.1;
+
+      config.CurrentLimits.StatorCurrentLimitEnable = Robot.isReal();
+      config.CurrentLimits.StatorCurrentLimit = 80.0;
+
+      config.Voltage.PeakForwardVoltage = 12.0;
+      config.Voltage.PeakReverseVoltage = -12.0;
+
+      config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+      config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+      config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+      config.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+          CONVERTER.toAngle(MAX_DISTANCE).in(Rotations);
+
+      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+      config.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+          CONVERTER.toAngle(MIN_DISTANCE).in(Rotations);
+
+      config.Feedback.RotorToSensorRatio = 1.0;
+
+      config.Feedback.SensorToMechanismRatio = GEARING;
+
+      config.Slot0 = new Slot0Configs().withKP(0.75).withKI(0.0).withKD(0.0);
+
+      config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY.in(RotationsPerSecond);
+      config.MotionMagic.MotionMagicAcceleration = ACCELERATION.in(RotationsPerSecondPerSecond);
+      config.MotionMagic.MotionMagicJerk = JERK.in(RotationsPerSecondPerSecond.per(Second));
+
+      return config;
+    }
+  }
+
+  public class VisionConstants {
+
+      public static boolean disableHAL = false;
+
+      // Robot Dimensions
+      public static final Distance FULL_ROBOT_WIDTH = Inches.of(27.5 + 3.75); // 3.75 inches total of bumper
+      public static final Distance FULL_ROBOT_LENGTH = Inches.of(27 + 3.75);
+
+      // Tags not in use
+      public static final Set<Integer> FILTERED_TAGS = Set.of(1, 12, 22, 23, 28, 17, 7, 6);
+
       // AprilTag layout
       public static AprilTagFieldLayout aprilTagLayout =
           AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
@@ -524,46 +579,311 @@ public final class Constants {
         system.addAprilTags(aprilTagLayout);
         return system;
       }
+
+      // Extrinsics
+      public static final String FRONT_NAME = "front";
+      public static final String LEFT_NAME = "left";
+      public static final String RIGHT_NAME = "right";
+      public static final String BACK_NAME = "back";
+
+      public static final Transform3d FRONT_TRANSFORM =
+              new Transform3d(
+                      Units.inchesToMeters(-7.5),
+                      Units.inchesToMeters(12.00),
+                      Units.inchesToMeters(19.95),
+                      new Rotation3d(
+                              0.0,
+                              Units.degreesToRadians(-31.973),
+                              Units.degreesToRadians(-8.965230)));
+      public static final Transform3d LEFT_TRANSFORM =
+              new Transform3d(
+                      Units.inchesToMeters(-8.00),
+                      Units.inchesToMeters(11.75),
+                      Units.inchesToMeters(17.0),
+                      new Rotation3d(
+                              0.0, Units.degreesToRadians(-18.173), Units.degreesToRadians(90.00)));
+      public static final Transform3d RIGHT_TRANSFORM =
+              new Transform3d(
+                      Units.inchesToMeters(-8.00),
+                      Units.inchesToMeters(-11.75),
+                      Units.inchesToMeters(17.0),
+                      new Rotation3d(
+                              0.0, Units.degreesToRadians(-18.173), Units.degreesToRadians(-90.00)));
+      public static final Transform3d BACK_TRANSFORM =
+              new Transform3d(
+                      Units.inchesToMeters(-12.00),
+                      Units.inchesToMeters(-9.50),
+                      Units.inchesToMeters(17.00),
+                      new Rotation3d(
+                              0.0,
+                              Units.degreesToRadians(-18.173),
+                              Units.degreesToRadians(-166.577)));
+
+      // Intrinsics
+      // ThriftyCam Default Calibrations
+      public static final Matrix<N3, N3> FRONT_MATRIX =
+              MatBuilder.fill(
+                      Nat.N3(),
+                      Nat.N3(),
+                      2002.948392331919,
+                      0.0,
+                      783.9099067246102,
+                      0.0,
+                      1999.0390684862123,
+                      662.7694019679813,
+                      0.0,
+                      0.0,
+                      1.0);
+
+      public static final Vector<N8> FRONT_DIST_COEFFS =
+              VecBuilder.fill(
+                      0.09905119793103302,
+                      -0.06388083628565337,
+                      3.87402720846368E-5,
+                      1.4421218015997156E-4,
+                      -0.16329892957216433,
+                      -0.004599206903333014,
+                      0.0029050841273878885,
+                      0.0067195798658376375);
+
+      public static final Matrix<N3, N3> LEFT_MATRIX =
+              MatBuilder.fill(
+                      Nat.N3(),
+                      Nat.N3(),
+                      2002.948392331919,
+                      0.0,
+                      783.9099067246102,
+                      0.0,
+                      1999.0390684862123,
+                      662.7694019679813,
+                      0.0,
+                      0.0,
+                      1.0);
+
+      public static final Vector<N8> LEFT_DIST_COEFFS =
+              VecBuilder.fill(
+                      0.09905119793103302,
+                      -0.06388083628565337,
+                      3.87402720846368E-5,
+                      1.4421218015997156E-4,
+                      -0.16329892957216433,
+                      -0.004599206903333014,
+                      0.0029050841273878885,
+                      0.0067195798658376375);
+
+      public static final Matrix<N3, N3> RIGHT_MATRIX =
+              MatBuilder.fill(
+                      Nat.N3(),
+                      Nat.N3(),
+                      2013.7145941329916,
+                      0.0,
+                      813.5600211516376,
+                      0.0,
+                      2010.9021854554633,
+                      705.7489358922749,
+                      0.0,
+                      0.0,
+                      1.0);
+
+      public static final Vector<N8> RIGHT_DIST_COEFFS =
+              VecBuilder.fill(
+                      0.10838581263006249,
+                      -0.11418498861043114,
+                      1.2747353334518889E-4,
+                      -5.523828072189691E-4,
+                      -0.08722021094520614,
+                      -0.004272598848412149,
+                      0.0049167243044280235,
+                      0.0035452581738189713);
+
+      public static final Matrix<N3, N3> BACK_MATRIX =
+              MatBuilder.fill(
+                      Nat.N3(),
+                      Nat.N3(),
+                      2013.7145941329916,
+                      0.0,
+                      813.5600211516376,
+                      0.0,
+                      2010.9021854554633,
+                      705.7489358922749,
+                      0.0,
+                      0.0,
+                      1.0);
+
+      public static final Vector<N8> BACK_DIST_COEFFS =
+              VecBuilder.fill(
+                      0.10838581263006249,
+                      -0.11418498861043114,
+                      1.2747353334518889E-4,
+                      -5.523828072189691E-4,
+                      -0.08722021094520614,
+                      -0.004272598848412149,
+                      0.0049167243044280235,
+                      0.0035452581738189713);
+
+      public static final int FRONT_RESOLUTION_WIDTH = 1600;
+      public static final int FRONT_RESOLUTION_HEIGHT = 1304;
+      public static final int LEFT_RESOLUTION_WIDTH = 1600;
+      public static final int LEFT_RESOLUTION_HEIGHT = 1304;
+      public static final int RIGHT_RESOLUTION_WIDTH = 1600;
+      public static final int RIGHT_RESOLUTION_HEIGHT = 1304;
+      public static final int BACK_RESOLUTION_WIDTH = 1600;
+      public static final int BACK_RESOLUTION_HEIGHT = 1304;
+
+      public static final Angle FRONT_FOV = Degrees.of(80); // from Thrifty docs
+      public static final Angle LEFT_FOV = Degrees.of(55);
+      public static final Angle RIGHT_FOV = Degrees.of(55);
+      public static final Angle BACK_FOV = Degrees.of(55);
+
+      // Performance
+      public static final double FRONT_FPS = 22;
+      public static final double LEFT_FPS = 22;
+      public static final double RIGHT_FPS = 22;
+      public static final double BACK_FPS = 22;
+
+      public static final double FRONT_STDDEV_FACTOR = 1.0;
+      public static final double LEFT_STDDEV_FACTOR = 1.0;
+      public static final double RIGHT_STDDEV_FACTOR = 1.0;
+      public static final double BACK_STDDEV_FACTOR = 1.0;
+
+      // Exposure 5 ms, USB 5 ms, detection 15 ms, scheduling 5 ms
+      public static final Time FRONT_LATENCY = Milliseconds.of(30);
+      public static final Time LEFT_LATENCY = Milliseconds.of(30);
+      public static final Time RIGHT_LATENCY = Milliseconds.of(30);
+      public static final Time BACK_LATENCY = Milliseconds.of(30);
+
+      public static final Time FRONT_LATENCY_STDDEV = Milliseconds.of(5);
+      public static final Time LEFT_LATENCY_STDDEV = Milliseconds.of(5);
+      public static final Time RIGHT_LATENCY_STDDEV = Milliseconds.of(5);
+      public static final Time BACK_LATENCY_STDDEV = Milliseconds.of(5);
+
+      public static final CameraProperties FRONT =
+              new CameraProperties(
+                      FRONT_NAME,
+                      FRONT_TRANSFORM,
+                      FRONT_MATRIX,
+                      FRONT_DIST_COEFFS,
+                      FRONT_RESOLUTION_WIDTH,
+                      FRONT_RESOLUTION_HEIGHT,
+                      FRONT_STDDEV_FACTOR,
+                      FRONT_FOV,
+                      FRONT_FPS,
+                      FRONT_LATENCY,
+                      FRONT_LATENCY_STDDEV);
+
+      public static final CameraProperties LEFT =
+              new CameraProperties(
+                      LEFT_NAME,
+                      LEFT_TRANSFORM,
+                      LEFT_MATRIX,
+                      LEFT_DIST_COEFFS,
+                      LEFT_RESOLUTION_WIDTH,
+                      LEFT_RESOLUTION_HEIGHT,
+                      LEFT_STDDEV_FACTOR,
+                      LEFT_FOV,
+                      LEFT_FPS,
+                      LEFT_LATENCY,
+                      LEFT_LATENCY_STDDEV);
+
+      public static final CameraProperties RIGHT =
+              new CameraProperties(
+                      RIGHT_NAME,
+                      RIGHT_TRANSFORM,
+                      RIGHT_MATRIX,
+                      RIGHT_DIST_COEFFS,
+                      RIGHT_RESOLUTION_WIDTH,
+                      RIGHT_RESOLUTION_HEIGHT,
+                      RIGHT_STDDEV_FACTOR,
+                      RIGHT_FOV,
+                      RIGHT_FPS,
+                      RIGHT_LATENCY,
+                      RIGHT_LATENCY_STDDEV);
+
+      public static final CameraProperties BACK =
+              new CameraProperties(
+                      BACK_NAME,
+                      BACK_TRANSFORM,
+                      BACK_MATRIX,
+                      BACK_DIST_COEFFS,
+                      BACK_RESOLUTION_WIDTH,
+                      BACK_RESOLUTION_HEIGHT,
+                      BACK_STDDEV_FACTOR,
+                      BACK_FOV,
+                      BACK_FPS,
+                      BACK_LATENCY,
+                      BACK_LATENCY_STDDEV);
+
+      private static Optional<VisionSystemSim> visionSim = Optional.empty();
+
+      public static VisionIOPhotonVision getFrontIOReal() {
+          return new VisionIOPhotonVision(FRONT);
+      }
+
+      public static VisionIOPhotonVisionSim getFrontIOSim() {
+          if (visionSim.isEmpty()) {
+              visionSim = Optional.of(new VisionSystemSim("main"));
+              visionSim.get().addAprilTags(AprilTagLayoutType.OFFICIAL.getLayout());
+          }
+
+          return new VisionIOPhotonVisionSim(
+                  FRONT,
+                  visionSim.get(),
+                  () -> RobotState.getInstance().getOdometryPose(),
+                  AprilTagLayoutType.OFFICIAL.getLayout());
+      }
+
+      public static VisionIOPhotonVision getLeftIOReal() {
+          return new VisionIOPhotonVision(LEFT);
+      }
+
+      public static VisionIOPhotonVisionSim getLeftIOSim() {
+          if (visionSim.isEmpty()) {
+              visionSim = Optional.of(new VisionSystemSim("main"));
+              visionSim.get().addAprilTags(AprilTagLayoutType.OFFICIAL.getLayout());
+          }
+
+          return new VisionIOPhotonVisionSim(
+                  LEFT,
+                  visionSim.get(),
+                  () -> RobotState.getInstance().getOdometryPose(),
+                  AprilTagLayoutType.OFFICIAL.getLayout());
+      }
+
+      public static VisionIOPhotonVision getRightIOReal() {
+          return new VisionIOPhotonVision(RIGHT);
+      }
+
+      public static VisionIOPhotonVisionSim getRightIOSim() {
+          if (visionSim.isEmpty()) {
+              visionSim = Optional.of(new VisionSystemSim("main"));
+              visionSim.get().addAprilTags(AprilTagLayoutType.OFFICIAL.getLayout());
+          }
+
+          return new VisionIOPhotonVisionSim(
+                  RIGHT,
+                  visionSim.get(),
+                  () -> RobotState.getInstance().getOdometryPose(),
+                  AprilTagLayoutType.OFFICIAL.getLayout());
+      }
+
+      public static VisionIOPhotonVision getBackIOReal() {
+          return new VisionIOPhotonVision(BACK);
+      }
+
+      public static VisionIOPhotonVisionSim getBackIOSim() {
+          if (visionSim.isEmpty()) {
+              visionSim = Optional.of(new VisionSystemSim("main"));
+              visionSim.get().addAprilTags(AprilTagLayoutType.OFFICIAL.getLayout());
+          }
+
+          return new VisionIOPhotonVisionSim(
+                  BACK,
+                  visionSim.get(),
+                  () -> RobotState.getInstance().getOdometryPose(),
+                  AprilTagLayoutType.OFFICIAL.getLayout());
+      }
+      
     }
-
-    public static TalonFXConfiguration getFXConfig() {
-      TalonFXConfiguration config = new TalonFXConfiguration();
-
-      config.CurrentLimits.SupplyCurrentLimitEnable = Robot.isReal();
-      config.CurrentLimits.SupplyCurrentLimit = 40.0;
-      config.CurrentLimits.SupplyCurrentLowerLimit = 40.0;
-      config.CurrentLimits.SupplyCurrentLowerTime = 0.1;
-
-      config.CurrentLimits.StatorCurrentLimitEnable = Robot.isReal();
-      config.CurrentLimits.StatorCurrentLimit = 80.0;
-
-      config.Voltage.PeakForwardVoltage = 12.0;
-      config.Voltage.PeakReverseVoltage = -12.0;
-
-      config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-      config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-
-      config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-      config.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-          CONVERTER.toAngle(MAX_DISTANCE).in(Rotations);
-
-      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-      config.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
-          CONVERTER.toAngle(MIN_DISTANCE).in(Rotations);
-
-      config.Feedback.RotorToSensorRatio = 1.0;
-
-      config.Feedback.SensorToMechanismRatio = GEARING;
-
-      config.Slot0 = new Slot0Configs().withKP(0.75).withKI(0.0).withKD(0.0);
-
-      config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY.in(RotationsPerSecond);
-      config.MotionMagic.MotionMagicAcceleration = ACCELERATION.in(RotationsPerSecondPerSecond);
-      config.MotionMagic.MotionMagicJerk = JERK.in(RotationsPerSecondPerSecond.per(Second));
-
-      return config;
-    }
-  }
 
   public class IntakePivotConstants {
     public static final String NAME = "Intake";

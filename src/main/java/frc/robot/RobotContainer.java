@@ -22,10 +22,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.lib.W8.devices.AprilTagCamera;
 import frc.lib.W8.io.absoluteencoder.AbsoluteEncoderIOCANCoderSim;
 import frc.lib.W8.io.motor.*;
-import frc.lib.W8.io.vision.VisionIOPhotonVision;
-import frc.lib.W8.io.vision.VisionIOPhotonVisionSim;
 import frc.lib.W8.mechanisms.flywheel.*;
 import frc.lib.W8.mechanisms.linear.LinearMechanism;
 import frc.lib.W8.mechanisms.linear.LinearMechanismReal;
@@ -36,7 +35,7 @@ import frc.lib.W8.mechanisms.rotary.RotaryMechanismSim;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.Constants.IntakeConstants.VisionConstants;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.ShooterFlywheelConstants;
 import frc.robot.Constants.ShooterRotaryConstants;
@@ -46,7 +45,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -55,7 +54,6 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import java.util.Optional;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -70,7 +68,7 @@ public class RobotContainer {
   private final Shooter shooter;
   private final Climber climber;
   private final Intake intake;
-  private final Vision vision;
+  private final VisionSubsystem vision;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -143,13 +141,12 @@ public class RobotContainer {
                             Ports.IntakeRoller,
                             IntakeConstants.MOTOR_NAME + " Encoder",
                             IntakeConstants.getCANcoderConfig(false)))));
-        vision =
-            new Vision(
-                new VisionIOPhotonVision(
-                    VisionConstants.camera0Name,
-                    VisionConstants.robotToCamera0,
-                    VisionConstants.aprilTagLayout,
-                    PoseStrategy.CONSTRAINED_SOLVEPNP));
+        
+        vision = new VisionSubsystem(new AprilTagCamera(VisionConstants.FRONT, VisionConstants.getFrontIOReal()),
+                new AprilTagCamera(VisionConstants.LEFT, VisionConstants.getLeftIOReal()),
+                new AprilTagCamera(VisionConstants.RIGHT, VisionConstants.getRightIOReal()),
+                new AprilTagCamera(VisionConstants.BACK, VisionConstants.getBackIOReal()));
+
         break;
 
       case SIM:
@@ -236,15 +233,11 @@ public class RobotContainer {
                             Ports.IntakeRoller,
                             IntakeConstants.MOTOR_NAME + " Encoder",
                             IntakeConstants.getCANcoderConfig(false)))));
-        vision =
-            new Vision(
-                new VisionIOPhotonVisionSim(
-                    () -> drive.getPose(),
-                    VisionConstants.camera0Name,
-                    VisionConstants.robotToCamera0,
-                    VisionConstants.aprilTagLayout,
-                    PoseStrategy.CONSTRAINED_SOLVEPNP,
-                    VisionConstants.getSystemSim()));
+
+        vision = new VisionSubsystem(new AprilTagCamera(VisionConstants.FRONT, VisionConstants.getFrontIOSim()),
+                new AprilTagCamera(VisionConstants.LEFT, VisionConstants.getLeftIOSim()),
+                new AprilTagCamera(VisionConstants.RIGHT, VisionConstants.getRightIOSim()),
+                new AprilTagCamera(VisionConstants.BACK, VisionConstants.getBackIOSim()));
         break;
 
       default:
@@ -273,7 +266,8 @@ public class RobotContainer {
             new Intake(
                 new FlywheelMechanism() {},
                 new RotaryMechanism(IntakeConstants.MOTOR_NAME, IntakeConstants.CONSTANTS) {});
-        vision = new Vision(null);
+
+        vision = new VisionSubsystem();
         break;
     }
 
