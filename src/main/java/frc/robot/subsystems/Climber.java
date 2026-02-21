@@ -3,15 +3,10 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Meters;
 
-import com.fasterxml.jackson.databind.util.Converter;
-
-import edu.wpi.first.units.CurrentUnit;
-import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.W8.mechanisms.linear.LinearMechanism;
 import frc.robot.Constants.ClimberConstants;
-import frc.lib.W8.io.motor.MotorIO;
 import frc.robot.Constants.ElevatorConstants;
 
 public class Climber extends SubsystemBase {
@@ -34,12 +29,11 @@ public class Climber extends SubsystemBase {
   // }
 
   public boolean isAboveCurrentLimit() {
-      if (_io.getSupplyCurrent().in(Amps) > ElevatorConstants.HARD_STOP_CURRENT_LIMIT) {
-        return true;
-      }
-      else {
-        return false;
-      }
+    if (_io.getSupplyCurrent().in(Amps) > ElevatorConstants.HARD_STOP_CURRENT_LIMIT) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @Override
