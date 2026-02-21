@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.flywheel.FlywheelMechanism;
@@ -16,8 +17,6 @@ import frc.robot.Constants.IntakePivotConstants;
 public class Intake extends SubsystemBase {
   private FlywheelMechanism _rollerIO;
   private RotaryMechanism _pivotIO;
-  double velocity;
-  double pivotAngle;
   public double desiredAngle;
 
   public Intake(FlywheelMechanism rollerIO, RotaryMechanism pivotIO) {
@@ -56,26 +55,30 @@ public class Intake extends SubsystemBase {
     setVelocity(0);
   }
 
-  // public Command intake() {
-  //   return Commands.sequence(
-  //       Commands.run(() -> setVelocity(velocity)), Commands.run(() ->
-  // setPivotAngle(pivotAngle)));
-  // }
-  public void setAngle(Angle angle) {
-    _pivotIO.runPosition(
-        angle,
-        getVelocity(),
-        IntakePivotConstants.ACCELERATION,
-        IntakePivotConstants.JERK,
-        PIDSlot.SLOT_0);
-    desiredAngle = angle.magnitude();
-  }
+  public Command intake() {
+    return Commands.sequence(
+      Commands.run(() -> setVelocity(Constants.IntakeConstants.PICKUP_SPEED)), setPivotAngle(Constants.IntakeConstants.PICKUP_ANGLE));
+   }
 
   public boolean isIntendedAngle() {
     return Math.abs(desiredAngle - _pivotIO.getVelocity().in(RotationsPerSecond))
         <= IntakePivotConstants.TOLERANCE.magnitude();
   }
-
-  @Override
+ public Command stowAngle() { 
+  return Commands.sequence(
+    Commands.run(() -> setVelocity(Constants.IntakeConstants.PICKUP_SPEED)), setStowAngle(Constants.IntakeConstants.STOW_ANGLE)); 
+     }
+      private Command setStowAngle(Angle stowAngle) {
+      return this.runOnce(
+        () ->
+            _pivotIO.runPosition(
+                stowAngle,
+                IntakeConstants.CRUISE_VELOCITY,
+                IntakeConstants.ACCELERATION,
+                IntakeConstants.JERK,
+                PIDSlot.SLOT_0));
+    }
+    
+      @Override
   public void periodic() {}
 }
