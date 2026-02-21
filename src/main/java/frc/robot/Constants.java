@@ -26,15 +26,25 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.CANdleConfiguration;
+import com.ctre.phoenix6.configs.CANdleFeaturesConfigs;
+import com.ctre.phoenix6.configs.LEDConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.*;
+import com.ctre.phoenix6.signals.Enable5VRailValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.LossOfSignalBehaviorValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.RGBWColor;
+import com.ctre.phoenix6.signals.StatusLedWhenActiveValue;
+import com.ctre.phoenix6.signals.StripTypeValue;
+import com.ctre.phoenix6.signals.VBatOutputModeValue;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -55,6 +65,9 @@ import frc.lib.W8.mechanisms.rotary.RotaryMechanism.RotaryMechCharacteristics;
 import frc.lib.W8.util.Device;
 import frc.lib.W8.util.Device.CAN;
 import frc.lib.W8.util.MechanismUtil.DistanceAngleConverter;
+import java.util.Arrays;
+import java.util.List;
+import org.photonvision.simulation.VisionSystemSim;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -84,6 +97,18 @@ public final class Constants {
     public static final RainbowAnimation rainbowAnim = new RainbowAnimation(0, 2);
     public static final RGBWColor colorPaleBlue = new RGBWColor(165, 180, 208, 0);
     public static final RGBWColor colorWheezerBlue = new RGBWColor(24, 155, 204, 0);
+    public static final CANdleConfiguration CANDLE_CONFIG =
+        new CANdleConfiguration()
+            .withCANdleFeatures(
+                new CANdleFeaturesConfigs()
+                    .withEnable5VRail(Enable5VRailValue.Enabled)
+                    .withVBatOutputMode(VBatOutputModeValue.On)
+                    .withStatusLedWhenActive(StatusLedWhenActiveValue.Disabled))
+            .withLED(
+                new LEDConfigs()
+                    .withBrightnessScalar(1.0)
+                    .withStripType(StripTypeValue.RGB)
+                    .withLossOfSignalBehavior(LossOfSignalBehaviorValue.DisableLEDs));
   }
 
   public class FieldConstants {
@@ -456,6 +481,50 @@ public final class Constants {
       config.MagnetSensor.MagnetOffset = sim ? 0.0 : ENCODER_OFFSET.in(Rotations);
 
       return config;
+    }
+
+    public class VisionConstants {
+      // AprilTag layout
+      public static AprilTagFieldLayout aprilTagLayout =
+          AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+
+      // Camera names, must match names configured on coprocessor
+      public static String camera0Name = "camera_0";
+      public static String camera1Name = "camera_1";
+
+      // Robot to camera transforms
+      // (Not used by Limelight, configure in web UI instead)
+      public static Transform3d robotToCamera0 =
+          new Transform3d(0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, 0.0));
+      public static Transform3d robotToCamera1 =
+          new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
+
+      // Basic filtering thresholds
+      public static double maxAmbiguity = 0.3;
+      public static double maxZError = 0.75;
+
+      // Standard deviation baselines, for 1 meter distance and 1 tag
+      // (Adjusted automatically based on distance and # of tags)
+      public static double linearStdDevBaseline = 0.02; // Meters
+      public static double angularStdDevBaseline = 0.06; // Radians
+
+      // Standard deviation multipliers for each camera
+      // (Adjust to trust some cameras more than others)
+      public static double[] cameraStdDevFactors =
+          new double[] {
+            1.0, // Camera 0
+            1.0 // Camera 1
+          };
+
+      /** Tags used for reef alignment */
+      public static List<Integer> alignmentTags =
+          Arrays.asList(6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22);
+
+      public static VisionSystemSim getSystemSim() {
+        var system = new VisionSystemSim("main");
+        system.addAprilTags(aprilTagLayout);
+        return system;
+      }
     }
 
     public static TalonFXConfiguration getFXConfig() {
