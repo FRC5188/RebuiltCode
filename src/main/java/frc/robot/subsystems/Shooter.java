@@ -1,12 +1,20 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -15,7 +23,8 @@ import frc.lib.W8.mechanisms.flywheel.FlywheelMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
 import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.FieldConstants;
-import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.ShooterFlywheelConstants;
+import frc.robot.Constants.ShooterPivotConstants;
 
 public class Shooter extends SubsystemBase {
 
@@ -45,16 +54,16 @@ public class Shooter extends SubsystemBase {
     this.desiredVelo = velocity;
     AngularVelocity angVelo = RotationsPerSecond.of(velocity);
 
-    _flywheel.runVelocity(angVelo, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
+    _flywheel.runVelocity(angVelo, ShooterFlywheelConstants.ACCELERATION, PIDSlot.SLOT_0);
   }
 
   public enum State {
     OFF(Units.RevolutionsPerSecond.of(0.0)),
-    IDLE(Units.RevolutionsPerSecond.of(ShooterConstants.IDLE_SPEED_RPM / 60)),
-    SHOOT_FROM_HUB(Units.RevolutionsPerSecond.of(ShooterConstants.HUB_SPEED_RPM / 60)),
-    SHOOT_FROM_TOWER(Units.RevolutionsPerSecond.of(ShooterConstants.TOWER_SPEED_RPM / 60)),
-    SHOOT(Units.RevolutionsPerSecond.of(ShooterConstants.DEFAULT_SPEED_RPM / 60)),
-    SHOOT_ON_MOVE(Units.RevolutionsPerSecond.of(ShooterConstants.DEFAULT_SPEED_RPM / 60));
+    IDLE(Units.RevolutionsPerSecond.of(ShooterFlywheelConstants.IDLE_SPEED_RPM / 60)),
+    SHOOT_FROM_HUB(Units.RevolutionsPerSecond.of(ShooterFlywheelConstants.HUB_SPEED_RPM / 60)),
+    SHOOT_FROM_TOWER(Units.RevolutionsPerSecond.of(ShooterFlywheelConstants.TOWER_SPEED_RPM / 60)),
+    SHOOT(Units.RevolutionsPerSecond.of(ShooterFlywheelConstants.DEFAULT_SPEED_RPM / 60)),
+    SHOOT_ON_MOVE(Units.RevolutionsPerSecond.of(ShooterFlywheelConstants.DEFAULT_SPEED_RPM / 60));
 
     private final AngularVelocity stateVelocity;
 
@@ -66,7 +75,7 @@ public class Shooter extends SubsystemBase {
   // Checks if the flywheel is at speed and returns a boolean
   public boolean flyAtVelocity() {
     return Math.abs(desiredVelo - _flywheel.getVelocity().in(RotationsPerSecond))
-        <= ShooterConstants.FLYWHEEL_VELOCITY_TOLERANCE;
+        <= ShooterFlywheelConstants.FLYWHEEL_VELOCITY_TOLERANCE;
   }
 
   public double getHoodAngleDegrees(Translation2d robotPos) {
@@ -75,20 +84,20 @@ public class Shooter extends SubsystemBase {
     double distance = robotPos.getDistance(FieldConstants.FIELDCENTER);
 
     double check =
-        Math.pow(ShooterConstants.EXIT_VELOCITY, 4)
-            - ShooterConstants.GRAVITY
-                * (ShooterConstants.GRAVITY * Math.pow(distance, 2)
+        Math.pow(ShooterPivotConstants.EXIT_VELOCITY, 4)
+            - ShooterPivotConstants.GRAVITY
+                * (ShooterPivotConstants.GRAVITY * Math.pow(distance, 2)
                     + 2
-                        * ShooterConstants.HEIGHT_DIFFERENCE
-                        * Math.pow(ShooterConstants.EXIT_VELOCITY, 2));
+                        * ShooterPivotConstants.HEIGHT_DIFFERENCE
+                        * Math.pow(ShooterPivotConstants.EXIT_VELOCITY, 2));
 
     if (check < 0) {
-      return ShooterConstants.IDLE_HOOD_ANGLE; // Default angle if the shot is not possible
+      return ShooterPivotConstants.IDLE_HOOD_ANGLE; // Default angle if the shot is not possible
     }
     return Math.toDegrees(
         Math.atan(
-            (ShooterConstants.EXIT_VELOCITY * ShooterConstants.EXIT_VELOCITY + Math.sqrt(check))
-                / (ShooterConstants.GRAVITY * distance)));
+            (ShooterPivotConstants.EXIT_VELOCITY * ShooterPivotConstants.EXIT_VELOCITY + Math.sqrt(check))
+                / (ShooterPivotConstants.GRAVITY * distance)));
   }
 
   // Sets hood angle
@@ -96,15 +105,15 @@ public class Shooter extends SubsystemBase {
     hoodAngle = angleDegrees;
     _hood.runPosition(
         Angle.ofBaseUnits(angleDegrees, Degrees),
-        ShooterConstants.HOOD_VELOCITY,
-        ShooterConstants.HOOD_ACCELERATION,
-        ShooterConstants.HOOD_JERK,
+        ShooterPivotConstants.HOOD_VELOCITY,
+        ShooterPivotConstants.HOOD_ACCELERATION,
+        ShooterPivotConstants.HOOD_JERK,
         PIDSlot.SLOT_0);
   }
 
   // Checks if hood is at angle
   public boolean hoodAtAngle() {
-    return Math.abs(hoodAngle - _hood.getPosition().in(Degrees)) < ShooterConstants.HOOD_TOLERANCE;
+    return Math.abs(hoodAngle - _hood.getPosition().in(Degrees)) < ShooterPivotConstants.HOOD_TOLERANCE;
   }
 
   public Command shoot(double velocity) {
@@ -121,5 +130,10 @@ public class Shooter extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {}
+  public void periodic() {
+    _hood.periodic();
+    Logger.recordOutput("3DField/3_Hood", new Pose3d(new Translation3d(-0.0075,0.0,0.523), new Rotation3d(0, _hood.getPosition().in(Radians), 0)));
+
+    _hood.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp())*0.25));
+  }
 }
