@@ -1,16 +1,24 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.flywheel.FlywheelMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
 import frc.robot.Constants;
-import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.IntakeFlywheelConstants;
 import frc.robot.Constants.IntakePivotConstants;
 
 public class Intake extends SubsystemBase {
@@ -29,7 +37,7 @@ public class Intake extends SubsystemBase {
   public void setVelocity(double velocity) {
     AngularVelocity angVelo = RotationsPerSecond.of(velocity);
 
-    _rollerIO.runVelocity(angVelo, Constants.IntakeConstants.ACCELERATION, PIDSlot.SLOT_0);
+    _rollerIO.runVelocity(angVelo, Constants.IntakeFlywheelConstants.ACCELERATION, PIDSlot.SLOT_0);
   }
 
   public Command setPivotAngle(Angle pivotAngle) {
@@ -37,9 +45,9 @@ public class Intake extends SubsystemBase {
         () ->
             _pivotIO.runPosition(
                 pivotAngle,
-                IntakeConstants.CRUISE_VELOCITY,
-                IntakeConstants.ACCELERATION,
-                IntakeConstants.JERK,
+                IntakeFlywheelConstants.CRUISE_VELOCITY,
+                IntakeFlywheelConstants.ACCELERATION,
+                IntakeFlywheelConstants.JERK,
                 PIDSlot.SLOT_0));
     // .withName("Go To " + setpoint.toString() + " Setpoint");
   }
@@ -76,6 +84,11 @@ public class Intake extends SubsystemBase {
         <= IntakePivotConstants.TOLERANCE.magnitude();
   }
 
-  @Override
-  public void periodic() {}
+  public void periodic() {
+    _pivotIO.periodic();
+    Logger.recordOutput("3DField/1_Intake", new Pose3d(new Translation3d(0.3085,0.0,0.175), new Rotation3d(0, _pivotIO.getPosition().in(Radians), 0)));
+    Logger.recordOutput("3DField/2_Hopper", new Pose3d(new Translation3d(Math.sin(_pivotIO.getPosition().in(Radians)*0.1055),0, 0), new Rotation3d(0, 0, 0)));
+
+    // _pivotIO.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp())*0.25)); --- Tests the pivot
+  }
 }
