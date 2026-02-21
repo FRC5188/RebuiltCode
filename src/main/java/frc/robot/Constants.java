@@ -652,6 +652,9 @@ public final class Constants {
         RadiansPerSecond.of(2 * Math.PI).times(10.0);
     public static final AngularAcceleration ACCELERATION = CRUISE_VELOCITY.div(0.1).per(Second);
     public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
+    public static final Distance BOTTOM = Inches.of(0.0);
+    public static final Distance MIDDLE = Inches.of(15.0);
+    public static final Distance TOP = Inches.of(30.0);
 
     public static final LinearMechCharacteristics CHARACTERISTICS =
         new LinearMechCharacteristics(

@@ -4,7 +4,9 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Meters;
 
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.linear.LinearMechanism;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.ElevatorConstants;
@@ -39,8 +41,15 @@ public class Climber extends SubsystemBase {
   @Override
   public void periodic() {}
 
-  public void runClimber() {
-    runClimber();
+  public Command runClimber() {
+    return this.runOnce(
+        () ->
+            _io.runPosition(
+                ClimberConstants.CONVERTER.toAngle(ClimberConstants.TOP),
+                ClimberConstants.CRUISE_VELOCITY,
+                ClimberConstants.ACCELERATION,
+                ClimberConstants.JERK,
+                PIDSlot.SLOT_0));
   }
 
   public boolean nearGoalposition() {
