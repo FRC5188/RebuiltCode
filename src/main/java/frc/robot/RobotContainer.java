@@ -55,12 +55,9 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-
 import java.util.Optional;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -71,7 +68,7 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 public class RobotContainer {
 
   // Subsystems
- private final Drive drive;
+  private final Drive drive;
   private final Hopper hopper;
   private final Shooter shooter;
   private final Climber climber;
@@ -259,7 +256,7 @@ public class RobotContainer {
         break;
 
       default:
-        //Replayed robot, disable IO implementations
+        // Replayed robot, disable IO implementations
         drive =
             new Drive(
                 new GyroIO() {},
@@ -326,7 +323,7 @@ public class RobotContainer {
             () -> controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    //Lock to 0° when A button is held
+    // Lock to 0° when A button is held
     controller
         .a()
         .whileTrue(
@@ -336,7 +333,7 @@ public class RobotContainer {
                 () -> -controller.getLeftX(),
                 () -> new Rotation2d()));
 
-    //Switch to X pattern when X button is pressed
+    // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed

@@ -57,19 +57,23 @@ public class Intake extends SubsystemBase {
 
   public Command intake() {
     return Commands.sequence(
-      Commands.run(() -> setVelocity(Constants.IntakeConstants.PICKUP_SPEED)), setPivotAngle(Constants.IntakeConstants.PICKUP_ANGLE));
-   }
+        Commands.run(() -> setVelocity(Constants.IntakeConstants.PICKUP_SPEED)),
+        setPivotAngle(Constants.IntakeConstants.PICKUP_ANGLE));
+  }
 
   public boolean isIntendedAngle() {
     return Math.abs(desiredAngle - _pivotIO.getVelocity().in(RotationsPerSecond))
         <= IntakePivotConstants.TOLERANCE.magnitude();
   }
- public Command stowAngle() { 
-  return Commands.sequence(
-    Commands.run(() -> setVelocity(Constants.IntakeConstants.PICKUP_SPEED)), setStowAngle(Constants.IntakeConstants.STOW_ANGLE)); 
-     }
-      private Command setStowAngle(Angle stowAngle) {
-      return this.runOnce(
+
+  public Command stowAngle() {
+    return Commands.sequence(
+        Commands.run(() -> setVelocity(Constants.IntakeConstants.PICKUP_SPEED)),
+        setStowAngle(Constants.IntakeConstants.STOW_ANGLE));
+  }
+
+  private Command setStowAngle(Angle stowAngle) {
+    return this.runOnce(
         () ->
             _pivotIO.runPosition(
                 stowAngle,
@@ -77,8 +81,8 @@ public class Intake extends SubsystemBase {
                 IntakeConstants.ACCELERATION,
                 IntakeConstants.JERK,
                 PIDSlot.SLOT_0));
-    }
-    
-      @Override
+  }
+
+  @Override
   public void periodic() {}
 }
