@@ -8,11 +8,7 @@
       },
       "prevControl": null,
       "nextControl": {
-<<<<<<< Updated upstream
         "x": 1.254409638554217,
-=======
-        "x": 1.2544096385542172,
->>>>>>> Stashed changes
         "y": 2.0243012048192766
       },
       "isLocked": false,
@@ -28,11 +24,7 @@
         "y": 2.0946011699463005
       },
       "nextControl": {
-<<<<<<< Updated upstream
         "x": 0.4871988983811608,
-=======
-        "x": 0.48719889838116087,
->>>>>>> Stashed changes
         "y": 2.534262681236635
       },
       "isLocked": false,
@@ -44,11 +36,7 @@
         "y": 2.8801012661030256
       },
       "prevControl": {
-<<<<<<< Updated upstream
         "x": 0.44575903614457824,
-=======
-        "x": 0.44575903614457835,
->>>>>>> Stashed changes
         "y": 2.811096385542169
       },
       "nextControl": null,
