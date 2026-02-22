@@ -3,7 +3,6 @@
   "waypoints": [
     {
       "anchor": {
-<<<<<<< Updated upstream
         "x": 8.610125,
         "y": 6.675017857142857
       },
@@ -11,15 +10,6 @@
       "nextControl": {
         "x": 4.926120481927711,
         "y": 5.761578313253013
-=======
-        "x": 7.373927710843373,
-        "y": 6.450024096385542
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 3.689923192771084,
-        "y": 5.5365845524956985
->>>>>>> Stashed changes
       },
       "isLocked": false,
       "linkedName": "EndUpSweep"
@@ -30,11 +20,7 @@
         "y": 4.599583975068654
       },
       "prevControl": {
-<<<<<<< Updated upstream
         "x": 3.280448600922837,
-=======
-        "x": 3.2804486009228375,
->>>>>>> Stashed changes
         "y": 4.638438076655999
       },
       "nextControl": null,
