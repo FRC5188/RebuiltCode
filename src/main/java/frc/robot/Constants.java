@@ -162,7 +162,7 @@ public final class Constants {
     public static final String MOTOR_NAME = "Hopper Roller";
 
     // CHANGE TO PROPER RPMS !!!!
-    
+
     public static final double SLOW_SPEED_RPM = 0.0;
     public static final double FAST_SPEED_RPM = 0.0;
     public static final double REVERSE_SPEED_RPM = 0.0;
