@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.flywheel.FlywheelMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
-import frc.robot.Constants;
 import frc.robot.Constants.IntakeFlywheelConstants;
 import frc.robot.Constants.IntakePivotConstants;
 import org.littletonrobotics.junction.Logger;
@@ -33,7 +32,7 @@ public class Intake extends SubsystemBase {
   public void setVelocity(double velocity) {
     AngularVelocity angVelo = RotationsPerSecond.of(velocity);
 
-    _rollerIO.runVelocity(angVelo, Constants.IntakeFlywheelConstants.ACCELERATION, PIDSlot.SLOT_0);
+    _rollerIO.runVelocity(angVelo, IntakeFlywheelConstants.ACCELERATION, PIDSlot.SLOT_0);
   }
 
   public Command setPivotAngle(Angle pivotAngle) {
@@ -62,8 +61,8 @@ public class Intake extends SubsystemBase {
 
   public Command intake() {
     return Commands.sequence(
-        Commands.run(() -> setVelocity(Constants.IntakeConstants.PICKUP_SPEED)),
-        setPivotAngle(Constants.IntakeConstants.PICKUP_ANGLE));
+        Commands.run(() -> setVelocity(IntakeFlywheelConstants.PICKUP_SPEED)),
+        setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
   }
 
   public boolean isIntendedAngle() {
@@ -73,8 +72,8 @@ public class Intake extends SubsystemBase {
 
   public Command stowAngle() {
     return Commands.sequence(
-        Commands.run(() -> setVelocity(Constants.IntakeConstants.PICKUP_SPEED)),
-        setStowAngle(Constants.IntakeConstants.STOW_ANGLE));
+        Commands.run(() -> setVelocity(IntakeFlywheelConstants.PICKUP_SPEED)),
+        setStowAngle(IntakePivotConstants.STOW_ANGLE));
   }
 
   private Command setStowAngle(Angle stowAngle) {
@@ -82,9 +81,9 @@ public class Intake extends SubsystemBase {
         () ->
             _pivotIO.runPosition(
                 stowAngle,
-                IntakeConstants.CRUISE_VELOCITY,
-                IntakeConstants.ACCELERATION,
-                IntakeConstants.JERK,
+                IntakePivotConstants.CRUISE_VELOCITY,
+                IntakePivotConstants.ACCELERATION,
+                IntakePivotConstants.JERK,
                 PIDSlot.SLOT_0));
   }
 
