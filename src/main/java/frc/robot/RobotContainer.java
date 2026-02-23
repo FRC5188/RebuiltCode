@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.lib.W8.io.absoluteencoder.AbsoluteEncoderIOCANCoderSim;
 import frc.lib.W8.io.motor.*;
 import frc.lib.W8.io.vision.VisionIOPhotonVision;
 import frc.lib.W8.io.vision.VisionIOPhotonVisionSim;
@@ -36,8 +35,9 @@ import frc.lib.W8.mechanisms.rotary.RotaryMechanismReal;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanismSim;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.HopperConstants;
-import frc.robot.Constants.IntakeConstants;
-import frc.robot.Constants.IntakeConstants.VisionConstants;
+import frc.robot.Constants.IntakeFlywheelConstants;
+import frc.robot.Constants.IntakeFlywheelConstants.VisionConstants;
+import frc.robot.Constants.IntakePivotConstants;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.ShooterFlywheelConstants;
 import frc.robot.Constants.ShooterRotaryConstants;
@@ -68,7 +68,7 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 public class RobotContainer {
 
   // Subsystems
-  private final Drive drive;
+  public final Drive drive;
   private final Hopper hopper;
   private final Shooter shooter;
   private final Climber climber;
@@ -119,8 +119,8 @@ public class RobotContainer {
                         Ports.ShooterRoller)),
                 new RotaryMechanismReal(
                     new MotorIOTalonFX(
-                        ShooterFlywheelConstants.NAME,
-                        ShooterFlywheelConstants.getFXConfig(),
+                        ShooterRotaryConstants.NAME,
+                        ShooterRotaryConstants.getFXConfig(),
                         Ports.ShooterRoller),
                     Constants.ShooterRotaryConstants.CONSTANTS,
                     java.util.Optional.empty()));
@@ -137,20 +137,16 @@ public class RobotContainer {
             new Intake(
                 new FlywheelMechanismReal(
                     new MotorIOTalonFX(
-                        IntakeConstants.MOTOR_NAME,
-                        IntakeConstants.getFXConfig(),
+                        IntakeFlywheelConstants.MOTOR_NAME,
+                        IntakeFlywheelConstants.getFXConfig(),
                         Ports.IntakeRoller)),
                 new RotaryMechanismReal(
                     new MotorIOTalonFX(
-                        IntakeConstants.MOTOR_NAME,
-                        IntakeConstants.getFXConfig(),
+                        IntakePivotConstants.NAME,
+                        IntakePivotConstants.getFXConfig(),
                         Ports.IntakeRoller),
-                    IntakeConstants.CONSTANTS,
-                    Optional.of(
-                        new AbsoluteEncoderIOCANCoderSim(
-                            Ports.IntakeRoller,
-                            IntakeConstants.MOTOR_NAME + " Encoder",
-                            IntakeConstants.getCANcoderConfig(false)))));
+                    IntakePivotConstants.CONSTANTS,
+                    Optional.empty()));
         vision =
             new Vision(
                 new VisionIOPhotonVision(
@@ -200,8 +196,8 @@ public class RobotContainer {
                     ShooterFlywheelConstants.TOLERANCE),
                 new RotaryMechanismSim(
                     new MotorIOTalonFXSim(
-                        ShooterFlywheelConstants.NAME,
-                        ShooterFlywheelConstants.getFXConfig(),
+                        ShooterRotaryConstants.NAME,
+                        ShooterRotaryConstants.getFXConfig(),
                         Ports.ShooterRoller),
                     ShooterRotaryConstants.DCMOTOR,
                     ShooterRotaryConstants.MOI,
@@ -224,26 +220,22 @@ public class RobotContainer {
             new Intake(
                 new FlywheelMechanismSim(
                     new MotorIOTalonFXSim(
-                        IntakeConstants.MOTOR_NAME,
-                        IntakeConstants.getFXConfig(),
+                        IntakeFlywheelConstants.MOTOR_NAME,
+                        IntakeFlywheelConstants.getFXConfig(),
                         Ports.IntakeRoller),
-                    IntakeConstants.DCMOTOR,
-                    IntakeConstants.MOI,
-                    IntakeConstants.TOLERANCE),
+                    IntakeFlywheelConstants.DCMOTOR,
+                    IntakeFlywheelConstants.MOI,
+                    IntakeFlywheelConstants.TOLERANCE),
                 new RotaryMechanismSim(
                     new MotorIOTalonFXSim(
-                        IntakeConstants.MOTOR_NAME,
-                        IntakeConstants.getFXConfig(),
+                        IntakePivotConstants.NAME,
+                        IntakePivotConstants.getFXConfig(),
                         Ports.IntakeRoller),
-                    IntakeConstants.DCMOTOR,
-                    IntakeConstants.MOI,
+                    IntakePivotConstants.DCMOTOR,
+                    IntakePivotConstants.MOI,
                     false,
-                    IntakeConstants.CONSTANTS,
-                    Optional.of(
-                        new AbsoluteEncoderIOCANCoderSim(
-                            Ports.IntakeRoller,
-                            IntakeConstants.MOTOR_NAME + " Encoder",
-                            IntakeConstants.getCANcoderConfig(false)))));
+                    IntakePivotConstants.CONSTANTS,
+                    Optional.empty()));
         vision =
             new Vision(
                 new VisionIOPhotonVisionSim(
@@ -280,7 +272,7 @@ public class RobotContainer {
         intake =
             new Intake(
                 new FlywheelMechanism() {},
-                new RotaryMechanism(IntakeConstants.MOTOR_NAME, IntakeConstants.CONSTANTS) {});
+                new RotaryMechanism(IntakePivotConstants.NAME, IntakePivotConstants.CONSTANTS) {});
         vision = new Vision(null);
         break;
     }
@@ -350,6 +342,8 @@ public class RobotContainer {
     controller
         .x()
         .onTrue(Commands.runOnce(() -> hopper.setGoal(HopperConstants.HOPPER_POSITION), hopper));
+
+    controller.y().onTrue(Commands.runOnce(() -> intake.setVelocity(1)));
   }
 
   /**

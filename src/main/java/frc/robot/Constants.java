@@ -340,8 +340,8 @@ public final class Constants {
 
     public static final Translation3d OFFSET = Translation3d.kZero;
 
-    public static final Angle MIN_ANGLE = Degrees.of(-130.0);
-    public static final Angle MAX_ANGLE = Rotations.of(.5);
+    public static final Angle MIN_ANGLE = Degrees.of(0.0);
+    public static final Angle MAX_ANGLE = Rotations.of(45.0);
     public static final Angle STARTING_ANGLE = Rotations.of(0.0);
     public static final Distance ARM_LENGTH = Meters.of(1.0);
 
@@ -432,7 +432,7 @@ public final class Constants {
 
   public static final int CANDLE_ID = 50;
 
-  public class IntakeConstants {
+  public class IntakeFlywheelConstants {
     // Constants for Intake
     public static final Angle MIN_ANGLE = Rotations.of(0.0);
     public static final Angle MAX_ANGLE = Rotations.of(1);
@@ -581,8 +581,8 @@ public final class Constants {
     private static final double ROTOR_TO_SENSOR = (50.0 / 1.0);
     private static final double SENSOR_TO_MECHANISM = 1.0;
 
-    public static final Angle MIN_ANGLE = Degrees.of(-90.0);
-    public static final Angle MAX_ANGLE = Degrees.of(90.0);
+    public static final Angle MIN_ANGLE = Degrees.of(0.0);
+    public static final Angle MAX_ANGLE = Degrees.of(130.0);
     public static final Angle STARTING_ANGLE = Radians.zero();
     public static final Distance ARM_LENGTH = Foot.one();
 
