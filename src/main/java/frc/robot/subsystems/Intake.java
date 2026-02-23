@@ -70,7 +70,7 @@ public class Intake extends SubsystemBase {
         <= IntakePivotConstants.TOLERANCE.magnitude();
   }
 
-  public Command stowAngle() {
+  public Command stowAndStopRollers() {
     return Commands.sequence(
         Commands.run(() -> setVelocity(IntakeFlywheelConstants.PICKUP_SPEED)),
         setStowAngle(IntakePivotConstants.STOW_ANGLE));
