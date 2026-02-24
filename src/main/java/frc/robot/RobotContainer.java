@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.lib.W8.devices.AprilTagCamera;
 import frc.lib.W8.io.absoluteencoder.AbsoluteEncoderIOCANCoderSim;
 import frc.lib.W8.io.motor.*;
 import frc.lib.W8.mechanisms.flywheel.*;
@@ -47,18 +46,17 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.vision.VisionSubsystem;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-
 import java.util.Optional;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 
 /**
@@ -75,7 +73,7 @@ public class RobotContainer {
   private final Shooter shooter;
   private final Climber climber;
   private final Intake intake;
-  private final VisionSubsystem vision;
+  private final Vision vision;
   private final BallCounter ballCounter;
 
   // Controller
@@ -154,10 +152,10 @@ public class RobotContainer {
                             IntakeConstants.MOTOR_NAME + " Encoder",
                             IntakeConstants.getCANcoderConfig(false)))));
         
-        vision = new VisionSubsystem(new AprilTagCamera(VisionConstants.FRONT, VisionConstants.getFrontIOReal()),
-                new AprilTagCamera(VisionConstants.LEFT, VisionConstants.getLeftIOReal()),
-                new AprilTagCamera(VisionConstants.RIGHT, VisionConstants.getRightIOReal()),
-                new AprilTagCamera(VisionConstants.BACK, VisionConstants.getBackIOReal()));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
 
         break;
 
@@ -246,11 +244,12 @@ public class RobotContainer {
                             IntakeConstants.MOTOR_NAME + " Encoder",
                             IntakeConstants.getCANcoderConfig(false)))));
 
-        vision = new VisionSubsystem(new AprilTagCamera(VisionConstants.FRONT, VisionConstants.getFrontIOSim()),
-                new AprilTagCamera(VisionConstants.LEFT, VisionConstants.getLeftIOSim()),
-                new AprilTagCamera(VisionConstants.RIGHT, VisionConstants.getRightIOSim()),
-                new AprilTagCamera(VisionConstants.BACK, VisionConstants.getBackIOSim()));
-        break;
+            vision = 
+                new Vision(
+                    drive::addVisionMeasurement,
+                    new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
+
+            break;
 
       default:
         //Replayed robot, disable IO implementations
@@ -279,7 +278,7 @@ public class RobotContainer {
                 new FlywheelMechanism() {},
                 new RotaryMechanism(IntakeConstants.MOTOR_NAME, IntakeConstants.CONSTANTS) {});
 
-        vision = new VisionSubsystem();
+        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {});
         break;
     }
 
