@@ -20,7 +20,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.util.Units;
+// import edu.wpi.first.math.util.Units; // Only needed for PhotonVision
 import java.util.List;
 import java.util.Arrays;
 
@@ -30,23 +30,17 @@ public class VisionConstants {
       AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
 
   // Camera names, must match names configured on coprocessor
-  
   public static String camera1Name = "limelight";
-
-  // Robot to camera transforms
-  // (Not used by Limelight, configure in web UI instead)
-
-  // Note: 0.0254 multiplier converts inches to meters
 
   // FOR FUTURE PHOTONVISION REFERENCE ONLY
     //   public static Transform3d robotToCamera1 =
     //     new Transform3d(Units.inchesToMeters(9.287), Units.inchesToMeters(-10.9704),Units.inchesToMeters(7.9167),
     //     new Rotation3d(0.0, Units.degreesToRadians(-15), Units.degreesToRadians(30)));
 
-    // Camera 1:
+    // Camera 1 Robot-to-camera transform:
   // (Not used by Limelight, configure in web UI instead)
   public static Transform3d robotToCamera0 =
-      new Transform3d(0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, 0.0)); // TODO: Modify values for 2026!
+      new Transform3d(0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, 0.0)); // TODO: Modify values for 2026! -KtH 2/23/26
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
@@ -61,12 +55,11 @@ public class VisionConstants {
   // (Adjust to trust some cameras more than others)
   public static double[] cameraStdDevFactors =
       new double[] {
-        1.0 // Camera 5
+        1.0 // Camera 1
       };
 
-
-  // List of tags that can be rejected if we want to align solely on the hub
-  //TODO: Update?
+  // List of tags that can be rejected if we want to align solely to the hub
+  //TODO: Update to exclude some field tags? -KtH 2/23/26
   public static List<Integer> rejectedTags = Arrays.asList();
 
   // Multipliers to apply for MegaTag 2 observations

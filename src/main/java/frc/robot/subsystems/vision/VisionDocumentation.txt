@@ -1,0 +1,111 @@
+Welcome to 5188 Vision Documentation!
+Author: Katie Henthorn (Class of '26)
+
+For vision code reference, please see the AdvantageKit Vision Template by Mechanical Advantage.
+https://github.com/Mechanical-Advantage/AdvantageKit/tree/main/template_projects/sources/vision/src/main
+
+In 2026, we used one Limelight camera that you should see referenced in all the files. 
+Any variations to that setup (ex: a new year, more cameras, switching to PhotonVision) will require
+a change in code as follows:
+
+YEARLY UPDATE TO-DO LIST:
+
+- Switch AprilTag map to the correct year.
+    public static AprilTagFieldLayout aprilTagLayout =
+        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
+      
+- Switch FieldConstants file to the correct year (src\main\java\frc\robot\FieldConstants.java).
+   You may find this in AdvantageKit's updated library or in another team's open-source repo.
+
+- Update rejected tags. 
+    These are the tags we don't want the camera to recognize. For example,
+    in 2025 we wanted our robot to rely only on the stable Reef tags.
+
+    If you want the robot to recognize all tags, leave the parentheses empty.
+
+    In VisionConstants:
+    public static List<Integer> rejectedTags = Arrays.asList(1, 2, 5, 67);
+
+-   Check that camera names match those flashed on the coprocessor:
+    
+    Example 1:
+        public static String camera1Name = "limelight";
+
+    Example 2:
+        public static String camera5Name = "photoncamera_5";
+
+- Update translation and rotation constants:
+    These indicate where on the robot you've placed the camera. Check out the WPILib Coordinate System Docs:
+    https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
+
+    (Below, I've included the 2025 constants as an example.)
+
+    public static Transform3d robotToCamera1 =
+         new Transform3d(Units.inchesToMeters(9.287), Units.inchesToMeters(-10.9704), Units.inchesToMeters(7.9167),
+         new Rotation3d(0.0, Units.degreesToRadians(-15), Units.degreesToRadians(30)));
+
+
+
+SWITCHING TO PHOTONVISION FROM LIMELIGHT:
+
+- Uncomment the Units import in VisionConstants:
+    import edu.wpi.first.math.util.Units;
+
+- Change the VisionConstants camera name to the name saved on the hardware.
+    public static String camera5Name = "photoncamera_5";
+
+- Uncomment the PhotonVision robotToCamera constants, and comment out the Limelight ones.
+
+    The PhotonVision ones should look like:
+
+    // FOR FUTURE PHOTONVISION REFERENCE ONLY
+        public static Transform3d robotToCamera1 =
+            new Transform3d(Units.inchesToMeters(9.287), Units.inchesToMeters(-10.9704),Units.inchesToMeters(7.9167),
+            new Rotation3d(0.0, Units.degreesToRadians(-15), Units.degreesToRadians(30)));
+
+- In VisionIO, change LIMELIGHT to PHOTONVISION in:
+
+  public static enum PoseObservationType {
+    MEGATAG_1,
+    MEGATAG_2,
+    LIMELIGHT
+  }
+    
+- Copy over the VisionIOPhotonVision.java file from the AdvantageKit codebase (I used 2025).
+
+- Swap out RobotContainer calls: 
+    First, locate this line within the REAL case of the switchcase:
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
+
+    Replace it with:
+       vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVision(VisionConstants.camera5Name, VisionConstants.robotToCamera5)
+                );   
+
+    ...and update the camera name to match yours in constants.
+
+    Locate this line within the SIM case:
+        vision = 
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
+
+    Replace it with:
+        vision = 
+            new Vision(
+                drive::addVisionMeasurement, 
+                new VisionIO() {}, 
+                new VisionIO() {});
+
+    Note: the number of "VisionIO() {}," should match the number of cameras used.
+
+
+
+
+
+
