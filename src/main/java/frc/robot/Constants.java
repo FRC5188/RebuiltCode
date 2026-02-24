@@ -712,9 +712,6 @@ public final class Constants {
     public static final AngularAcceleration ANGULAR_ACCELERATION =
         RotationsPerSecondPerSecond.of(1);
     public static final double CLIMB_SPEED = 1.0;
-  }
-
-  public class ElevatorConstants {
     public static final double HARD_STOP_CURRENT_LIMIT = 50.0;
   }
 }

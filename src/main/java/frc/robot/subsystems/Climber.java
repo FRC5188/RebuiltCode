@@ -7,9 +7,7 @@ import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -38,7 +36,7 @@ public class Climber extends SubsystemBase {
   // }
 
   public boolean isAboveCurrentLimit() {
-    if (_io.getSupplyCurrent().in(Amps) > ElevatorConstants.HARD_STOP_CURRENT_LIMIT) {
+    if (_io.getSupplyCurrent().in(Amps) > ClimberConstants.HARD_STOP_CURRENT_LIMIT) {
       return true;
     } else {
       return false;
