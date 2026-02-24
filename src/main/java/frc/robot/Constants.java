@@ -162,6 +162,7 @@ public final class Constants {
     public static final String MOTOR_NAME = "Hopper Roller";
 
     // CHANGE TO PROPER RPMS !!!!
+
     public static final double SLOW_SPEED_RPM = 0.0;
     public static final double FAST_SPEED_RPM = 0.0;
     public static final double REVERSE_SPEED_RPM = 0.0;
@@ -341,8 +342,8 @@ public final class Constants {
 
     public static final Translation3d OFFSET = Translation3d.kZero;
 
-    public static final Angle MIN_ANGLE = Degrees.of(-130.0);
-    public static final Angle MAX_ANGLE = Rotations.of(.5);
+    public static final Angle MIN_ANGLE = Degrees.of(0.0);
+    public static final Angle MAX_ANGLE = Rotations.of(45.0);
     public static final Angle STARTING_ANGLE = Rotations.of(0.0);
     public static final Distance ARM_LENGTH = Meters.of(1.0);
 
@@ -433,11 +434,12 @@ public final class Constants {
 
   public static final int CANDLE_ID = 50;
 
-  public class IntakeConstants {
+  public class IntakeFlywheelConstants {
     // Constants for Intake
     public static final Angle MIN_ANGLE = Rotations.of(0.0);
     public static final Angle MAX_ANGLE = Rotations.of(1);
     public static final Angle STARTING_ANGLE = Rotations.of(0.0);
+    public static final double PICKUP_SPEED = 0.0;
     public static final Distance WHEEL_RADIUS = Meters.of(0.05);
     public static final Translation3d OFFSET = Translation3d.kZero;
     public static final MomentOfInertia MOI = KilogramSquareMeters.of(0.0028125);
@@ -569,6 +571,9 @@ public final class Constants {
   public class IntakePivotConstants {
     public static final String NAME = "Intake";
 
+    public static final Angle PICKUP_ANGLE = Rotations.of(0.0);
+    public static final Angle STOW_ANGLE = Rotations.of(0.0);
+
     public static final Angle TOLERANCE = Degrees.of(1.0);
 
     public static final AngularVelocity CRUISE_VELOCITY = RadiansPerSecond.of(10);
@@ -579,8 +584,8 @@ public final class Constants {
     private static final double ROTOR_TO_SENSOR = (50.0 / 1.0);
     private static final double SENSOR_TO_MECHANISM = 1.0;
 
-    public static final Angle MIN_ANGLE = Degrees.of(-90.0);
-    public static final Angle MAX_ANGLE = Degrees.of(90.0);
+    public static final Angle MIN_ANGLE = Degrees.of(0.0);
+    public static final Angle MAX_ANGLE = Degrees.of(130.0);
     public static final Angle STARTING_ANGLE = Radians.zero();
     public static final Distance ARM_LENGTH = Foot.one();
 
