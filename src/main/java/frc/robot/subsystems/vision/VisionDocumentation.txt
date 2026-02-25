@@ -5,10 +5,12 @@ For vision code reference, please see the AdvantageKit Vision Template by Mechan
 https://github.com/Mechanical-Advantage/AdvantageKit/tree/main/template_projects/sources/vision/src/main
 
 In 2026, we used one Limelight camera that you should see referenced in all the files. 
-Any variations to that setup (ex: a new year, more cameras, switching to PhotonVision) will require
+Any variations to that setup (ex: a new year, switching to PhotonVision, more cameras) will require
 a change in code as follows:
 
-YEARLY UPDATE TO-DO LIST:
+
+
+1. YEARLY UPDATE TO-DO LIST:
 
 - Switch AprilTag map to the correct year.
     public static AprilTagFieldLayout aprilTagLayout =
@@ -46,7 +48,7 @@ YEARLY UPDATE TO-DO LIST:
 
 
 
-SWITCHING TO PHOTONVISION FROM LIMELIGHT:
+2. SWITCHING TO PHOTONVISION FROM LIMELIGHT:
 
 - Uncomment the Units import in VisionConstants:
     import edu.wpi.first.math.util.Units;
@@ -54,7 +56,7 @@ SWITCHING TO PHOTONVISION FROM LIMELIGHT:
 - Change the VisionConstants camera name to the name saved on the hardware.
     public static String camera5Name = "photoncamera_5";
 
-- Uncomment the PhotonVision robotToCamera constants, and comment out the Limelight ones.
+- In VisionConstants, uncomment the PhotonVision robotToCamera constants, and comment out the Limelight ones.
 
     The PhotonVision ones should look like:
 
@@ -106,6 +108,67 @@ SWITCHING TO PHOTONVISION FROM LIMELIGHT:
 
 
 
+3. SWITCHING TO MULTIPLE CAMERAS:
 
+- In VisionConstants, add new camera names. Note: these must match the names assigned to the hardware.
+    Ex:
+        public static String camera5Name = "photoncamera_1";
+        public static String camera6Name = "photoncamera_2";
+        public static String camera7Name = "photoncamera_3";
+        public static String camera8Name = "photoncamera_4";
 
+- If using PhotonVision, repeat this line in VisionConstants with each new camera:
+    public static Transform3d robotToCamera1 =
+        new Transform3d(Units.inchesToMeters(9.287), Units.inchesToMeters(-10.9704),Units.inchesToMeters(7.9167),
+            new Rotation3d(0.0, Units.degreesToRadians(-15), Units.degreesToRadians(30)));
 
+- In VisionConstants, add a standard deviation factor for each camera. The magnitude of the value corresponds with the robot's "trust" in the camera. 
+    By default, we use 1.0 across the board.
+
+    For example, three cameras where we trust all cameras equally:
+
+     public static double[] cameraStdDevFactors =
+      new double[] {
+        1.0, // Camera 1
+        1.0, // Camera 2
+        1.0 // Camera 3
+      };
+
+- In RobotContainer, add more cameras to the Vision constructor:
+
+    LIMELIGHT EXAMPLE WITH TWO CAMERAS:
+
+        Under the REAL case:
+
+            vision =
+                new Vision(
+                    drive::addVisionMeasurement,
+                    new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation),
+                    new VisionIOLimelight(VisionConstants.camera2Name, drive::getRotation));
+        
+        Under the SIM case:
+
+            vision = 
+                    new Vision(
+                        drive::addVisionMeasurement,
+                        new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation),
+                        new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
+
+    PHOTONVISION EXAMPLE WITH TWO CAMERAS:
+
+        Under the REAL case:
+
+            vision =
+                new Vision(
+                    drive::addVisionMeasurement,
+                    new VisionIOPhotonVision(VisionConstants.camera1Name, VisionConstants.robotToCamera1),
+                    new VisionIOPhotonVision(VisionConstants.camera2Name, VisionConstants.robotToCamera2));   
+
+        Under the SIM case:
+
+            vision = 
+                new Vision(
+                    drive::addVisionMeasurement, 
+                    new VisionIO() {}, 
+                    new VisionIO() {});
+                    
