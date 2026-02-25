@@ -315,6 +315,8 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(() -> hopper.setGoal(HopperConstants.HOPPER_POSITION), hopper));
 
     controller.y().onTrue(Commands.runOnce(() -> intake.setVelocity(1)));
+    controller.leftBumper().onTrue(intake.intake());
+    controller.rightBumper().onTrue(intake.stowAndStopRollers());
   }
 
   /**
