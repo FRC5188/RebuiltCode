@@ -18,6 +18,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.Rebuilt2026.FuelSim;
@@ -45,8 +46,8 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
   
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
-  private RobotContainer robotContainer;
-  public FuelSim fuelSim = new FuelSim();
+  public static RobotContainer robotContainer;
+  public static FuelSim fuelSim = new FuelSim();
 
   public Robot() {
     CanBridge.runTCP();
@@ -196,6 +197,10 @@ public class Robot extends LoggedRobot {
         robotContainer.drive
             ::getChassisSpeeds); // Supplier<ChassisSpeeds> of field-centric chassis speed
 
+            fuelSim.registerIntake(0.4, 0.5, -0.4, 0.4,
+            () -> robotContainer.intake.canIntake(),
+            () -> {robotContainer.intake.simBalls++;});
+
     fuelSim.start(); // enables the simulation to run (updateSim must still be called periodically)
 
     fuelSim.enableAirResistance(); // an additional drag force will be applied to fuel in physics
@@ -208,5 +213,7 @@ public class Robot extends LoggedRobot {
     fuelSim.updateSim();
 
     Logger.recordOutput("Zero Pose", new Pose3d());
+    
+    SmartDashboard.putNumber("Sim Balls", (double) robotContainer.intake.simBalls);
   }
 }

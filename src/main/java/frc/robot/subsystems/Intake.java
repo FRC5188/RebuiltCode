@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
@@ -26,11 +27,14 @@ public class Intake extends SubsystemBase {
   private RotaryMechanism _pivotIO;
   double velocity;
   double pivotAngle;
+  public int simBalls;
   public double desiredAngle;
 
   public Intake(FlywheelMechanism rollerIO, RotaryMechanism pivotIO) {
     _rollerIO = rollerIO;
     _pivotIO = pivotIO;
+
+    simBalls = 0;
   }
 
   // Velocity of Rollers
@@ -84,11 +88,18 @@ public class Intake extends SubsystemBase {
         <= IntakePivotConstants.TOLERANCE.magnitude();
   }
 
+  public boolean canIntake()
+  {
+    return _pivotIO.getPosition().in(Degree) > (IntakePivotConstants.MAX_ANGLE.in(Degree) - 10) && simBalls < 45 && simBalls >= 0;
+  }
+
   public void periodic() {
+    if (_pivotIO.getPosition().in(Degree) < IntakePivotConstants.MAX_ANGLE.in(Degree)) _pivotIO.runVoltage(Volts.of(0.25));
+
     _pivotIO.periodic();
     Logger.recordOutput("3DField/1_Intake", new Pose3d(new Translation3d(0.3085,0.0,0.175), new Rotation3d(0, _pivotIO.getPosition().in(Radians), 0)));
     Logger.recordOutput("3DField/2_Hopper", new Pose3d(new Translation3d(Math.sin(_pivotIO.getPosition().in(Radians)*0.1055),0, 0), new Rotation3d(0, 0, 0)));
 
-    // _pivotIO.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp())*0.25)); --- Tests the pivot
+     //_pivotIO.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp())*0.25)); //--- Tests the pivot
   }
 }

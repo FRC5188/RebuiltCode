@@ -74,11 +74,11 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 public class RobotContainer {
 
   // Subsystems
- public final Drive drive;
+  public final Drive drive;
   private final Hopper hopper;
   private final Shooter shooter;
   private final Climber climber;
-  private final Intake intake;
+  public final Intake intake;
   private final BallCounter ballCounter;
   private final Vision vision;
 
@@ -350,8 +350,8 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(() -> hopper.setGoal(HopperConstants.HOPPER_POSITION), hopper));
 
     controller
-        .y()
-        .onTrue(Commands.runOnce(() -> intake.setVelocity(1)));
+        .rightTrigger()
+        .onTrue(Commands.runOnce(() -> shooter.simShoot()));
   }
 
   /**

@@ -573,7 +573,7 @@ public final class Constants {
     public static final AngularVelocity CRUISE_VELOCITY = RadiansPerSecond.of(10);
     public static final AngularAcceleration ACCELERATION = RadiansPerSecondPerSecond.of(100);
     public static final Velocity<AngularAccelerationUnit> JERK =
-        RadiansPerSecondPerSecond.per(Second).of(0);
+        RadiansPerSecondPerSecond.per(Second).of(0.1);
 
     private static final double ROTOR_TO_SENSOR = (50.0 / 1.0);
     private static final double SENSOR_TO_MECHANISM = 1.0;
@@ -592,7 +592,8 @@ public final class Constants {
 
     // Positional PID
     public static final Slot0Configs SLOT_0_CONFIG =
-        new Slot0Configs().withKP(10.0).withKI(2.0).withKD(8).withKS(0.07).withKV(0.1);
+        new Slot0Configs().withKP(100.0).withKI(0.0).withKD(0).withKS(0.07).withKV(0.1);
+        //                              ^^^ CHANGE
 
     public static TalonFXConfiguration getFXConfig() {
       TalonFXConfiguration config = new TalonFXConfiguration();
