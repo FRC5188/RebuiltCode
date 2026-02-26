@@ -114,7 +114,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "IntakeOut",
+      "name": "",
       "waypointRelativePos": 0.7914798206277904,
       "endWaypointRelativePos": null,
       "command": null
