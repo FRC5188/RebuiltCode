@@ -5,8 +5,6 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -27,6 +25,7 @@ import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Robot;
+import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
 
@@ -160,6 +159,6 @@ public class Shooter extends SubsystemBase {
     // The pitch of the Rotation3D should be '_hood.getPosition().in(Radians)', change after fixing motor configs.                   
     Logger.recordOutput("3DField/3_Hood", new Pose3d(new Translation3d(-0.0075,0.0,0.523), new Rotation3d(0, pitch, 0)));
 
-    _hood.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp())*0.25));
+    _hood.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp()) * 0.25));
   }
 }

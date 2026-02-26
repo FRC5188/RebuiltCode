@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.lib.W8.io.absoluteencoder.AbsoluteEncoderIOCANCoderSim;
 import frc.lib.W8.io.motor.*;
 import frc.lib.W8.io.vision.VisionIOPhotonVision;
 import frc.lib.W8.io.vision.VisionIOPhotonVisionSim;
@@ -37,8 +36,8 @@ import frc.lib.W8.mechanisms.rotary.RotaryMechanismSim;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.Constants.IntakeFlywheelConstants;
-import frc.robot.Constants.IntakePivotConstants;
 import frc.robot.Constants.IntakeFlywheelConstants.VisionConstants;
+import frc.robot.Constants.IntakePivotConstants;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.ShooterFlywheelConstants;
 import frc.robot.Constants.ShooterRotaryConstants;
@@ -56,14 +55,9 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-
-import static edu.wpi.first.units.Units.Degrees;
-
 import java.util.Optional;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -254,7 +248,7 @@ public class RobotContainer {
         break;
 
       default:
-        //Replayed robot, disable IO implementations
+        // Replayed robot, disable IO implementations
         drive =
             new Drive(
                 new GyroIO() {},
@@ -321,7 +315,7 @@ public class RobotContainer {
             () -> controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    //Lock to 0° when A button is held
+    // Lock to 0° when A button is held
     controller
         .a()
         .whileTrue(
@@ -331,7 +325,7 @@ public class RobotContainer {
                 () -> -controller.getLeftX(),
                 () -> new Rotation2d()));
 
-    //Switch to X pattern when X button is pressed
+    // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
