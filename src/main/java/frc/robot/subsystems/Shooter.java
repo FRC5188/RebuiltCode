@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -130,19 +129,39 @@ public class Shooter extends SubsystemBase {
         Commands.runOnce(() -> setFlywheelVelocity(0)));
   }
 
-  public void simShoot()
-  {
+  public void simShoot() {
     if (Robot.robotContainer.intake.simBalls <= 0) return;
 
     double flywheelSpeed = 6;
     Translation2d robotPose2d = Robot.robotContainer.drive.getPose().getTranslation();
     double Yaw = Robot.robotContainer.drive.getPose().getRotation().getRadians();
-    Pose3d robotPose3d = new Pose3d(new Translation3d(robotPose2d.getX(),robotPose2d.getY(),0), new Rotation3d(robotPose2d.getAngle()));
-    Pose3d shooterPose3d = new Pose3d(new Translation3d(-0.0075,0.0,0.523), new Rotation3d(0, _hood.getPosition().in(Radians), 0));
-    
-    double V_xy = Math.sin(Math.PI/2-(_hood.getPosition().in(Radians) + Degrees.of(12).in(Radians)))*flywheelSpeed;
+    Pose3d robotPose3d =
+        new Pose3d(
+            new Translation3d(robotPose2d.getX(), robotPose2d.getY(), 0),
+            new Rotation3d(robotPose2d.getAngle()));
+    Pose3d shooterPose3d =
+        new Pose3d(
+            new Translation3d(-0.0075, 0.0, 0.523),
+            new Rotation3d(0, _hood.getPosition().in(Radians), 0));
 
-    Robot.fuelSim.spawnFuel(robotPose3d.plus(new Transform3d(shooterPose3d.getX(), shooterPose3d.getY(), shooterPose3d.getZ(), new Rotation3d(0, 0, 0))).getTranslation(), new Translation3d(V_xy*Math.cos(Yaw), V_xy*Math.sin(Yaw), Math.sin(Math.PI/2-(_hood.getPosition().in(Radians) + Degrees.of(12).in(Radians))) *flywheelSpeed));
+    double V_xy =
+        Math.sin(Math.PI / 2 - (_hood.getPosition().in(Radians) + Degrees.of(12).in(Radians)))
+            * flywheelSpeed;
+
+    Robot.fuelSim.spawnFuel(
+        robotPose3d
+            .plus(
+                new Transform3d(
+                    shooterPose3d.getX(),
+                    shooterPose3d.getY(),
+                    shooterPose3d.getZ(),
+                    new Rotation3d(0, 0, 0)))
+            .getTranslation(),
+        new Translation3d(
+            V_xy * Math.cos(Yaw),
+            V_xy * Math.sin(Yaw),
+            Math.sin(Math.PI / 2 - (_hood.getPosition().in(Radians) + Degrees.of(12).in(Radians)))
+                * flywheelSpeed));
     Robot.robotContainer.intake.simBalls--;
   }
 
@@ -150,11 +169,16 @@ public class Shooter extends SubsystemBase {
     _hood.periodic();
     // _feeder.periodic();
     // _flywheel.periodic();
-    
-    double pitch = Math.toRadians(Math.abs(Math.sin(Timer.getFPGATimestamp())*45)); // Placeholder for position
-    
-    // The pitch of the Rotation3D should be '_hood.getPosition().in(Radians)', change after fixing motor configs.                   
-    Logger.recordOutput("3DField/3_Hood", new Pose3d(new Translation3d(-0.0075,0.0,0.523), new Rotation3d(0, pitch, 0)));
+
+    double pitch =
+        Math.toRadians(
+            Math.abs(Math.sin(Timer.getFPGATimestamp()) * 45)); // Placeholder for position
+
+    // The pitch of the Rotation3D should be '_hood.getPosition().in(Radians)', change after fixing
+    // motor configs.
+    Logger.recordOutput(
+        "3DField/3_Hood",
+        new Pose3d(new Translation3d(-0.0075, 0.0, 0.523), new Rotation3d(0, pitch, 0)));
 
     _hood.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp()) * 0.25));
   }

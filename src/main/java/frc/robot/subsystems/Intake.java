@@ -77,9 +77,10 @@ public class Intake extends SubsystemBase {
         <= IntakePivotConstants.TOLERANCE.magnitude();
   }
 
-  public boolean canIntake()
-  {
-    return _pivotIO.getPosition().in(Degree) > (IntakePivotConstants.MAX_ANGLE.in(Degree) - 10) && simBalls < 45 && simBalls >= 0;
+  public boolean canIntake() {
+    return _pivotIO.getPosition().in(Degree) > (IntakePivotConstants.MAX_ANGLE.in(Degree) - 10)
+        && simBalls < 45
+        && simBalls >= 0;
   }
 
   public Command stowAndStopRollers() {
@@ -101,7 +102,8 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (_pivotIO.getPosition().in(Degree) < IntakePivotConstants.MAX_ANGLE.in(Degree)) _pivotIO.runVoltage(Volts.of(0.25));
+    if (_pivotIO.getPosition().in(Degree) < IntakePivotConstants.MAX_ANGLE.in(Degree))
+      _pivotIO.runVoltage(Volts.of(0.25));
 
     _pivotIO.periodic();
     Logger.recordOutput(
@@ -115,6 +117,6 @@ public class Intake extends SubsystemBase {
             new Translation3d(Math.sin(_pivotIO.getPosition().in(Radians) * 0.1055), 0, 0),
             new Rotation3d(0, 0, 0)));
 
-     //_pivotIO.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp())*0.25)); //--- Tests the pivot
+    // _pivotIO.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp())*0.25)); //--- Tests the pivot
   }
 }

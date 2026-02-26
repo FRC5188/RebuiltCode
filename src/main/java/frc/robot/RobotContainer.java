@@ -40,7 +40,6 @@ import frc.robot.Constants.ShooterRotaryConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.BallCounter;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -315,17 +314,17 @@ public class RobotContainer {
         .x()
         .onTrue(Commands.runOnce(() -> hopper.setGoal(HopperConstants.HOPPER_POSITION), hopper));
 
-    controller
-        .rightTrigger()
-        .onTrue(Commands.runOnce(() -> shooter.simShoot()));
+    controller.rightTrigger().onTrue(Commands.runOnce(() -> shooter.simShoot()));
 
     controller
         .leftTrigger()
-        .onTrue(Commands.runOnce(() -> {
-            Robot.fuelSim.clearFuel();
-            Robot.fuelSim.spawnStartingFuel();
-            intake.simBalls = 0;
-        }));
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  Robot.fuelSim.clearFuel();
+                  Robot.fuelSim.spawnStartingFuel();
+                  intake.simBalls = 0;
+                }));
     controller.y().onTrue(Commands.runOnce(() -> intake.setVelocity(1)));
     controller.leftBumper().onTrue(intake.intake());
     controller.rightBumper().onTrue(intake.stowAndStopRollers());

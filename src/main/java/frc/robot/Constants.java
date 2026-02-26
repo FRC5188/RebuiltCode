@@ -599,7 +599,8 @@ public final class Constants {
     // Positional PID
     public static final Slot0Configs SLOT_0_CONFIG =
         new Slot0Configs().withKP(100.0).withKI(0.0).withKD(0).withKS(0.07).withKV(0.1);
-        //                              ^^^ CHANGE
+
+    //                              ^^^ CHANGE
 
     public static TalonFXConfiguration getFXConfig() {
       TalonFXConfiguration config = new TalonFXConfiguration();
