@@ -141,9 +141,6 @@ public class Shooter extends SubsystemBase {
     Pose3d shooterPose3d = new Pose3d(new Translation3d(-0.0075,0.0,0.523), new Rotation3d(0, _hood.getPosition().in(Radians), 0));
     
     double V_xy = Math.sin(Math.PI/2-(_hood.getPosition().in(Radians) + Degrees.of(12).in(Radians)))*flywheelSpeed;
-    System.out.println(V_xy*Math.cos(Yaw));
-    System.out.println(V_xy*Math.sin(Yaw));
-    System.out.println(Math.sin(_hood.getPosition().in(Radians) + Degrees.of(12).in(Radians)));
 
     Robot.fuelSim.spawnFuel(robotPose3d.plus(new Transform3d(shooterPose3d.getX(), shooterPose3d.getY(), shooterPose3d.getZ(), new Rotation3d(0, 0, 0))).getTranslation(), new Translation3d(V_xy*Math.cos(Yaw), V_xy*Math.sin(Yaw), Math.sin(Math.PI/2-(_hood.getPosition().in(Radians) + Degrees.of(12).in(Radians))) *flywheelSpeed));
     Robot.robotContainer.intake.simBalls--;

@@ -346,6 +346,14 @@ public class RobotContainer {
     controller
         .rightTrigger()
         .onTrue(Commands.runOnce(() -> shooter.simShoot()));
+
+    controller
+        .leftTrigger()
+        .onTrue(Commands.runOnce(() -> {
+            Robot.fuelSim.clearFuel();
+            Robot.fuelSim.spawnStartingFuel();
+            intake.simBalls = 0;
+        }));
   }
 
   /**
