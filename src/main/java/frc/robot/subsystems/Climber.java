@@ -1,15 +1,13 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -26,37 +24,22 @@ public class Climber extends SubsystemBase {
     _io = io;
   }
 
-  public void Position(double position) {
-    Distance positionInches = Inches.of(position);
-    _io.runPosition(
-        ClimberConstants.CONVERTER.toAngle(positionInches),
-        ClimberConstants.ANGULAR_VELOCITY,
-        ClimberConstants.ANGULAR_ACCELERATION,
-        null,
-        PIDSlot.SLOT_0);
-  }
+  // public void Position(double position) {
 
-  public Command runClimber(double Position) {
-    Distance positionInches = Inches.of(Position);
-    return this.runOnce(
-        () ->
-            _io.runPosition(
-                ClimberConstants.CONVERTER.toAngle(positionInches),
-                ClimberConstants.ANGULAR_VELOCITY,
-                ClimberConstants.ANGULAR_ACCELERATION,
-                ClimberConstants.JERK,
-                PIDSlot.SLOT_0));
-  }
+  //   Distance positionInches = Inches.of(position);
+  //   _io.runPosition(
+  //       ClimberConstants.CONVERTER.toAngle(positionInches),
+  //       ClimberConstants.ANGULAR_VELOCITY,
+  //       ClimberConstants.ANGULAR_ACCELERATION,
+  //       null,
+  //       PIDSlot.SLOT_0);
+  // }
 
-  public enum State {
-    IDLE(Units.MetersPerSecond.of(0.0)),
-    ASCENDING(Units.MetersPerSecond.of(ClimberConstants.CLIMB_SPEED)),
-    DESCENDING(Units.MetersPerSecond.of(-ClimberConstants.CLIMB_SPEED));
-
-    private final LinearVelocity velocity;
-
-    private State(LinearVelocity velocity) {
-      this.velocity = velocity;
+  public boolean isAboveCurrentLimit() {
+    if (_io.getSupplyCurrent().in(Amps) > ClimberConstants.HARD_STOP_CURRENT_LIMIT) {
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -75,8 +58,15 @@ public class Climber extends SubsystemBase {
     _io.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp()) * 0.25));
   }
 
-  public void runClimber() {
-    runClimber();
+  public Command runClimber() {
+    return this.runOnce(
+        () ->
+            _io.runPosition(
+                ClimberConstants.CONVERTER.toAngle(ClimberConstants.TOP),
+                ClimberConstants.CRUISE_VELOCITY,
+                ClimberConstants.ACCELERATION,
+                ClimberConstants.JERK,
+                PIDSlot.SLOT_0));
   }
 
   public boolean nearGoalposition() {

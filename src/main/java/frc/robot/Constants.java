@@ -162,6 +162,7 @@ public final class Constants {
     public static final String MOTOR_NAME = "Hopper Roller";
 
     // CHANGE TO PROPER RPMS !!!!
+
     public static final double SLOW_SPEED_RPM = 0.0;
     public static final double FAST_SPEED_RPM = 0.0;
     public static final double REVERSE_SPEED_RPM = 0.0;
@@ -331,9 +332,10 @@ public final class Constants {
 
     public static final Angle TOLERANCE = Degrees.of(2.0);
 
-    public static final AngularVelocity CRUISE_VELOCITY = RadiansPerSecond.of(1);
-    public static final AngularAcceleration ACCELERATION = CRUISE_VELOCITY.div(0.1).per(Second);
-    public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
+    // public static final AngularVelocity CRUISE_VELOCITY = Units.RadiansPerSecond.of(1);
+    // public static final AngularAcceleration ACCELERATION =
+    //     CRUISE_VELOCITY.div(0.1).per(Units.Second);
+    // public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
 
     private static final double ROTOR_TO_SENSOR = (2.0 / 1.0);
     private static final double SENSOR_TO_MECHANISM = (2.0 / 1.0);
@@ -395,10 +397,10 @@ public final class Constants {
       config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
       config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
-      config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = MAX_ANGLE.in(Rotations);
+      // config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = MAX_ANGLE.in(Units.Rotaitons);
 
       config.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
-      config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = MIN_ANGLE.in(Rotations);
+      // config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = MIN_ANGLE.in(Units.Rotations);
 
       config.Feedback.RotorToSensorRatio = ROTOR_TO_SENSOR;
       config.Feedback.SensorToMechanismRatio = SENSOR_TO_MECHANISM;
@@ -437,6 +439,7 @@ public final class Constants {
     public static final Angle MIN_ANGLE = Rotations.of(0.0);
     public static final Angle MAX_ANGLE = Rotations.of(1);
     public static final Angle STARTING_ANGLE = Rotations.of(0.0);
+    public static final double PICKUP_SPEED = 0.0;
     public static final Distance WHEEL_RADIUS = Meters.of(0.05);
     public static final Translation3d OFFSET = Translation3d.kZero;
     public static final MomentOfInertia MOI = KilogramSquareMeters.of(0.0028125);
@@ -568,6 +571,9 @@ public final class Constants {
   public class IntakePivotConstants {
     public static final String NAME = "Intake";
 
+    public static final Angle PICKUP_ANGLE = Rotations.of(0.0);
+    public static final Angle STOW_ANGLE = Rotations.of(0.0);
+
     public static final Angle TOLERANCE = Degrees.of(1.0);
 
     public static final AngularVelocity CRUISE_VELOCITY = RadiansPerSecond.of(10);
@@ -652,6 +658,9 @@ public final class Constants {
         RadiansPerSecond.of(2 * Math.PI).times(10.0);
     public static final AngularAcceleration ACCELERATION = CRUISE_VELOCITY.div(0.1).per(Second);
     public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
+    public static final Distance BOTTOM = Inches.of(0.0);
+    public static final Distance MIDDLE = Inches.of(15.0);
+    public static final Distance TOP = Inches.of(30.0);
 
     public static final LinearMechCharacteristics CHARACTERISTICS =
         new LinearMechCharacteristics(
@@ -704,5 +713,6 @@ public final class Constants {
     public static final AngularAcceleration ANGULAR_ACCELERATION =
         RotationsPerSecondPerSecond.of(1);
     public static final double CLIMB_SPEED = 1.0;
+    public static final double HARD_STOP_CURRENT_LIMIT = 50.0;
   }
 }
