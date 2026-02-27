@@ -1,6 +1,6 @@
 {
   "robotWidth": 0.69,
-  "robotLength": 0.69,
+  "robotLength": 0.7,
   "holonomicMode": true,
   "pathFolders": [
     "Climb Paths ✔",
@@ -40,7 +40,5 @@
   "brModuleY": -0.273,
   "bumperOffsetX": 0.0,
   "bumperOffsetY": 0.0,
-  "robotFeatures": [
-    "{\"name\":\"Line\",\"type\":\"line\",\"data\":{\"start\":{\"x\":0.0,\"y\":0.0},\"end\":{\"x\":0.2,\"y\":0.0},\"strokeWidth\":0.02}}"
-  ]
+  "robotFeatures": []
 }
