@@ -24,6 +24,14 @@ public class Climber extends SubsystemBase {
       this.velocity = velocity;
     }
   }
+  public boolean isAboveCurrentLimit() {
+      if (_io.getSupplyCurrent().in(Units.Amps) > ClimberConstants.HARD_STOP_CURRENT_LIMIT) {
+        return true;
+      }
+      else {
+        return false;
+      }
+  }
 
   @Override
   public void periodic() {}
