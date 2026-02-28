@@ -579,7 +579,7 @@ public final class Constants {
     public static final AngularVelocity CRUISE_VELOCITY = RadiansPerSecond.of(10);
     public static final AngularAcceleration ACCELERATION = RadiansPerSecondPerSecond.of(100);
     public static final Velocity<AngularAccelerationUnit> JERK =
-        RadiansPerSecondPerSecond.per(Second).of(0);
+        RadiansPerSecondPerSecond.per(Second).of(0.1);
 
     private static final double ROTOR_TO_SENSOR = (50.0 / 1.0);
     private static final double SENSOR_TO_MECHANISM = 1.0;
@@ -598,7 +598,9 @@ public final class Constants {
 
     // Positional PID
     public static final Slot0Configs SLOT_0_CONFIG =
-        new Slot0Configs().withKP(10.0).withKI(2.0).withKD(8).withKS(0.07).withKV(0.1);
+        new Slot0Configs().withKP(100.0).withKI(0.0).withKD(0).withKS(0.07).withKV(0.1);
+
+    //                              ^^^ CHANGE
 
     public static TalonFXConfiguration getFXConfig() {
       TalonFXConfiguration config = new TalonFXConfiguration();
@@ -657,6 +659,9 @@ public final class Constants {
         RadiansPerSecond.of(2 * Math.PI).times(10.0);
     public static final AngularAcceleration ACCELERATION = CRUISE_VELOCITY.div(0.1).per(Second);
     public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
+    public static final Distance BOTTOM = Inches.of(0.0);
+    public static final Distance MIDDLE = Inches.of(15.0);
+    public static final Distance TOP = Inches.of(30.0);
 
     public static final LinearMechCharacteristics CHARACTERISTICS =
         new LinearMechCharacteristics(
@@ -709,9 +714,6 @@ public final class Constants {
     public static final AngularAcceleration ANGULAR_ACCELERATION =
         RotationsPerSecondPerSecond.of(1);
     public static final double CLIMB_SPEED = 1.0;
-  }
-
-  public class ElevatorConstants {
     public static final double HARD_STOP_CURRENT_LIMIT = 50.0;
   }
 }

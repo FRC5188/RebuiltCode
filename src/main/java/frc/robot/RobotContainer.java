@@ -23,11 +23,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-<<<<<<< R2-137-create-an-elevator-current-limit
-import frc.lib.W8.io.absoluteencoder.AbsoluteEncoderIOCANCoder;
-import frc.lib.W8.io.absoluteencoder.AbsoluteEncoderIOCANCoderSim;
-=======
->>>>>>> main
 import frc.lib.W8.io.motor.*;
 import frc.lib.W8.io.vision.VisionIOPhotonVision;
 import frc.lib.W8.io.vision.VisionIOPhotonVisionSim;
@@ -68,14 +63,11 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 public class RobotContainer {
 
   // Subsystems
-<<<<<<< R2-137-create-an-elevator-current-limit
-  private final Drive drive;
-=======
   public final Drive drive;
->>>>>>> main
+  public final Drive drive;
   private final Hopper hopper;
   private final Shooter shooter;
-  private final Intake intake;
+  public final Intake intake;
   private final BallCounter ballCounter;
   private final Vision vision;
 
@@ -140,17 +132,9 @@ public class RobotContainer {
                         IntakePivotConstants.NAME,
                         IntakePivotConstants.getFXConfig(),
                         Ports.IntakeRoller),
-<<<<<<< R2-137-create-an-elevator-current-limit
-                    IntakeConstants.CONSTANTS,
-                    Optional.of(
-                        new AbsoluteEncoderIOCANCoder(
-                            Ports.IntakeRoller,
-                            IntakeConstants.MOTOR_NAME + " Encoder",
-                            IntakeConstants.getCANcoderConfig(false)))));
-=======
                     IntakePivotConstants.CONSTANTS,
                     Optional.empty()));
->>>>>>> main
+
         vision =
             new Vision(
                 new VisionIOPhotonVision(
@@ -332,7 +316,20 @@ public class RobotContainer {
         .x()
         .onTrue(Commands.runOnce(() -> hopper.setGoal(HopperConstants.HOPPER_POSITION), hopper));
 
+    controller.rightTrigger().onTrue(Commands.runOnce(() -> shooter.simShoot()));
+
+    controller
+        .leftTrigger()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  Robot.fuelSim.clearFuel();
+                  Robot.fuelSim.spawnStartingFuel();
+                  intake.simBalls = 0;
+                }));
     controller.y().onTrue(Commands.runOnce(() -> intake.setVelocity(1)));
+    controller.leftBumper().onTrue(intake.intake());
+    controller.rightBumper().onTrue(intake.stowAndStopRollers());
   }
 
   /**
