@@ -3,11 +3,18 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Meters;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.linear.LinearMechanism;
 import frc.robot.Constants.ClimberConstants;
-import frc.robot.Constants.ElevatorConstants;
+import org.littletonrobotics.junction.Logger;
+
 
 public class Climber extends SubsystemBase {
   private LinearMechanism _io;
@@ -29,7 +36,7 @@ public class Climber extends SubsystemBase {
   // }
 
   public boolean isAboveCurrentLimit() {
-    if (_io.getSupplyCurrent().in(Amps) > ElevatorConstants.HARD_STOP_CURRENT_LIMIT) {
+    if (_io.getSupplyCurrent().in(Amps) > ClimberConstants.HARD_STOP_CURRENT_LIMIT) {
       return true;
     } else {
       return false;
@@ -39,8 +46,15 @@ public class Climber extends SubsystemBase {
   @Override
   public void periodic() {}
 
-  public void runClimber() {
-    runClimber();
+  public Command runClimber() {
+    return this.runOnce(
+        () ->
+            _io.runPosition(
+                ClimberConstants.CONVERTER.toAngle(ClimberConstants.TOP),
+                ClimberConstants.CRUISE_VELOCITY,
+                ClimberConstants.ACCELERATION,
+                ClimberConstants.JERK,
+                PIDSlot.SLOT_0));
   }
 
   public boolean nearGoalposition() {
