@@ -86,6 +86,12 @@ public class Drive extends SubsystemBase {
               1),
           getModuleTranslations());
 
+    // Shoot on the Move constants
+    public static final double SHOOT_ON_THE_MOVE_P = 0.13;
+    public static final double SHOOT_ON_THE_MOVE_I = 0.003;
+    public static final double SHOOT_ON_THE_MOVE_D = 0.00075;
+    public static final double SHOOT_ON_THE_MOVE_TOLERANCE = 3.0;
+
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
@@ -365,4 +371,22 @@ public class Drive extends SubsystemBase {
       new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
     };
   }
+
+  /**
+   * Returns the distance from the center of the robot to the alliance's speaker
+   */
+  public double getRadiusToSpeakerInMeters() {
+
+    return getRadiusToSpeakerInMeters(_poseEstimator.getEstimatedPosition(), getSpeakerPos());
+  }
+
+  public static double getRadiusToSpeakerInMeters(Pose2d robotPose, Pose2d speakerPos) {
+    double xDiff = robotPose.getX() - speakerPos.getX();
+    double yDiff = robotPose.getY() - speakerPos.getY();
+    double xPow = Math.pow(xDiff, 2);
+    double yPow = Math.pow(yDiff, 2);
+    // Use pythagorean thm to find hypotenuse, which is our radius
+    return Math.sqrt(xPow + yPow);
+  }
+  
 }

@@ -14,16 +14,6 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.KilogramSquareMeters;
-import static edu.wpi.first.units.Units.Kilograms;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CANdleConfiguration;
@@ -263,6 +253,9 @@ public final class Constants {
     public static final double TOWER_SPEED_RPM = (1.0);
     public static final double DEFAULT_SPEED_RPM = (1.0);
     public static final double FLYWHEEL_VELOCITY_TOLERANCE = 1.0;
+
+    public static final double TIME_TO_SHOOT = 0.2; // In seconds, how long it takes for a ball to leave once "shoot" is pressed
+
 
     // Hood Constants
     public static final double HEIGHT_DIFFERENCE =

@@ -36,6 +36,8 @@ public class Shooter extends SubsystemBase {
   private double desiredVelo;
   private double hoodAngle;
 
+  private static boolean autoShootEnabled = true;
+
   public Shooter(FlywheelMechanism flywheel, FlywheelMechanism feeder, RotaryMechanism hood) {
     _flywheel = flywheel;
     _feeder = feeder;
@@ -163,6 +165,14 @@ public class Shooter extends SubsystemBase {
             Math.sin(Math.PI / 2 - (_hood.getPosition().in(Radians) + Degrees.of(12).in(Radians)))
                 * flywheelSpeed));
     Robot.robotContainer.intake.simBalls--;
+  }
+
+  public boolean isAutoShootEnabled() {
+      return autoShootEnabled;
+  }
+
+  public void setAutoShootEnabled(boolean enabled) {
+      autoShootEnabled = enabled;
   }
 
   public void periodic() {
