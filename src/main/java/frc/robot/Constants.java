@@ -652,6 +652,9 @@ public final class Constants {
     public static final AngularAcceleration ACCELERATION = CRUISE_VELOCITY.div(0.1).per(Second);
     public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
 
+    public static final double L1 = 10;
+    public static final double STOW = 0; 
+
     public static final LinearMechCharacteristics CHARACTERISTICS =
         new LinearMechCharacteristics(
             new Translation3d(0.0, 0.0, 0.0),

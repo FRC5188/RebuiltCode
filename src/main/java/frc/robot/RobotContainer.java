@@ -291,9 +291,9 @@ public class RobotContainer {
     }
 
     // Extends climber arm
-    NamedCommands.registerCommand("ExtendClimber", climber.runClimber(10));
+    NamedCommands.registerCommand("ExtendClimber", climber.runClimber(ClimberConstants.L1));
     // Retracts climber arm
-    NamedCommands.registerCommand("Climb", climber.runClimber(0));
+    NamedCommands.registerCommand("Climb", climber.runClimber(ClimberConstants.STOW));
     // Bring flywheel up to speed + hood to position for known locations?
     NamedCommands.registerCommand("ReadyUp", getAutonomousCommand());
     // Shoots
@@ -303,7 +303,7 @@ public class RobotContainer {
     // Turns intake off - sets intake mode to  
     NamedCommands.registerCommand("IntakeOff", getAutonomousCommand());
     // Extends the intake
-    NamedCommands.registerCommand("IntakeOut", getAutonomousCommand());
+    NamedCommands.registerCommand("IntakeDown", getAutonomousCommand());
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
