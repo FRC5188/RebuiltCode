@@ -13,6 +13,8 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -82,8 +84,20 @@ public class Shooter extends SubsystemBase {
 
   public double getHoodAngleDegrees(Translation2d robotPos) {
 
-    // TODO: Replace with HUB later once it gets added.
-    double distance = robotPos.getDistance(FieldConstants.FIELDCENTER);
+    Alliance alliance = Alliance.Blue; // default
+    Translation2d hubPosition;
+
+    if (DriverStation.getAlliance().isPresent()) {
+      alliance = DriverStation.getAlliance().get();
+    }
+
+    if (alliance == Alliance.Red) {
+      hubPosition = FieldConstants.OPPHUBCENTER;
+    } else {
+      hubPosition = FieldConstants.HUBCENTER;
+    }
+
+    double distance = robotPos.getDistance(hubPosition);
 
     double check =
         Math.pow(ShooterConstants.EXIT_VELOCITY, 4)
@@ -102,6 +116,25 @@ public class Shooter extends SubsystemBase {
                 / (ShooterConstants.GRAVITY * distance)));
   }
 
+  public double getHoodAngleDegrees(double radius) {
+
+    double check =
+        Math.pow(ShooterConstants.EXIT_VELOCITY, 4)
+            - ShooterConstants.GRAVITY
+                * (ShooterConstants.GRAVITY * Math.pow(radius, 2)
+                    + 2
+                        * ShooterConstants.HEIGHT_DIFFERENCE
+                        * Math.pow(ShooterConstants.EXIT_VELOCITY, 2));
+
+    if (check < 0) {
+      return ShooterConstants.IDLE_HOOD_ANGLE; // Default angle if the shot is not possible
+    }
+    return Math.toDegrees(
+        Math.atan(
+            (ShooterConstants.EXIT_VELOCITY * ShooterConstants.EXIT_VELOCITY + Math.sqrt(check))
+                / (ShooterConstants.GRAVITY * radius)));
+  }
+
   // Sets hood angle
   public void setHoodAngle(double angleDegrees) {
     hoodAngle = angleDegrees;
@@ -111,6 +144,12 @@ public class Shooter extends SubsystemBase {
         ShooterConstants.HOOD_ACCELERATION,
         ShooterConstants.HOOD_JERK,
         PIDSlot.SLOT_0);
+  }
+
+  private void setFlywheelSpeedWithRadius(double radius) {
+    setFlywheelVelocity(
+        ShooterConstants.DEFAULT_SPEED_RPM
+            / 60); // TODO: Update this value from default speed later.
   }
 
   // Checks if hood is at angle
@@ -168,11 +207,11 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean isAutoShootEnabled() {
-      return autoShootEnabled;
+    return autoShootEnabled;
   }
 
   public void setAutoShootEnabled(boolean enabled) {
-      autoShootEnabled = enabled;
+    autoShootEnabled = enabled;
   }
 
   public void periodic() {
@@ -191,5 +230,12 @@ public class Shooter extends SubsystemBase {
         new Pose3d(new Translation3d(-0.0075, 0.0, 0.523), new Rotation3d(0, pitch, 0)));
 
     _hood.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp()) * 0.25));
+  }
+
+  public void runShooterForRadius(double radius) {
+    double desiredAngle = getHoodAngleDegrees(radius);
+
+    setHoodAngle(desiredAngle);
+    setFlywheelSpeedWithRadius(radius);
   }
 }

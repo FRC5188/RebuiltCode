@@ -47,6 +47,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
@@ -86,11 +87,11 @@ public class Drive extends SubsystemBase {
               1),
           getModuleTranslations());
 
-    // Shoot on the Move constants
-    public static final double SHOOT_ON_THE_MOVE_P = 0.13;
-    public static final double SHOOT_ON_THE_MOVE_I = 0.003;
-    public static final double SHOOT_ON_THE_MOVE_D = 0.00075;
-    public static final double SHOOT_ON_THE_MOVE_TOLERANCE = 3.0;
+  // Shoot on the Move constants
+  public static final double SHOOT_ON_THE_MOVE_P = 0.13;
+  public static final double SHOOT_ON_THE_MOVE_I = 0.003;
+  public static final double SHOOT_ON_THE_MOVE_D = 0.00075;
+  public static final double SHOOT_ON_THE_MOVE_TOLERANCE = 3.0;
 
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
@@ -111,6 +112,9 @@ public class Drive extends SubsystemBase {
       };
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
+
+  private Alliance alliance;
+  private Translation2d hubPosition;
 
   public Drive(
       GyroIO gyroIO,
@@ -372,21 +376,46 @@ public class Drive extends SubsystemBase {
     };
   }
 
-  /**
-   * Returns the distance from the center of the robot to the alliance's speaker
-   */
-  public double getRadiusToSpeakerInMeters() {
-
-    return getRadiusToSpeakerInMeters(_poseEstimator.getEstimatedPosition(), getSpeakerPos());
+  public Alliance getAlliance() {
+    if (DriverStation.getAlliance().isPresent()) {
+      alliance = DriverStation.getAlliance().get();
+    }
+    return alliance;
   }
 
-  public static double getRadiusToSpeakerInMeters(Pose2d robotPose, Pose2d speakerPos) {
-    double xDiff = robotPose.getX() - speakerPos.getX();
-    double yDiff = robotPose.getY() - speakerPos.getY();
+  private Translation2d getHubPos() {
+    hubPosition =
+        (getAlliance() == DriverStation.Alliance.Blue)
+            ? FieldConstants.HUBCENTER
+            : FieldConstants.OPPHUBCENTER;
+
+    return hubPosition;
+  }
+
+  /** Returns the distance from the center of the robot to the alliance's hub */
+  public double getRadiusToHubInMeters() {
+    return getRadiusToHubInMeters(poseEstimator.getEstimatedPosition(), getHubPos());
+  }
+
+  /**
+   * Returns the distance from the center of the robot to the alliance's hub. NOTE: Use THIS
+   * constructor for CmdShootOnTheMove only.
+   */
+  public double getRadiusToHubInMeters(Pose2d robotPose) {
+
+    return getRadiusToHubInMeters(robotPose, getHubPos());
+  }
+
+  public static double getRadiusToHubInMeters(Pose2d robotPose, Translation2d hubPos) {
+    double xDiff = robotPose.getX() - hubPos.getX();
+    double yDiff = robotPose.getY() - hubPos.getY();
     double xPow = Math.pow(xDiff, 2);
     double yPow = Math.pow(yDiff, 2);
     // Use pythagorean thm to find hypotenuse, which is our radius
     return Math.sqrt(xPow + yPow);
   }
-  
+
+  public Rotation2d getRotation2dToHub(Translation2d futurePose) {
+    return getHubPos().minus(futurePose).getAngle();
+  }
 }

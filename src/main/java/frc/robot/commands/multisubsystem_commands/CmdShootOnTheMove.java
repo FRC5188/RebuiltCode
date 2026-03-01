@@ -10,8 +10,13 @@ package frc.robot.commands.multisubsystem_commands;
 // https://github.com/WHS-FRC-3467/Skip-5.14-Nocturne/blob/PostGSDCleanup/src/main/java/frc/robot/Commands/velocityOffset.java
 // -----------------------------------------------------
 
-import java.util.function.DoubleSupplier;
-
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Intake;
@@ -22,17 +27,12 @@ import frc.robot.subsystems.drive.Drive;
 // import frc.robot.subsystems.shooter.Shooter;
 // import frc.robot.subsystems.shooter.ShooterConstants;
 // import frc.robot.subsystems.shooter.Shooter.ShooterZone;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.Timer;
+import java.util.function.DoubleSupplier;
 
 public class CmdShootOnTheMove extends Command {
   /** Creates a new CmdDriveShootOnTheMove. */
   private final Drive _drive;
+
   private final Shooter _shooter;
   private final Intake _intake;
 
@@ -63,20 +63,18 @@ public class CmdShootOnTheMove extends Command {
   private PIDController _rotationPID;
 
   /**
-   * CmdAdjustShooterAutomatically is the default command for the shooter. 
-   * Disable it when we run this command.
-   * 
-   * @param drivetrainSubsystem  the drive subsystem
-   * @param shooterSubsystem     the shooter subsystem
-   * @param intakeSubsystem      the intake subsystem
-   * @param triggerAxis          button binding used
-   * @param translationXSupplier translation x supplied by driver translation
-   *                             joystick
-   * @param translationYSupplier translation y supplied by driver translation
-   *                             joystick
-[]\
-   **/
-  public CmdShootOnTheMove(Drive drivetrainSubsystem,
+   * CmdAdjustShooterAutomatically is the default command for the shooter. Disable it when we run
+   * this command.
+   *
+   * @param drivetrainSubsystem the drive subsystem
+   * @param shooterSubsystem the shooter subsystem
+   * @param intakeSubsystem the intake subsystem
+   * @param triggerAxis button binding used
+   * @param translationXSupplier translation x supplied by driver translation joystick
+   * @param translationYSupplier translation y supplied by driver translation joystick []\
+   */
+  public CmdShootOnTheMove(
+      Drive drivetrainSubsystem,
       Shooter shooterSubsystem,
       Intake intakeSubsystem,
       DoubleSupplier triggerAxis,
@@ -90,10 +88,9 @@ public class CmdShootOnTheMove extends Command {
     _translationXSupplier = translationXSupplier;
     _translationYSupplier = translationYSupplier;
 
-    _rotationPID = new PIDController(
-        Drive.SHOOT_ON_THE_MOVE_P,
-        Drive.SHOOT_ON_THE_MOVE_I,
-        Drive.SHOOT_ON_THE_MOVE_D);
+    _rotationPID =
+        new PIDController(
+            Drive.SHOOT_ON_THE_MOVE_P, Drive.SHOOT_ON_THE_MOVE_I, Drive.SHOOT_ON_THE_MOVE_D);
 
     _rotationPID.setTolerance(Drive.SHOOT_ON_THE_MOVE_TOLERANCE);
     _rotationPID.enableContinuousInput(-180.0, 180.0);
@@ -135,8 +132,10 @@ public class CmdShootOnTheMove extends Command {
     }
 
     // Calculate change in x and y distances due to time and velocity.
-    _moveDelta = new Translation2d(_timeUntilShot * (_speeds.vxMetersPerSecond),
-        _timeUntilShot * (_speeds.vyMetersPerSecond));
+    _moveDelta =
+        new Translation2d(
+            _timeUntilShot * (_speeds.vxMetersPerSecond),
+            _timeUntilShot * (_speeds.vyMetersPerSecond));
 
     // Add current position + change in position due to velocity to get future
     // position. This is where the robot will be at _timeUntilShot.
@@ -147,7 +146,7 @@ public class CmdShootOnTheMove extends Command {
     _currentAngleRadians = _drive.getRotation().getRadians() + Math.PI;
 
     // Angle to the speaker from the future position as a Rotation2d.
-    _futureAngleToSpeaker = _drive.getRotation2dToSpeaker(_futureRobotTranslation);
+    _futureAngleToSpeaker = _drive.getRotation2dToHub(_futureRobotTranslation);
 
     // All PID calculations are done in radians, so convert our setpoint from a
     // Rotation2d to radians.
@@ -155,35 +154,47 @@ public class CmdShootOnTheMove extends Command {
 
     // Angle in radians (omegaRadiansPerSecond) to pass to the drivetrain later in a
     // ChassisSpeeds object
-    _correctedRotation = _rotationPID.calculate(
-        (MathUtil.inputModulus(_currentAngleRadians, -1 * Math.PI, Math.PI)));
+    _correctedRotation =
+        _rotationPID.calculate(
+            (MathUtil.inputModulus(_currentAngleRadians, -1 * Math.PI, Math.PI)));
 
     // Get a Pose2d based on the newly-calculated future translation and angle.
     _futureRobotPose2d = new Pose2d(_futureRobotTranslation, _futureAngleToSpeaker);
-    _correctedRadius = _drive.getRadiusToSpeakerInMeters(_futureRobotPose2d);
+    _correctedRadius = _drive.getRadiusToHubInMeters(_futureRobotPose2d);
 
     // drive the robot based on the calculations from above
+    // _drive.runVelocity(
+    //     _drive.transformJoystickInputsToChassisSpeeds(
+    //       _translationXSupplier.getAsDouble(),
+    //       _translationYSupplier.getAsDouble(),
+    //        _correctedRotation, false));
+
+    // DriveCommands.joystickDriveAtAngle(
+    //   _drive,
+    //   _translationXSupplier,
+    //     _translationYSupplier,
+    //     _correctedRotation);
+
     _drive.runVelocity(
-        _drive.transformJoystickInputsToChassisSpeeds(
-          _translationXSupplier.getAsDouble(), 
-          _translationYSupplier.getAsDouble(),
-           _correctedRotation, false));
-        
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            _translationXSupplier.getAsDouble(),
+            _translationYSupplier.getAsDouble(),
+            _correctedRotation,
+            _drive.getRotation()));
 
     if (_shooter.isAutoShootEnabled()) {
-      if (_intake.hasNote()) {
-        // if (_correctedZone != _shooter.getCurrentZone()) {
-        //   // We want to shoot!
-        //   _shooter.runShooterForZone(_correctedZone);
-        // }
-        _shooter.runShooterForRadius(_correctedRadius);
-
-      } else {
-        if (_shooter.getCurrentZone() != ShooterZone.Unknown) {
-          _shooter.runShooterForZone(ShooterZone.Unknown);
-        }
-      }
+      // if (_intake.hasNote()) {
+      // if (_correctedZone != _shooter.getCurrentZone()) {
+      //   // We want to shoot!
+      //   _shooter.runShooterForZone(_correctedZone);
+      // }
+      _shooter.runShooterForRadius(_correctedRadius);
     }
+    // else {
+    //   if (_shooter.getCurrentZone() != ShooterZone.Unknown) {
+    //     _shooter.runShooterForZone(ShooterZone.Unknown);
+    //   }
+    // }
   }
 
   // Called once the command ends or is interrupted.
@@ -194,7 +205,7 @@ public class CmdShootOnTheMove extends Command {
             _translationXSupplier.getAsDouble(),
             _translationYSupplier.getAsDouble(),
             0,
-            _drive.getGyroscopeRotation()));
+            _drive.getRotation()));
     _shotTimer.stop();
     _shotTimer.reset();
     _hasRunOnce = false;

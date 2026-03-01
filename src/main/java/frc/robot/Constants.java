@@ -118,22 +118,31 @@ public final class Constants {
     public static final Distance CENTERLINE = Meters.of(FIELDLENGTH.in(Meters) / 2);
     public static final Double starting = (aprilTagLayout.getTagPose(26).get().getX());
     public static final Double allianceZone = starting;
-    public static final Double hubCenter =
+
+    public static final Double hubCenterX =
         (aprilTagLayout.getTagPose(26).get().getX() + (HUBWIDTH / 2.0));
+    public static final Double oppHubCenterX =
+        aprilTagLayout.getTagPose(4).get().getX() + (HUBWIDTH / 2.0);
+
+    public static final Double hubCenterY = aprilTagLayout.getFieldWidth() / 2;
+
+    public static final Translation2d HUBCENTER = new Translation2d(hubCenterX, hubCenterY);
+
+    public static final Translation2d OPPHUBCENTER = new Translation2d(oppHubCenterX, hubCenterY);
+
     public static final Distance neutralZoneNear =
         Meters.of(CENTERLINE.in(Meters) - (Units.inchesToMeters(120.0)));
     public static final Distance neutralZoneFar =
         Meters.of(CENTERLINE.in(Meters) + (Units.inchesToMeters(120.0)));
-    public static final Distance oppHubCenter =
-        Meters.of(aprilTagLayout.getTagPose(4).get().getX() + (HUBWIDTH / 2.0));
+
     public static final Distance oppAllianceZone =
         Meters.of(aprilTagLayout.getTagPose(10).get().getX());
     public static final double BUMPWIDTH = Units.inchesToMeters(73.0);
     public static final double BUMPHIGHT = Units.inchesToMeters(6.513);
     public static final double BUMPDEPTH = Units.inchesToMeters(44.4);
-    public static final double RBUMPSTART = hubCenter + (HUBWIDTH / 2.0);
+    public static final double RBUMPSTART = hubCenterX + (HUBWIDTH / 2.0);
     public static final double RBUMPEND = RBUMPSTART + BUMPWIDTH;
-    public static final double LBUMPSTART = hubCenter - (HUBWIDTH / 2.0);
+    public static final double LBUMPSTART = hubCenterX - (HUBWIDTH / 2.0);
     public static final double LBUMPEND = RBUMPSTART - BUMPWIDTH;
   }
 
@@ -254,8 +263,8 @@ public final class Constants {
     public static final double DEFAULT_SPEED_RPM = (1.0);
     public static final double FLYWHEEL_VELOCITY_TOLERANCE = 1.0;
 
-    public static final double TIME_TO_SHOOT = 0.2; // In seconds, how long it takes for a ball to leave once "shoot" is pressed
-
+    public static final double TIME_TO_SHOOT =
+        0.2; // In seconds, how long it takes for a ball to leave once "shoot" is pressed
 
     // Hood Constants
     public static final double HEIGHT_DIFFERENCE =
