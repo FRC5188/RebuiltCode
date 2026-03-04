@@ -164,8 +164,7 @@ public final class Constants {
     // CHANGE TO PROPER RPMS !!!!
 
     public static final double SLOW_SPEED_RPM = 0.0;
-    public static final double FAST_SPEED_RPM = 0.0;
-    public static final double REVERSE_SPEED_RPM = 0.0;
+    public static final double FAST_SPEED_RPM = 100.0;
     public static final Voltage VOLTAGE = Volts.of(12.0);
     public static final AngularVelocity ANGULAR_VELOCITY = RotationsPerSecond.of(1);
     public static final AngularAcceleration ANGULAR_ACCELERATION =
