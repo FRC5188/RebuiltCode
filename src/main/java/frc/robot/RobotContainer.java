@@ -65,7 +65,7 @@ public class RobotContainer {
   public final Drive drive;
   private final Hopper hopper;
   private final Shooter shooter;
-  private final Intake intake;
+  public final Intake intake;
   private final Vision vision;
   private final BallCounter ballCounter;
 
