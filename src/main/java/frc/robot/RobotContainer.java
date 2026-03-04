@@ -308,7 +308,20 @@ public class RobotContainer {
         .x()
         .onTrue(Commands.runOnce(() -> hopper.setGoal(HopperConstants.HOPPER_POSITION), hopper));
 
+    controller.rightTrigger().onTrue(Commands.runOnce(() -> shooter.simShoot()));
+
+    controller
+        .leftTrigger()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  Robot.fuelSim.clearFuel();
+                  Robot.fuelSim.spawnStartingFuel();
+                  intake.simBalls = 0;
+                }));
     controller.y().onTrue(Commands.runOnce(() -> intake.setVelocity(1)));
+    controller.leftBumper().onTrue(intake.intake());
+    controller.rightBumper().onTrue(intake.stowAndStopRollers());
   }
 
   /**
