@@ -156,9 +156,7 @@ public class RobotContainer {
             new Hopper(
                 new FlywheelMechanismSim(
                     new MotorIOTalonFXSim(
-                        HopperConstants.MOTOR_NAME,
-                        HopperConstants.getFXConfig(),
-                        Ports.Spindexer),
+                        HopperConstants.MOTOR_NAME, HopperConstants.getFXConfig(), Ports.Spindexer),
                     HopperConstants.DCMOTOR,
                     HopperConstants.MOI,
                     HopperConstants.TOLERANCE));

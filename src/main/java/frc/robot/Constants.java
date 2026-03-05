@@ -163,7 +163,6 @@ public final class Constants {
 
     public static final Device.CAN LEDs = new CAN(2, "rio");
     public static final Device.CAN Pigeon = new CAN(0, "rio");
-
   }
 
   public class HopperConstants {
