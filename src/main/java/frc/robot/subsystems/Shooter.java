@@ -92,8 +92,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public double getHoodAngleDegrees(Translation2d robotPos) {
-
-    // TODO: Replace with HUB later once it gets added.
+    // Replace with HUB when it is added
     double distance = robotPos.getDistance(FieldConstants.FIELDCENTER);
 
     double check =
