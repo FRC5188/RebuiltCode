@@ -163,12 +163,10 @@ public final class Constants {
 
     // CHANGE TO PROPER RPMS !!!!
 
-    public static final double SLOW_SPEED_RPM = 0.0;
-    public static final double FAST_SPEED_RPM = 100.0;
     public static final Voltage VOLTAGE = Volts.of(12.0);
-    public static final AngularVelocity ANGULAR_VELOCITY = RotationsPerSecond.of(1);
+    public static final AngularVelocity ANGULAR_VELOCITY = RotationsPerSecond.of(3);
     public static final AngularAcceleration ANGULAR_ACCELERATION =
-        RotationsPerSecondPerSecond.of(1);
+        RotationsPerSecondPerSecond.of(3);
     public static final int HOPPER_POSITION = 1;
 
     public static final Mass CARRIAGE_MASS = Kilograms.of(2.5);

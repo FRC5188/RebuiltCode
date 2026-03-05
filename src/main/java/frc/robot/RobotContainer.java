@@ -279,13 +279,13 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    drive.setDefaultCommand(
+    /*drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
             () -> controller.getLeftY(),
             () -> controller.getLeftX(),
             () -> -controller.getRightX()));
-
+*/
     // Lock to 0° when A button is held
     controller
         .a()
@@ -297,10 +297,12 @@ public class RobotContainer {
                 () -> new Rotation2d()));
 
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    //TODO: Uncomment 
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    controller
+    //TODO: Uncomment
+    /*controller
         .b()
         .onTrue(
             Commands.runOnce(
@@ -309,12 +311,16 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+                */
 
-    controller
-        .x()
-        .onTrue(Commands.runOnce(() -> hopper.setGoal(HopperConstants.HOPPER_POSITION), hopper));
+    controller.b().onTrue(hopper.runHopper());
 
-    controller.rightTrigger().onTrue(Commands.runOnce(() -> shooter.simShoot()));
+    controller.x().onTrue(Commands.run(() -> shooter.runFeeder()));
+
+//    controller.rightTrigger().whileTrue(Commands.run(() -> shooter.setFlywheelVelocity(0)));
+    
+    // TODO: Uncomment this
+    // controller.rightTrigger().onTrue(Commands.runOnce(() -> shooter.simShoot()));
 
     controller
         .leftTrigger()
