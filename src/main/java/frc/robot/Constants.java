@@ -154,6 +154,10 @@ public final class Constants {
     public static final Device.CAN HopperRoller = new CAN(3, "rio");
     public static final Device.CAN ClimberLinearMechanism = new CAN(4, "rio");
     public static final Device.CAN ShooterRoller = new CAN(5, "rio");
+    public static final Device.CAN IntakePivot = new CAN(6, "rio");
+    public static final Device.CAN ShooterTower = new CAN(7, "rio");
+    public static final Device.CAN ShooterFeeder = new CAN(8, "rio");
+    public static final Device.CAN ShooterHood = new CAN(9, "rio");
   }
 
   public class HopperConstants {
@@ -258,10 +262,10 @@ public final class Constants {
     public static final Angle STARTING_ANGLE = Rotations.of(0.0);
     public static final Distance WHEEL_RADIUS = Meters.of(0.5);
 
-    public static final double IDLE_SPEED_RPM = (1.0);
-    public static final double HUB_SPEED_RPM = (1.0);
-    public static final double TOWER_SPEED_RPM = (1.0);
-    public static final double DEFAULT_SPEED_RPM = (1.0);
+    public static final AngularVelocity IDLE_SPEED_RPM = RotationsPerSecond.of(1.0);
+    public static final AngularVelocity HUB_SPEED_RPM = RotationsPerSecond.of(1.0);
+    public static final AngularVelocity TOWER_SPEED_RPM = RotationsPerSecond.of(1.0);
+    public static final AngularVelocity DEFAULT_SPEED_RPM = RotationsPerSecond.of(1.0);
     public static final double FLYWHEEL_VELOCITY_TOLERANCE = 1.0;
 
     // Hood Constants
@@ -278,9 +282,9 @@ public final class Constants {
         new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
   }
 
-  public class ShooterFlywheelConstants {
-
-    public static String NAME = "ShooterFlywheel";
+  // Needs tuned
+  public class ShooterFeederConstants {
+    public static String NAME = "ShooterFeederFlywheel";
 
     public static final AngularVelocity MAX_VELOCITY = RadiansPerSecond.of(2 * Math.PI);
     public static final AngularAcceleration MAX_ACCELERATION = MAX_VELOCITY.per(Second);
@@ -327,6 +331,103 @@ public final class Constants {
     }
   }
 
+  // Needs tuned
+  public class ShooterTowerConstants {
+    public static String NAME = "ShooterTowerFlywheel";
+
+    public static final AngularVelocity MAX_VELOCITY = RadiansPerSecond.of(2 * Math.PI);
+    public static final AngularAcceleration MAX_ACCELERATION = MAX_VELOCITY.per(Second);
+
+    private static final double GEARING = (2.0 / 1.0);
+
+    public static final AngularVelocity TOLERANCE = MAX_VELOCITY.times(0.1);
+
+    public static final DCMotor DCMOTOR = DCMotor.getKrakenX60(1);
+    public static final MomentOfInertia MOI = KilogramSquareMeters.of(1.0);
+
+    // Velocity PID
+    private static Slot0Configs SLOT0CONFIG =
+        new Slot0Configs().withKP(1000.0).withKI(0.0).withKD(0.0);
+
+    public static TalonFXConfiguration getFXConfig() {
+      TalonFXConfiguration config = new TalonFXConfiguration();
+
+      config.CurrentLimits.SupplyCurrentLimitEnable = Robot.isReal();
+      config.CurrentLimits.SupplyCurrentLimit = 40.0;
+      config.CurrentLimits.SupplyCurrentLowerLimit = 40.0;
+      config.CurrentLimits.SupplyCurrentLowerTime = 0.1;
+
+      config.CurrentLimits.StatorCurrentLimitEnable = Robot.isReal();
+      config.CurrentLimits.StatorCurrentLimit = 80.0;
+
+      config.Voltage.PeakForwardVoltage = 12.0;
+      config.Voltage.PeakReverseVoltage = -12.0;
+
+      config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+      config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+      config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+
+      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
+
+      config.Feedback.RotorToSensorRatio = 1.0;
+
+      config.Feedback.SensorToMechanismRatio = GEARING;
+
+      config.Slot0 = SLOT0CONFIG;
+
+      return config;
+    }
+  }
+
+  public class ShooterFlywheelConstants {
+    public static String NAME = "ShooterFlywheel";
+
+    public static final AngularVelocity MAX_VELOCITY = RadiansPerSecond.of(2 * Math.PI);
+    public static final AngularAcceleration MAX_ACCELERATION = MAX_VELOCITY.per(Second);
+
+    private static final double GEARING = (5.0 / 1.0);
+
+    public static final AngularVelocity TOLERANCE = MAX_VELOCITY.times(0.1);
+
+    public static final DCMotor DCMOTOR = DCMotor.getKrakenX60(1);
+    public static final MomentOfInertia MOI = KilogramSquareMeters.of(0.2);
+
+    // Velocity PID
+    private static Slot0Configs SLOT0CONFIG =
+        new Slot0Configs().withKP(0.75).withKI(0.0).withKD(0.0);
+
+    public static TalonFXConfiguration getFXConfig() {
+      TalonFXConfiguration config = new TalonFXConfiguration();
+
+      config.CurrentLimits.SupplyCurrentLimitEnable = Robot.isReal();
+      config.CurrentLimits.SupplyCurrentLimit = 40.0;
+      config.CurrentLimits.SupplyCurrentLowerLimit = 40.0;
+      config.CurrentLimits.SupplyCurrentLowerTime = 0.1;
+
+      config.CurrentLimits.StatorCurrentLimitEnable = Robot.isReal();
+      config.CurrentLimits.StatorCurrentLimit = 80.0;
+
+      config.Voltage.PeakForwardVoltage = 12.0;
+      config.Voltage.PeakReverseVoltage = -12.0;
+
+      config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+      config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+      config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+
+      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
+
+      config.Feedback.RotorToSensorRatio = 1.0;
+
+      config.Feedback.SensorToMechanismRatio = GEARING;
+
+      config.Slot0 = SLOT0CONFIG;
+
+      return config;
+    }
+  }
+
   public class ShooterRotaryConstants {
     public static String NAME = "ShooterRotary";
 
@@ -337,13 +438,13 @@ public final class Constants {
     //     CRUISE_VELOCITY.div(0.1).per(Units.Second);
     // public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
 
-    private static final double ROTOR_TO_SENSOR = (2.0 / 1.0);
-    private static final double SENSOR_TO_MECHANISM = (2.0 / 1.0);
+    private static final double ROTOR_TO_SENSOR = (1.0 / 1.0);
+    private static final double SENSOR_TO_MECHANISM = (50.0 / 1.0);
 
     public static final Translation3d OFFSET = Translation3d.kZero;
 
     public static final Angle MIN_ANGLE = Degrees.of(0.0);
-    public static final Angle MAX_ANGLE = Rotations.of(45.0);
+    public static final Angle MAX_ANGLE = Degrees.of(45.0);
     public static final Angle STARTING_ANGLE = Rotations.of(0.0);
     public static final Distance ARM_LENGTH = Meters.of(1.0);
 
@@ -382,12 +483,12 @@ public final class Constants {
     public static TalonFXConfiguration getFXConfig() {
       TalonFXConfiguration config = new TalonFXConfiguration();
 
-      config.CurrentLimits.SupplyCurrentLimitEnable = false;
+      config.CurrentLimits.SupplyCurrentLimitEnable = Robot.isReal();
       config.CurrentLimits.SupplyCurrentLimit = 40.0;
       config.CurrentLimits.SupplyCurrentLowerLimit = 40.0;
       config.CurrentLimits.SupplyCurrentLowerTime = 0.1;
 
-      config.CurrentLimits.StatorCurrentLimitEnable = false;
+      config.CurrentLimits.StatorCurrentLimitEnable = Robot.isReal();
       config.CurrentLimits.StatorCurrentLimit = 80.0;
 
       config.Voltage.PeakForwardVoltage = 12.0;
@@ -404,8 +505,6 @@ public final class Constants {
 
       config.Feedback.RotorToSensorRatio = ROTOR_TO_SENSOR;
       config.Feedback.SensorToMechanismRatio = SENSOR_TO_MECHANISM;
-
-      config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
 
       config.Slot0 = SLOT0CONFIG;
 
@@ -439,10 +538,10 @@ public final class Constants {
     public static final Angle MIN_ANGLE = Rotations.of(0.0);
     public static final Angle MAX_ANGLE = Rotations.of(1);
     public static final Angle STARTING_ANGLE = Rotations.of(0.0);
-    public static final double PICKUP_SPEED = 0.0;
+    public static final double PICKUP_SPEED = 10.0;
     public static final Distance WHEEL_RADIUS = Meters.of(0.05);
     public static final Translation3d OFFSET = Translation3d.kZero;
-    public static final MomentOfInertia MOI = KilogramSquareMeters.of(0.0028125);
+    public static final MomentOfInertia MOI = KilogramSquareMeters.of(0.2);
     public static final RotaryMechCharacteristics CONSTANTS =
         new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
     public static final String MOTOR_NAME = "Intake Flywheel";
@@ -571,7 +670,10 @@ public final class Constants {
   public class IntakePivotConstants {
     public static final String NAME = "Intake";
 
-    public static final Angle PICKUP_ANGLE = Rotations.of(0.0);
+    public static final Angle MIN_ANGLE = Degrees.of(0.0);
+    public static final Angle MAX_ANGLE = Degrees.of(130.0);
+
+    public static final Angle PICKUP_ANGLE = MAX_ANGLE;
     public static final Angle STOW_ANGLE = Rotations.of(0.0);
 
     public static final Angle TOLERANCE = Degrees.of(1.0);
@@ -581,11 +683,8 @@ public final class Constants {
     public static final Velocity<AngularAccelerationUnit> JERK =
         RadiansPerSecondPerSecond.per(Second).of(0.1);
 
-    private static final double ROTOR_TO_SENSOR = (50.0 / 1.0);
-    private static final double SENSOR_TO_MECHANISM = 1.0;
-
-    public static final Angle MIN_ANGLE = Degrees.of(0.0);
-    public static final Angle MAX_ANGLE = Degrees.of(130.0);
+    private static final double ROTOR_TO_SENSOR = (1.0 / 1.0);
+    private static final double SENSOR_TO_MECHANISM = (50.0 / 1.0);
     public static final Angle STARTING_ANGLE = Radians.zero();
     public static final Distance ARM_LENGTH = Foot.one();
 
@@ -594,12 +693,13 @@ public final class Constants {
             new Translation3d(), ARM_LENGTH, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
 
     public static final DCMotor DCMOTOR = DCMotor.getKrakenX60(1);
-    public static final MomentOfInertia MOI = KilogramSquareMeters.of(0.25);
+    public static final MomentOfInertia MOI = KilogramSquareMeters.of(1);
 
     // Positional PID
     public static final Slot0Configs SLOT_0_CONFIG =
         new Slot0Configs().withKP(100.0).withKI(0.0).withKD(0).withKS(0.07).withKV(0.1);
-        //                              ^^^ CHANGE
+
+    //                              ^^^ CHANGE
 
     public static TalonFXConfiguration getFXConfig() {
       TalonFXConfiguration config = new TalonFXConfiguration();
@@ -636,11 +736,6 @@ public final class Constants {
 
       return config;
     }
-  }
-
-  public class FeederConstants {
-    public static final AngularVelocity FEED_SPEED = RotationsPerSecond.of(0.0);
-    public static final AngularAcceleration FEED_ACCELERATION = RotationsPerSecondPerSecond.of(0.0);
   }
 
   public class ClimberConstants {

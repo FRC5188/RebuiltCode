@@ -3,27 +3,24 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.Volts;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.flywheel.FlywheelMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
-import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.ShooterFeederConstants;
+import frc.robot.Constants.ShooterTowerConstants;
 import frc.robot.Robot;
 import org.littletonrobotics.junction.Logger;
 
@@ -31,22 +28,36 @@ public class Shooter extends SubsystemBase {
 
   private final FlywheelMechanism _flywheel;
   private final FlywheelMechanism _feeder;
+  private final FlywheelMechanism _tower;
   private final RotaryMechanism _hood;
 
   // desired target values
   private double desiredVelo;
   private double hoodAngle;
 
-  public Shooter(FlywheelMechanism flywheel, FlywheelMechanism feeder, RotaryMechanism hood) {
+  public Shooter(
+      FlywheelMechanism flywheel,
+      FlywheelMechanism feeder,
+      FlywheelMechanism tower,
+      RotaryMechanism hood) {
     _flywheel = flywheel;
     _feeder = feeder;
+    _tower = tower;
     _hood = hood;
   }
 
   // Sets feeder motor speed
   public void runFeeder() {
     _feeder.runVelocity(
-        FeederConstants.FEED_SPEED, FeederConstants.FEED_ACCELERATION, PIDSlot.SLOT_2);
+        ShooterFeederConstants.MAX_VELOCITY,
+        ShooterFeederConstants.MAX_ACCELERATION,
+        PIDSlot.SLOT_2);
+  }
+
+  // Sets tower motor speed
+  public void runTower() {
+    _feeder.runVelocity(
+        ShooterTowerConstants.MAX_VELOCITY, ShooterTowerConstants.MAX_ACCELERATION, PIDSlot.SLOT_2);
   }
 
   // Sets the flywheel velocity based on an input.
@@ -58,20 +69,21 @@ public class Shooter extends SubsystemBase {
     _flywheel.runVelocity(angVelo, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
   }
 
-  public enum State {
-    OFF(Units.RevolutionsPerSecond.of(0.0)),
-    IDLE(Units.RevolutionsPerSecond.of(ShooterConstants.IDLE_SPEED_RPM / 60)),
-    SHOOT_FROM_HUB(Units.RevolutionsPerSecond.of(ShooterConstants.HUB_SPEED_RPM / 60)),
-    SHOOT_FROM_TOWER(Units.RevolutionsPerSecond.of(ShooterConstants.TOWER_SPEED_RPM / 60)),
-    SHOOT(Units.RevolutionsPerSecond.of(ShooterConstants.DEFAULT_SPEED_RPM / 60)),
-    SHOOT_ON_MOVE(Units.RevolutionsPerSecond.of(ShooterConstants.DEFAULT_SPEED_RPM / 60));
+  // // Broken aha !!
+  // public enum State {
+  //   OFF(Units.RevolutionsPerSecond.of(0.0)),
+  //   IDLE(Units.RevolutionsPerSecond.of(ShooterConstants.IDLE_SPEED_RPM / 60)),
+  //   SHOOT_FROM_HUB(Units.RevolutionsPerSecond.of(ShooterConstants.HUB_SPEED_RPM / 60)),
+  //   SHOOT_FROM_TOWER(Units.RevolutionsPerSecond.of(ShooterConstants.TOWER_SPEED_RPM / 60)),
+  //   SHOOT(Units.RevolutionsPerSecond.of(ShooterConstants.DEFAULT_SPEED_RPM / 60)),
+  //   SHOOT_ON_MOVE(Units.RevolutionsPerSecond.of(ShooterConstants.DEFAULT_SPEED_RPM / 60));
 
-    private final AngularVelocity stateVelocity;
+  //   private final AngularVelocity stateVelocity;
 
-    State(AngularVelocity stateVelocity) {
-      this.stateVelocity = stateVelocity;
-    }
-  }
+  //   State(AngularVelocity stateVelocity) {
+  //     this.stateVelocity = stateVelocity;
+  //   }
+  // }
 
   // Checks if the flywheel is at speed and returns a boolean
   public boolean flyAtVelocity() {
@@ -126,36 +138,75 @@ public class Shooter extends SubsystemBase {
             Commands.run(() -> setHoodAngle(hoodAngle)).until(this::hoodAtAngle)),
         // feed once ready
         Commands.runOnce(() -> runFeeder()),
+        Commands.runOnce(() -> runTower()),
         // stop flywheel when finished
         Commands.runOnce(() -> setFlywheelVelocity(0)));
   }
 
-  public void simShoot()
-  {
+  public void simShoot() {
     if (Robot.robotContainer.intake.simBalls <= 0) return;
 
-    double flywheelSpeed = 6;
     Translation2d robotPose2d = Robot.robotContainer.drive.getPose().getTranslation();
-    double Yaw = Robot.robotContainer.drive.getPose().getRotation().getRadians();
-    Pose3d robotPose3d = new Pose3d(new Translation3d(robotPose2d.getX(),robotPose2d.getY(),0), new Rotation3d(robotPose2d.getAngle()));
-    Pose3d shooterPose3d = new Pose3d(new Translation3d(-0.0075,0.0,0.523), new Rotation3d(0, _hood.getPosition().in(Radians), 0));
-    
-    double V_xy = Math.sin(Math.PI/2-(_hood.getPosition().in(Radians) + Degrees.of(12).in(Radians)))*flywheelSpeed;
+    Pose3d robotPose3d =
+        new Pose3d(
+            new Translation3d(robotPose2d.getX(), robotPose2d.getY(), 0),
+            new Rotation3d(robotPose2d.getAngle()));
+    Pose3d shooterPose3d =
+        new Pose3d(
+            new Translation3d(-0.0075, 0.0, 0.523),
+            new Rotation3d(0, _hood.getPosition().in(Radians), 0));
 
-    Robot.fuelSim.spawnFuel(robotPose3d.plus(new Transform3d(shooterPose3d.getX(), shooterPose3d.getY(), shooterPose3d.getZ(), new Rotation3d(0, 0, 0))).getTranslation(), new Translation3d(V_xy*Math.cos(Yaw), V_xy*Math.sin(Yaw), Math.sin(Math.PI/2-(_hood.getPosition().in(Radians) + Degrees.of(12).in(Radians))) *flywheelSpeed));
+    double flywheelSpeed = _flywheel.getVelocity().magnitude();
+
+    double Yaw = Robot.robotContainer.drive.getPose().getRotation().getRadians();
+    double V_xy =
+        Math.sin(Math.PI / 2 - (_hood.getPosition().in(Radians) + Degrees.of(12).in(Radians)))
+            * flywheelSpeed;
+
+    // ChassisSpeeds driveChassisSpeeds = Robot.robotContainer.drive.getChassisSpeeds();
+    // Translation3d driveSpeed3d = new Translation3d(
+    //   0.0,
+    //   0.0,
+    //   0.0
+    //   );
+
+    Robot.fuelSim.spawnFuel(
+        robotPose3d
+            .plus(
+                new Transform3d(
+                    shooterPose3d.getX(),
+                    shooterPose3d.getY(),
+                    shooterPose3d.getZ(),
+                    new Rotation3d(0, 0, 0)))
+            .getTranslation(),
+        new Translation3d(
+            V_xy * Math.cos(Yaw),
+            V_xy * Math.sin(Yaw),
+            Math.sin(Math.PI / 2 - (_hood.getPosition().in(Radians) + Degrees.of(12).in(Radians)))
+                * flywheelSpeed));
+
     Robot.robotContainer.intake.simBalls--;
   }
 
   public void periodic() {
     _hood.periodic();
-    // _feeder.periodic();
-    // _flywheel.periodic();
-    
-    double pitch = Math.toRadians(Math.abs(Math.sin(Timer.getFPGATimestamp())*45)); // Placeholder for position
-    
-    // The pitch of the Rotation3D should be '_hood.getPosition().in(Radians)', change after fixing motor configs.                   
-    Logger.recordOutput("3DField/3_Hood", new Pose3d(new Translation3d(-0.0075,0.0,0.523), new Rotation3d(0, pitch, 0)));
+    _feeder.periodic();
+    _tower.periodic();
+    _flywheel.periodic();
 
-    _hood.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp()) * 0.25));
+    Logger.recordOutput(
+        "3DField/3_Hood",
+        new Pose3d(
+            new Translation3d(-0.0075, 0.0, 0.523),
+            new Rotation3d(0, _hood.getPosition().in(Radians), 0)));
+
+    // For testing purposes, raises the hood
+    // if (_hood.getPosition().in(Degrees) < ShooterRotaryConstants.MAX_ANGLE.in(Degrees) - 10)
+    // _hood.runVoltage(Volts.of(7));
+
+    // _hood.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp()) * 5));
+    // _feeder.runVoltage(Volts.of(5));
+    // _tower.runVoltage(Volts.of(5));
+    // _flywheel.runVoltage(Volts.of(5));
   }
 }

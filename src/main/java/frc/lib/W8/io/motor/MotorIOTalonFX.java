@@ -75,9 +75,9 @@ public class MotorIOTalonFX implements MotorIO {
   // Preconfigured control objects reused for efficiency
   protected final CoastOut coastControl = new CoastOut();
   protected final StaticBrake brakeControl = new StaticBrake();
-  protected final VoltageOut voltageControl = new VoltageOut(0).withEnableFOC(true);
+  protected final VoltageOut voltageControl = new VoltageOut(0);
   protected final TorqueCurrentFOC currentControl = new TorqueCurrentFOC(0);
-  protected final DutyCycleOut dutyCycleControl = new DutyCycleOut(0).withEnableFOC(true);
+  protected final DutyCycleOut dutyCycleControl = new DutyCycleOut(0);
   protected final DynamicMotionMagicTorqueCurrentFOC positionControl =
       new DynamicMotionMagicTorqueCurrentFOC(0, 0, 0);
   protected final VelocityTorqueCurrentFOC velocityControl = new VelocityTorqueCurrentFOC(0);
@@ -166,7 +166,7 @@ public class MotorIOTalonFX implements MotorIO {
     return (control instanceof PositionTorqueCurrentFOC)
         || (control instanceof PositionVoltage)
         || (control instanceof MotionMagicTorqueCurrentFOC)
-        || (control instanceof DynamicMotionMagicTorqueCurrentFOC)
+        || (control instanceof MotionMagicDutyCycle)
         || (control instanceof MotionMagicVoltage);
   }
 
@@ -181,7 +181,7 @@ public class MotorIOTalonFX implements MotorIO {
     var control = motor.getAppliedControl();
     return (control instanceof VelocityTorqueCurrentFOC)
         || (control instanceof VelocityVoltage)
-        || (control instanceof MotionMagicVelocityTorqueCurrentFOC)
+        || (control instanceof MotionMagicVelocityDutyCycle)
         || (control instanceof MotionMagicVelocityVoltage);
   }
 
@@ -196,8 +196,8 @@ public class MotorIOTalonFX implements MotorIO {
   protected boolean isRunningMotionMagic() {
     var control = motor.getAppliedControl();
     return (control instanceof MotionMagicTorqueCurrentFOC)
-        || (control instanceof DynamicMotionMagicTorqueCurrentFOC)
-        || (control instanceof MotionMagicVelocityTorqueCurrentFOC)
+        || (control instanceof MotionMagicDutyCycle)
+        || (control instanceof MotionMagicVelocityDutyCycle)
         || (control instanceof MotionMagicVoltage)
         || (control instanceof MotionMagicVelocityVoltage);
   }
@@ -395,13 +395,7 @@ public class MotorIOTalonFX implements MotorIO {
       Velocity<AngularAccelerationUnit> maxJerk,
       PIDSlot slot) {
     this.goalPosition = position;
-    motor.setControl(
-        positionControl
-            .withPosition(position)
-            .withVelocity(cruiseVelocity)
-            .withAcceleration(acceleration)
-            .withJerk(maxJerk)
-            .withSlot(slot.getNum()));
+    motor.setControl(positionControl.withPosition(position).withSlot(slot.getNum()));
   }
 
   /**
