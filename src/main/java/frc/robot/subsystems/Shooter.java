@@ -37,7 +37,11 @@ public class Shooter extends SubsystemBase {
   private double desiredVelo;
   private double hoodAngle;
 
-  public Shooter(FlywheelMechanism lflywheel, FlywheelMechanism rflywheel, FlywheelMechanism feeder, RotaryMechanism hood) {
+  public Shooter(
+      FlywheelMechanism lflywheel,
+      FlywheelMechanism rflywheel,
+      FlywheelMechanism feeder,
+      RotaryMechanism hood) {
     _lflywheel = lflywheel;
     _rflywheel = rflywheel;
     _feeder = feeder;
@@ -56,7 +60,7 @@ public class Shooter extends SubsystemBase {
     this.desiredVelo = velocity;
     AngularVelocity angVelo = RotationsPerSecond.of(velocity);
     AngularVelocity negangVelo = RotationsPerSecond.of(velocity);
-    _lflywheel.runVelocity(angVelo, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0); 
+    _lflywheel.runVelocity(angVelo, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
     _rflywheel.runVelocity(negangVelo, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
   }
 
@@ -77,7 +81,9 @@ public class Shooter extends SubsystemBase {
 
   // Checks if the flywheel is at speed and returns a boolean
   public boolean flyAtVelocity() {
-    return ((Math.abs(desiredVelo - _lflywheel.getVelocity().in(RotationsPerSecond)) + Math.abs(desiredVelo - _rflywheel.getVelocity().in(RotationsPerSecond))) / 2)
+    return ((Math.abs(desiredVelo - _lflywheel.getVelocity().in(RotationsPerSecond))
+                + Math.abs(desiredVelo - _rflywheel.getVelocity().in(RotationsPerSecond)))
+            / 2)
         <= ShooterConstants.FLYWHEEL_VELOCITY_TOLERANCE;
   }
 
@@ -132,7 +138,7 @@ public class Shooter extends SubsystemBase {
         Commands.runOnce(() -> setFlywheelVelocity(0)));
   }
 
-  public Command runFlywheel(){
+  public Command runFlywheel() {
     return Commands.runOnce(() -> setFlywheelVelocity(1));
   }
 

@@ -319,11 +319,10 @@ public final class Constants {
       config.Voltage.PeakReverseVoltage = -12.0;
 
       config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-      //config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-      if (invert == true){
+      // config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      if (invert == true) {
         config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-      }
-      else {
+      } else {
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
       }
 
