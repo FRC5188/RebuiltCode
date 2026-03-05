@@ -149,17 +149,27 @@ public final class Constants {
 
   public class Ports {
     // Constants for Port Values
-    public static final Device.CAN IntakeRoller = new CAN(1, "rio");
+    public static final Device.CAN IntakeRoller = new CAN(11, "rio");
+    public static final Device.CAN IntakePivot = new CAN(22, "rio");
+
+    public static final Device.CAN Spindexer = new CAN(40, "rio");
+
+    public static final Device.CAN TowerRoller = new CAN(13, "rio");
+    public static final Device.CAN LeftFlywheel = new CAN(43, "rio");
+    public static final Device.CAN RightFlywheel = new CAN(56, "rio");
+    public static final Device.CAN HoodMotor = new CAN(44, "rio");
+
+    public static final Device.CAN ClimberMotor = new CAN(50, "rio");
+
     public static final Device.CAN LEDs = new CAN(2, "rio");
-    public static final Device.CAN HopperRoller = new CAN(3, "rio");
-    public static final Device.CAN ClimberLinearMechanism = new CAN(4, "rio");
-    public static final Device.CAN ShooterRoller = new CAN(5, "rio");
+    public static final Device.CAN Pigeon = new CAN(0, "rio");
+
   }
 
   public class HopperConstants {
     // holds constants for the hopper
 
-    public static final String MOTOR_NAME = "Hopper Roller";
+    public static final String MOTOR_NAME = "Spindexer";
 
     // CHANGE TO PROPER RPMS !!!!
 
