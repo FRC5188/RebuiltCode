@@ -302,8 +302,8 @@ public class RobotContainer {
         .whileTrue(new CmdShootOnTheMove(
             drive, 
             shooter, 
-            () -> controller.getLeftX(),
-            () -> controller.getRightX()));
+            () -> controller.getLeftY(),
+            () -> controller.getLeftX()));
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));

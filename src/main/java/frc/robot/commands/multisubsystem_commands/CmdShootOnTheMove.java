@@ -142,9 +142,13 @@ public class CmdShootOnTheMove extends Command {
             _timeUntilShot * (_speeds.vyMetersPerSecond));
 
     // Get linear velocity
-      Translation2d linearVelocity =
-          (getLinearVelocityFromJoysticks(
-              _translationXSupplier.getAsDouble(), _translationYSupplier.getAsDouble()));
+      // Translation2d linearVelocity =
+      //     new Pose2d().transformBy(
+      //             new Transform2d(
+      //                 new Translation2d(
+      //                     _translationXSupplier.getAsDouble(), _translationYSupplier.getAsDouble()),
+      //                 new Rotation2d())).getTranslation();
+             // _translationXSupplier.getAsDouble(), _translationYSupplier.getAsDouble()));
 
     // Add current position + change in position due to velocity to get future
     // position. This is where the robot will be at _timeUntilShot.
@@ -182,11 +186,21 @@ public class CmdShootOnTheMove extends Command {
     //     _translationYSupplier,
     //     _correctedRotation);
 
+    // ChassisSpeeds speeds =
+    //   new ChassisSpeeds(
+    //       linearVelocity.getX() * _drive.getMaxLinearSpeedMetersPerSec(),
+    //       linearVelocity.getY() * _drive.getMaxLinearSpeedMetersPerSec(),
+    //       _correctedRotationRate);
+    //   boolean isFlipped =
+    //       DriverStation.getAlliance().isPresent()
+    //           && DriverStation.getAlliance().get() == Alliance.Red;
+
     ChassisSpeeds speeds =
       new ChassisSpeeds(
-          linearVelocity.getX() * _drive.getMaxLinearSpeedMetersPerSec(),
-          linearVelocity.getY() * _drive.getMaxLinearSpeedMetersPerSec(),
+          _translationXSupplier.getAsDouble() * _drive.getMaxLinearSpeedMetersPerSec(),
+          _translationYSupplier.getAsDouble() * _drive.getMaxLinearSpeedMetersPerSec(),
           _correctedRotationRate);
+          
       boolean isFlipped =
           DriverStation.getAlliance().isPresent()
               && DriverStation.getAlliance().get() == Alliance.Red;
@@ -243,18 +257,18 @@ public class CmdShootOnTheMove extends Command {
     return _isFinished;
   }
 
-  private static Translation2d getLinearVelocityFromJoysticks(double x, double y) {
-    // Apply deadband
-    double linearMagnitude = MathUtil.applyDeadband(Math.hypot(x, y), DEADBAND);
-    Rotation2d linearDirection = new Rotation2d(Math.atan2(y, x));
+  // private static Translation2d getLinearVelocityFromJoysticks(double x, double y) {
+  //   // Apply deadband
+  //   double linearMagnitude = MathUtil.applyDeadband(Math.hypot(x, y), DEADBAND);
+  //   Rotation2d linearDirection = new Rotation2d(Math.atan2(y, x));
 
-    // Square magnitude for more precise control
-    linearMagnitude = linearMagnitude * linearMagnitude;
+  //   // Square magnitude for more precise control
+  //   linearMagnitude = linearMagnitude * linearMagnitude;
 
-    // Return new linear velocity
-    return new Pose2d(new Translation2d(), linearDirection)
-        .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
-        .getTranslation();
-  }
+  //   // Return new linear velocity
+  //   return new Pose2d(new Translation2d(), linearDirection)
+  //       .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
+  //       .getTranslation();
+  // }
 }
 
