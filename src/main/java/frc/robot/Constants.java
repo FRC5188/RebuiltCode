@@ -300,9 +300,9 @@ public final class Constants {
 
     // Velocity PID
     private static Slot0Configs SLOT0CONFIG =
-        new Slot0Configs().withKP(1000.0).withKI(0.0).withKD(0.0);
+        new Slot0Configs().withKP(0.0).withKI(0.0).withKD(0.0).withKS(10.0);
 
-    public static TalonFXConfiguration getFXConfig() {
+    public static TalonFXConfiguration getFXConfig(boolean invert) {
       TalonFXConfiguration config = new TalonFXConfiguration();
 
       config.CurrentLimits.SupplyCurrentLimitEnable = Robot.isReal();
@@ -317,7 +317,12 @@ public final class Constants {
       config.Voltage.PeakReverseVoltage = -12.0;
 
       config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-      config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      // config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      if (invert == true) {
+        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+      } else {
+        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      }
 
       config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
 
