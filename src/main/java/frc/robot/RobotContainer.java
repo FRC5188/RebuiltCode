@@ -38,6 +38,7 @@ import frc.robot.Constants.Ports;
 import frc.robot.Constants.ShooterFlywheelConstants;
 import frc.robot.Constants.ShooterRotaryConstants;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.multisubsystem_commands.CmdShootOnTheMove;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.BallCounter;
 import frc.robot.subsystems.Hopper;
@@ -287,14 +288,22 @@ public class RobotContainer {
             () -> -controller.getRightX()));
 
     // Lock to 0° when A button is held
+    // controller
+    //     .a()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -controller.getLeftY(),
+    //             () -> -controller.getLeftX(),
+    //             () -> new Rotation2d()));
+
     controller
         .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
+        .whileTrue(new CmdShootOnTheMove(
+            drive, 
+            shooter, 
+            () -> controller.getLeftX(),
+            () -> controller.getRightX()));
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
