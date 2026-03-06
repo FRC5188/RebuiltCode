@@ -111,29 +111,34 @@ public class RobotContainer {
                     new MotorIOTalonFX(
                         HopperConstants.MOTOR_NAME,
                         HopperConstants.getFXConfig(),
-                        Ports.HopperRoller)));
+                        Ports.Spindexer)));
         shooter =
             new Shooter(
                 new FlywheelMechanismReal(
                     new MotorIOTalonFX(
                         ShooterFlywheelConstants.NAME,
                         ShooterFlywheelConstants.getFXConfig(),
-                        Ports.ShooterRoller)),
+                        Ports.LeftFlywheel)),
+                new FlywheelMechanismReal(
+                    new MotorIOTalonFX(
+                        ShooterFlywheelConstants.NAME,
+                        ShooterFlywheelConstants.getFXConfig(),
+                        Ports.RightFlywheel)),
                 new FlywheelMechanismReal(
                     new MotorIOTalonFX(
                         ShooterFeederConstants.NAME,
-                        ShooterFeederConstants.getFXConfig(),
-                        Ports.ShooterFeeder)),
+                        ShooterFeederConstants.getFXConfig(false),
+                        Ports.Spindexer)),
                 new FlywheelMechanismReal(
                     new MotorIOTalonFX(
                         ShooterTowerConstants.NAME,
                         ShooterTowerConstants.getFXConfig(),
-                        Ports.ShooterTower)),
+                        Ports.TowerRoller)),
                 new RotaryMechanismReal(
                     new MotorIOTalonFX(
                         ShooterRotaryConstants.NAME,
                         ShooterRotaryConstants.getFXConfig(),
-                        Ports.ShooterHood),
+                        Ports.HoodMotor),
                     Constants.ShooterRotaryConstants.CONSTANTS,
                     java.util.Optional.empty()));
 
@@ -148,7 +153,7 @@ public class RobotContainer {
                     new MotorIOTalonFX(
                         IntakePivotConstants.NAME,
                         IntakePivotConstants.getFXConfig(),
-                        Ports.IntakeRoller),
+                        Ports.IntakePivot),
                     IntakePivotConstants.CONSTANTS,
                     Optional.empty()));
         vision =
@@ -164,7 +169,7 @@ public class RobotContainer {
                     new MotorIOTalonFX(
                         ClimberConstants.MOTOR_NAME,
                         ClimberConstants.getFXConfig(),
-                        Ports.ClimberLinearMechanism),
+                        Ports.ClimberMotor),
                     ClimberConstants.CHARACTERISTICS));
 
         break;
@@ -183,9 +188,7 @@ public class RobotContainer {
             new Hopper(
                 new FlywheelMechanismSim(
                     new MotorIOTalonFXSim(
-                        HopperConstants.MOTOR_NAME,
-                        HopperConstants.getFXConfig(),
-                        Ports.HopperRoller),
+                        HopperConstants.MOTOR_NAME, HopperConstants.getFXConfig(), Ports.Spindexer),
                     HopperConstants.DCMOTOR,
                     HopperConstants.MOI,
                     HopperConstants.TOLERANCE));
@@ -195,15 +198,23 @@ public class RobotContainer {
                     new MotorIOTalonFXSim(
                         ShooterFlywheelConstants.NAME,
                         ShooterFlywheelConstants.getFXConfig(),
-                        Ports.ShooterRoller),
+                        Ports.LeftFlywheel),
+                    ShooterFlywheelConstants.DCMOTOR,
+                    ShooterFlywheelConstants.MOI,
+                    ShooterFlywheelConstants.TOLERANCE),
+                new FlywheelMechanismSim(
+                    new MotorIOTalonFXSim(
+                        ShooterFlywheelConstants.NAME,
+                        ShooterFlywheelConstants.getFXConfig(),
+                        Ports.RightFlywheel),
                     ShooterFlywheelConstants.DCMOTOR,
                     ShooterFlywheelConstants.MOI,
                     ShooterFlywheelConstants.TOLERANCE),
                 new FlywheelMechanismSim(
                     new MotorIOTalonFXSim(
                         ShooterFeederConstants.NAME,
-                        ShooterFeederConstants.getFXConfig(),
-                        Ports.ShooterFeeder),
+                        ShooterFeederConstants.getFXConfig(false),
+                        Ports.Spindexer),
                     ShooterFeederConstants.DCMOTOR,
                     ShooterFeederConstants.MOI,
                     ShooterFeederConstants.TOLERANCE),
@@ -211,7 +222,7 @@ public class RobotContainer {
                     new MotorIOTalonFXSim(
                         ShooterTowerConstants.NAME,
                         ShooterTowerConstants.getFXConfig(),
-                        Ports.ShooterTower),
+                        Ports.TowerRoller),
                     ShooterTowerConstants.DCMOTOR,
                     ShooterTowerConstants.MOI,
                     ShooterTowerConstants.TOLERANCE),
@@ -219,7 +230,7 @@ public class RobotContainer {
                     new MotorIOTalonFXSim(
                         ShooterRotaryConstants.NAME,
                         ShooterRotaryConstants.getFXConfig(),
-                        Ports.ShooterHood),
+                        Ports.HoodMotor),
                     ShooterRotaryConstants.DCMOTOR,
                     ShooterRotaryConstants.MOI,
                     false,
@@ -262,7 +273,7 @@ public class RobotContainer {
                     new MotorIOTalonFXSim(
                         ClimberConstants.MOTOR_NAME,
                         ClimberConstants.getFXConfig(),
-                        Ports.ClimberLinearMechanism),
+                        Ports.ClimberMotor),
                     ClimberConstants.DCMOTOR,
                     ClimberConstants.CARRIAGE_MASS,
                     ClimberConstants.CHARACTERISTICS,
@@ -283,6 +294,7 @@ public class RobotContainer {
 
         shooter =
             new Shooter(
+                new FlywheelMechanism() {},
                 new FlywheelMechanism() {},
                 new FlywheelMechanism() {},
                 new FlywheelMechanism() {},
@@ -339,17 +351,17 @@ public class RobotContainer {
             () -> -controller.getRightX()));
 
     // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
+    // controller
+    //     .a()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -controller.getLeftY(),
+    //             () -> -controller.getLeftX(),
+    //             () -> new Rotation2d()));
 
-    // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // // Switch to X pattern when X button is pressed
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
     controller
@@ -381,6 +393,7 @@ public class RobotContainer {
 
     controller.leftBumper().onTrue(intake.intake());
     controller.rightBumper().onTrue(intake.stowAndStopRollers());
+    controller.a().onTrue(shooter.runFlywheel());
   }
 
   /**

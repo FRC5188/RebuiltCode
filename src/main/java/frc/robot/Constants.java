@@ -149,27 +149,31 @@ public final class Constants {
 
   public class Ports {
     // Constants for Port Values
-    public static final Device.CAN IntakeRoller = new CAN(1, "rio");
+    public static final Device.CAN IntakeRoller = new CAN(11, "rio");
+    public static final Device.CAN IntakePivot = new CAN(22, "rio");
+
+    public static final Device.CAN Spindexer = new CAN(40, "rio");
+
+    public static final Device.CAN TowerRoller = new CAN(13, "rio");
+    public static final Device.CAN LeftFlywheel = new CAN(43, "rio");
+    public static final Device.CAN RightFlywheel = new CAN(56, "rio");
+    public static final Device.CAN HoodMotor = new CAN(44, "rio");
+
+    public static final Device.CAN ClimberMotor = new CAN(50, "rio");
+
     public static final Device.CAN LEDs = new CAN(2, "rio");
-    public static final Device.CAN HopperRoller = new CAN(3, "rio");
-    public static final Device.CAN ClimberLinearMechanism = new CAN(4, "rio");
-    public static final Device.CAN ShooterRoller = new CAN(5, "rio");
-    public static final Device.CAN IntakePivot = new CAN(6, "rio");
-    public static final Device.CAN ShooterTower = new CAN(7, "rio");
-    public static final Device.CAN ShooterFeeder = new CAN(8, "rio");
-    public static final Device.CAN ShooterHood = new CAN(9, "rio");
+    public static final Device.CAN Pigeon = new CAN(0, "rio");
   }
 
   public class HopperConstants {
     // holds constants for the hopper
 
-    public static final String MOTOR_NAME = "Hopper Roller";
+    public static final String MOTOR_NAME = "Spindexer";
 
     // CHANGE TO PROPER RPMS !!!!
 
     public static final double SLOW_SPEED_RPM = 0.0;
-    public static final double FAST_SPEED_RPM = 0.0;
-    public static final double REVERSE_SPEED_RPM = 0.0;
+    public static final double FAST_SPEED_RPM = 100.0;
     public static final Voltage VOLTAGE = Volts.of(12.0);
     public static final AngularVelocity ANGULAR_VELOCITY = RotationsPerSecond.of(1);
     public static final AngularAcceleration ANGULAR_ACCELERATION =
@@ -298,9 +302,9 @@ public final class Constants {
 
     // Velocity PID
     private static Slot0Configs SLOT0CONFIG =
-        new Slot0Configs().withKP(1000.0).withKI(0.0).withKD(0.0);
+        new Slot0Configs().withKP(0.0).withKI(0.0).withKD(0.0).withKS(10.0);
 
-    public static TalonFXConfiguration getFXConfig() {
+    public static TalonFXConfiguration getFXConfig(boolean invert) {
       TalonFXConfiguration config = new TalonFXConfiguration();
 
       config.CurrentLimits.SupplyCurrentLimitEnable = Robot.isReal();
@@ -315,7 +319,12 @@ public final class Constants {
       config.Voltage.PeakReverseVoltage = -12.0;
 
       config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-      config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      // config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      if (invert == true) {
+        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+      } else {
+        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      }
 
       config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
 
