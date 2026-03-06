@@ -311,7 +311,7 @@ public class RobotContainer {
                 .ignoringDisable(true));
                 */
 
-    controller.b().onTrue(hopper.runHopper());
+    controller.b().whileTrue(hopper.runHopper());
 
     controller.x().onTrue(Commands.run(() -> shooter.runFeeder()));
 
