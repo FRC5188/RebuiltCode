@@ -165,7 +165,8 @@ public class Shooter extends SubsystemBase {
             new Translation3d(-0.0075, 0.0, 0.523),
             new Rotation3d(0, _hood.getPosition().in(Radians), 0));
 
-    double flywheelSpeed = _lflywheel.getVelocity().magnitude() + _rflywheel.getVelocity().magnitude();
+    double flywheelSpeed =
+        _lflywheel.getVelocity().magnitude() + _rflywheel.getVelocity().magnitude();
 
     double Yaw = Robot.robotContainer.drive.getPose().getRotation().getRadians();
     double V_xy =

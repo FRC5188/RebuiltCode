@@ -74,6 +74,7 @@ public class Climber extends SubsystemBase {
                 0, 0, ClimberConstants.CONVERTER.toDistance(_io.getPosition()).in(Meters)),
             new Rotation3d(0, 0, 0)));
 
-    // _io.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp()) * 0.25)); // For testing climber motion!
+    // _io.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp()) * 0.25)); // For testing climber
+    // motion!
   }
 }

@@ -44,11 +44,11 @@ public class Intake extends SubsystemBase {
 
   public void setPivotAngle(Angle pivotAngle) {
     _pivotIO.runPosition(
-                pivotAngle,
-                IntakeFlywheelConstants.CRUISE_VELOCITY,
-                IntakeFlywheelConstants.ACCELERATION,
-                IntakeFlywheelConstants.JERK,
-                PIDSlot.SLOT_0);
+        pivotAngle,
+        IntakeFlywheelConstants.CRUISE_VELOCITY,
+        IntakeFlywheelConstants.ACCELERATION,
+        IntakeFlywheelConstants.JERK,
+        PIDSlot.SLOT_0);
   }
 
   public AngularVelocity getVelocity() {
@@ -66,8 +66,7 @@ public class Intake extends SubsystemBase {
   public Command intake() {
     return Commands.sequence(
         Commands.runOnce(() -> this.setPivotAngle(IntakePivotConstants.PICKUP_ANGLE)),
-        Commands.runOnce(() -> this.setVelocity(IntakeFlywheelConstants.PICKUP_SPEED))
-    );
+        Commands.runOnce(() -> this.setVelocity(IntakeFlywheelConstants.PICKUP_SPEED)));
   }
 
   public boolean isIntendedAngle() {
