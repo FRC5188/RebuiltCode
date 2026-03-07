@@ -88,10 +88,10 @@ public class Drive extends SubsystemBase {
           getModuleTranslations());
 
   // Shoot on the Move constants
-  public static final double SHOOT_ON_THE_MOVE_P = 3.3;
-  public static final double SHOOT_ON_THE_MOVE_I = 0.03;
-  public static final double SHOOT_ON_THE_MOVE_D = 0.0075;
-  public static final double SHOOT_ON_THE_MOVE_TOLERANCE = 3.0;
+  public static final double SHOOT_ON_THE_MOVE_P = 6.0;
+  public static final double SHOOT_ON_THE_MOVE_I = 0.0;
+  public static final double SHOOT_ON_THE_MOVE_D = 0.0;
+  public static final double SHOOT_ON_THE_MOVE_TOLERANCE = 0.05;
 
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
