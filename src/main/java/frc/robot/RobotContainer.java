@@ -112,12 +112,12 @@ public class RobotContainer {
             new Shooter(
                 new FlywheelMechanismReal(
                     new MotorIOTalonFX(
-                        ShooterFlywheelConstants.NAME,
+                        ShooterFlywheelConstants.NAME_L,
                         ShooterFlywheelConstants.getFXConfig(),
                         Ports.LeftFlywheel)),
                 new FlywheelMechanismReal(
                     new MotorIOTalonFX(
-                        ShooterFlywheelConstants.NAME,
+                        ShooterFlywheelConstants.NAME_R,
                         ShooterFlywheelConstants.getFXConfig(),
                         Ports.RightFlywheel)),
                 new FlywheelMechanismReal(
@@ -192,7 +192,7 @@ public class RobotContainer {
             new Shooter(
                 new FlywheelMechanismSim(
                     new MotorIOTalonFXSim(
-                        ShooterFlywheelConstants.NAME,
+                        ShooterFlywheelConstants.NAME_L,
                         ShooterFlywheelConstants.getFXConfig(),
                         Ports.LeftFlywheel),
                     ShooterFlywheelConstants.DCMOTOR,
@@ -200,7 +200,7 @@ public class RobotContainer {
                     ShooterFlywheelConstants.TOLERANCE),
                 new FlywheelMechanismSim(
                     new MotorIOTalonFXSim(
-                        ShooterFlywheelConstants.NAME,
+                        ShooterFlywheelConstants.NAME_R,
                         ShooterFlywheelConstants.getFXConfig(),
                         Ports.RightFlywheel),
                     ShooterFlywheelConstants.DCMOTOR,
@@ -375,21 +375,21 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(() -> hopper.setGoal(HopperConstants.HOPPER_POSITION), hopper));
 
     // Commands for sim testing!
-    // controller.rightTrigger().onTrue(Commands.runOnce(() -> shooter.simShoot()));
+    controller.rightTrigger().onTrue(Commands.runOnce(() -> shooter.simShoot()));
 
-    // controller
-    //     .leftTrigger()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //             () -> {
-    //               Robot.fuelSim.clearFuel();
-    //               Robot.fuelSim.spawnStartingFuel();
-    //               intake.simBalls = 0;
-    //             }));
+    controller
+        .leftTrigger()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  Robot.fuelSim.clearFuel();
+                  Robot.fuelSim.spawnStartingFuel();
+                  intake.simBalls = 0;
+                }));
 
-    controller.leftBumper().onTrue(intake.intake());
-    controller.rightBumper().onTrue(intake.stowAndStopRollers());
-    controller.a().onTrue(shooter.runFlywheel());
+    // controller.leftBumper().onTrue(intake.intake());
+    // controller.rightBumper().onTrue(intake.stowAndStopRollers());
+    // controller.a().onTrue(shooter.runFlywheel());
   }
 
   /**
