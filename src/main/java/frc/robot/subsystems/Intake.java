@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -36,10 +37,10 @@ public class Intake extends SubsystemBase {
   }
 
   // Velocity of Rollers
-  public void setVelocity(double velocity) {
-    AngularVelocity angVelo = RotationsPerSecond.of(velocity);
+  public void setVelocity(AngularVelocity velocity) {
+    // AngularVelocity angVelo = RotationsPerSecond.of(velocity);
 
-    _rollerIO.runVelocity(angVelo, IntakeFlywheelConstants.ACCELERATION, PIDSlot.SLOT_0);
+    _rollerIO.runVelocity(velocity, IntakeFlywheelConstants.ACCELERATION, PIDSlot.SLOT_0);
   }
 
   public Command setPivotAngle(Angle pivotAngle) {
@@ -63,12 +64,16 @@ public class Intake extends SubsystemBase {
   }
 
   public void stop() {
-    setVelocity(0);
+    setVelocity(RotationsPerSecond.of(0));
+  }
+
+  public Command runRollers(AngularVelocity velocity) {
+    return Commands.runOnce(() -> setVelocity(velocity));
   }
 
   public Command intake() {
     return Commands.sequence(
-        Commands.run(() -> setVelocity(IntakeFlywheelConstants.PICKUP_SPEED)),
+        Commands.run(() -> setVelocity(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))),
         setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
   }
 
@@ -85,7 +90,7 @@ public class Intake extends SubsystemBase {
 
   public Command stowAndStopRollers() {
     return Commands.sequence(
-        Commands.run(() -> setVelocity(IntakeFlywheelConstants.PICKUP_SPEED)),
+        Commands.run(() -> setVelocity(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))),
         setStowAngle(IntakePivotConstants.STOW_ANGLE));
   }
 

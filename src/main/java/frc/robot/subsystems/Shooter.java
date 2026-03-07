@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -23,6 +24,7 @@ import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
 import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.ShooterFlywheelConstants;
 import frc.robot.Robot;
 import org.littletonrobotics.junction.Logger;
 
@@ -49,19 +51,22 @@ public class Shooter extends SubsystemBase {
   }
 
   // Sets feeder motor speed
-  public void runFeeder() {
+  public void runFeeder(AngularVelocity velocity) {
     _feeder.runVelocity(
-        FeederConstants.FEED_SPEED, FeederConstants.FEED_ACCELERATION, PIDSlot.SLOT_2);
+        velocity, FeederConstants.FEED_ACCELERATION, PIDSlot.SLOT_2);
   }
 
   // Sets the flywheel velocity based on an input.
-  public void setFlywheelVelocity(double velocity) {
+  public void setFlywheelVelocity(AngularVelocity velocity) {
     // store the desired velocity then send converted velocity to the mechanism
-    this.desiredVelo = velocity;
-    AngularVelocity angVelo = RotationsPerSecond.of(velocity);
-    AngularVelocity negangVelo = RotationsPerSecond.of(velocity);
-    _lflywheel.runVelocity(angVelo, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
-    _rflywheel.runVelocity(negangVelo, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
+    // this.desiredVelo = velocity;
+    // AngularVelocity angVelo = RotationsPerSecond.of(velocity);
+    // AngularVelocity negangVelo = RotationsPerSecond.of(velocity);
+    _lflywheel.runVelocity(velocity, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
+    _rflywheel.runVelocity(velocity, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
+    Logger.recordOutput("LeftFlywheel/TargetSpeed",velocity);
+    Logger.recordOutput("RightFlywheel/TargetSpeed",velocity);
+
   }
 
   public enum State {
@@ -125,7 +130,7 @@ public class Shooter extends SubsystemBase {
     return Math.abs(hoodAngle - _hood.getPosition().in(Degrees)) < ShooterConstants.HOOD_TOLERANCE;
   }
 
-  public Command shoot(double velocity) {
+  public Command shoot(AngularVelocity velocity) {
     // Prepare targets
     return Commands.sequence(
         // Set and wait in parallel for both hood and flywheel
@@ -133,13 +138,17 @@ public class Shooter extends SubsystemBase {
             Commands.run(() -> setFlywheelVelocity(velocity)).until(this::flyAtVelocity),
             Commands.run(() -> setHoodAngle(hoodAngle)).until(this::hoodAtAngle)),
         // feed once ready
-        Commands.runOnce(() -> runFeeder()),
+        Commands.runOnce(() -> runFeeder(FeederConstants.FEED_SPEED)),
         // stop flywheel when finished
-        Commands.runOnce(() -> setFlywheelVelocity(0)));
+        Commands.runOnce(() -> setFlywheelVelocity(RotationsPerSecond.of(0.0))));
   }
 
-  public Command runFlywheel() {
-    return Commands.runOnce(() -> setFlywheelVelocity(1));
+  public Command runFlywheel(AngularVelocity velocity) {
+    return Commands.runOnce(() -> setFlywheelVelocity(velocity));
+  }
+
+  public Command runTower(AngularVelocity velocity) {
+    return Commands.runOnce(() -> runFeeder(velocity));
   }
 
   public void simShoot() {
@@ -180,6 +189,9 @@ public class Shooter extends SubsystemBase {
 
   public void periodic() {
     _hood.periodic();
+    _lflywheel.periodic();
+    _rflywheel.periodic();
+    _feeder.periodic();
     // _feeder.periodic();
     // _flywheel.periodic();
 

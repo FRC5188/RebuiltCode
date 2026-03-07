@@ -50,6 +50,10 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+
+import static edu.wpi.first.units.Units.Rotation;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import java.util.Optional;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
@@ -103,17 +107,17 @@ public class RobotContainer {
             new Shooter(
                 new FlywheelMechanismReal(
                     new MotorIOTalonFX(
-                        ShooterFlywheelConstants.NAME,
-                        ShooterFlywheelConstants.getFXConfig(false),
+                        "ShooterLeftFlywheel",
+                        ShooterFlywheelConstants.getFXConfig(true),
                         Ports.LeftFlywheel)),
                 new FlywheelMechanismReal(
                     new MotorIOTalonFX(
-                        ShooterFlywheelConstants.NAME,
-                        ShooterFlywheelConstants.getFXConfig(true),
+                        "ShooterRightFlywheel",
+                        ShooterFlywheelConstants.getFXConfig(false),
                         Ports.RightFlywheel)),
                 new FlywheelMechanismReal(
                     new MotorIOTalonFX(
-                        ShooterFlywheelConstants.NAME,
+                        "ShooterTower",
                         ShooterFlywheelConstants.getFXConfig(false),
                         Ports.TowerRoller)),
                 new RotaryMechanismReal(
@@ -179,7 +183,7 @@ public class RobotContainer {
                     new MotorIOTalonFXSim(
                         ShooterFlywheelConstants.NAME,
                         ShooterFlywheelConstants.getFXConfig(true),
-                        Ports.LeftFlywheel),
+                        Ports.RightFlywheel),
                     ShooterFlywheelConstants.DCMOTOR,
                     ShooterFlywheelConstants.MOI,
                     ShooterFlywheelConstants.TOLERANCE),
@@ -322,9 +326,9 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller
-        .x()
-        .onTrue(Commands.runOnce(() -> hopper.setGoal(HopperConstants.HOPPER_POSITION), hopper));
+    // controller
+    //     .x()
+    //     .onTrue(Commands.runOnce(() -> hopper.setGoal(HopperConstants.HOPPER_POSITION), hopper));
 
     controller.rightTrigger().onTrue(Commands.runOnce(() -> shooter.simShoot()));
 
@@ -337,10 +341,20 @@ public class RobotContainer {
                   Robot.fuelSim.spawnStartingFuel();
                   intake.simBalls = 0;
                 }));
-    controller.y().onTrue(Commands.runOnce(() -> intake.setVelocity(1)));
-    controller.leftBumper().onTrue(intake.intake());
-    controller.rightBumper().onTrue(intake.stowAndStopRollers());
-    controller.a().onTrue(shooter.runFlywheel());
+    // controller.y().onTrue(Commands.runOnce(() -> intake.setVelocity(RotationsPerSecond.of(10))));
+    // controller.a().onTrue(intake.intake());
+    // controller.x().onTrue(intake.stowAndStopRollers());
+    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(10)));
+    controller.leftBumper().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
+    controller.rightBumper().whileTrue(Commands.parallel(intake.runRollers(RotationsPerSecond.of(100)), hopper.runSpindexer(100), shooter.runTower(RotationsPerSecond.of(100))));
+    controller.rightBumper().onFalse(Commands.parallel(intake.runRollers(RotationsPerSecond.of(0)), hopper.runSpindexer(0), shooter.runTower(RotationsPerSecond.of(0))));
+
+    controller.a().whileTrue((intake.runRollers(RotationsPerSecond.of(100))));
+    controller.a().onFalse((intake.runRollers(RotationsPerSecond.of(0))));
+    controller.x().whileTrue(hopper.runSpindexer(100));
+    controller.x().onFalse(hopper.runSpindexer(0));
+    controller.y().whileTrue(shooter.runTower(RotationsPerSecond.of(100)));
+     controller.y().onFalse(shooter.runTower(RotationsPerSecond.of(0)));
   }
 
   /**

@@ -302,7 +302,7 @@ public final class Constants {
 
     // Velocity PID
     private static Slot0Configs SLOT0CONFIG =
-        new Slot0Configs().withKP(0.0).withKI(0.0).withKD(0.0).withKS(10.0);
+        new Slot0Configs().withKP(25.0).withKI(0.0).withKD(0.0).withKS(0.05).withKS(10.0);
 
     public static TalonFXConfiguration getFXConfig(boolean invert) {
       TalonFXConfiguration config = new TalonFXConfiguration();
@@ -653,8 +653,8 @@ public final class Constants {
   }
 
   public class FeederConstants {
-    public static final AngularVelocity FEED_SPEED = RotationsPerSecond.of(0.0);
-    public static final AngularAcceleration FEED_ACCELERATION = RotationsPerSecondPerSecond.of(0.0);
+    public static final AngularVelocity FEED_SPEED = RotationsPerSecond.of(20.0);
+    public static final AngularAcceleration FEED_ACCELERATION = RotationsPerSecondPerSecond.of(100.0);
   }
 
   public class ClimberConstants {
