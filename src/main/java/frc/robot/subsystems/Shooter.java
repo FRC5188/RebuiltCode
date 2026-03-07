@@ -28,7 +28,8 @@ import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
 
-  private final FlywheelMechanism _flywheel;
+  private final FlywheelMechanism _rflywheel;
+  private final FlywheelMechanism _lflywheel;
   private final FlywheelMechanism _feeder;
   private final RotaryMechanism _hood;
 
@@ -36,8 +37,13 @@ public class Shooter extends SubsystemBase {
   private double desiredVelo;
   private double hoodAngle;
 
-  public Shooter(FlywheelMechanism flywheel, FlywheelMechanism feeder, RotaryMechanism hood) {
-    _flywheel = flywheel;
+  public Shooter(
+      FlywheelMechanism lflywheel,
+      FlywheelMechanism rflywheel,
+      FlywheelMechanism feeder,
+      RotaryMechanism hood) {
+    _lflywheel = lflywheel;
+    _rflywheel = rflywheel;
     _feeder = feeder;
     _hood = hood;
   }
@@ -53,8 +59,9 @@ public class Shooter extends SubsystemBase {
     // store the desired velocity then send converted velocity to the mechanism
     this.desiredVelo = velocity;
     AngularVelocity angVelo = RotationsPerSecond.of(velocity);
-
-    _flywheel.runVelocity(angVelo, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
+    AngularVelocity negangVelo = RotationsPerSecond.of(velocity);
+    _lflywheel.runVelocity(angVelo, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
+    _rflywheel.runVelocity(negangVelo, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
   }
 
   public enum State {
@@ -74,7 +81,9 @@ public class Shooter extends SubsystemBase {
 
   // Checks if the flywheel is at speed and returns a boolean
   public boolean flyAtVelocity() {
-    return Math.abs(desiredVelo - _flywheel.getVelocity().in(RotationsPerSecond))
+    return ((Math.abs(desiredVelo - _lflywheel.getVelocity().in(RotationsPerSecond))
+                + Math.abs(desiredVelo - _rflywheel.getVelocity().in(RotationsPerSecond)))
+            / 2)
         <= ShooterConstants.FLYWHEEL_VELOCITY_TOLERANCE;
   }
 
@@ -127,6 +136,10 @@ public class Shooter extends SubsystemBase {
         Commands.runOnce(() -> runFeeder()),
         // stop flywheel when finished
         Commands.runOnce(() -> setFlywheelVelocity(0)));
+  }
+
+  public Command runFlywheel() {
+    return Commands.runOnce(() -> setFlywheelVelocity(1));
   }
 
   public void simShoot() {
