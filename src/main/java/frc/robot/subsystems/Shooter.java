@@ -3,8 +3,6 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -14,7 +12,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,9 +21,7 @@ import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShooterFeederConstants;
-import frc.robot.Constants.ShooterRotaryConstants;
 import frc.robot.Constants.ShooterTowerConstants;
-import frc.robot.generated.TunerConstants;
 import frc.robot.Robot;
 import org.littletonrobotics.junction.Logger;
 
@@ -180,11 +175,7 @@ public class Shooter extends SubsystemBase {
             * flywheelSpeed;
 
     ChassisSpeeds driveChassisSpeeds = Robot.robotContainer.drive.getChassisSpeeds();
-    Translation3d driveSpeed3d = new Translation3d(
-      0.0,
-      0.0,
-      0.0
-      );
+    Translation3d driveSpeed3d = new Translation3d(0.0, 0.0, 0.0);
 
     Robot.fuelSim.spawnFuel(
         robotPose3d
@@ -196,11 +187,13 @@ public class Shooter extends SubsystemBase {
                     new Rotation3d(0, 0, 0)))
             .getTranslation(),
         new Translation3d(
-            V_xy * Math.cos(Yaw),
-            V_xy * Math.sin(Yaw),
-            Math.sin(Math.PI / 2 - (_hood.getPosition().in(Radians) + Degrees.of(12).in(Radians)))
-                * flywheelSpeed)
-                .plus(driveSpeed3d));
+                V_xy * Math.cos(Yaw),
+                V_xy * Math.sin(Yaw),
+                Math.sin(
+                        Math.PI / 2
+                            - (_hood.getPosition().in(Radians) + Degrees.of(12).in(Radians)))
+                    * flywheelSpeed)
+            .plus(driveSpeed3d));
 
     Robot.robotContainer.intake.simBalls--;
   }
@@ -220,7 +213,8 @@ public class Shooter extends SubsystemBase {
 
     // For testing purposes, raises the hood
     // if (_hood.getPosition().in(Degrees) < ShooterRotaryConstants.MAX_ANGLE.in(Degrees) - 10)
-    // _hood.runVelocity(RotationsPerSecond.of(1), RotationsPerSecondPerSecond.of(0.01), PIDSlot.SLOT_0);
+    // _hood.runVelocity(RotationsPerSecond.of(1), RotationsPerSecondPerSecond.of(0.01),
+    // PIDSlot.SLOT_0);
 
     // _hood.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp()) * 5));
     // _feeder.runVoltage(Volts.of(5));
