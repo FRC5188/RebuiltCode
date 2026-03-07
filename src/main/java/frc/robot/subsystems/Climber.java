@@ -47,15 +47,15 @@ public class Climber extends SubsystemBase {
   public void periodic() {
     _io.periodic();
 
-    double z = Math.abs(Math.sin(Timer.getFPGATimestamp()) * 0.33); // Placeholder for position
+    // double z = Math.abs(Math.sin(Timer.getFPGATimestamp()) * 0.33); // Placeholder for position
 
-    // The z of the Translation3D should be
-    // 'ClimberConstants.CONVERTER.toDistance(_io.getPosition()).in(Meters)', change after fixing
-    // motor configs.
-    Logger.recordOutput(
-        "3DField/4_Climber", new Pose3d(new Translation3d(0, 0, z), new Rotation3d(0, 0, 0)));
+    // // The z of the Translation3D should be
+    // // 'ClimberConstants.CONVERTER.toDistance(_io.getPosition()).in(Meters)', change after fixing
+    // // motor configs.
+    // Logger.recordOutput(
+    //     "3DField/4_Climber", new Pose3d(new Translation3d(0, 0, z), new Rotation3d(0, 0, 0)));
 
-    _io.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp()) * 0.25));
+    // _io.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp()) * 0.25));
   }
 
   public Command runClimber() {

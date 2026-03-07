@@ -14,6 +14,8 @@
 package frc.robot;
 
 import au.grapplerobotics.LaserCan;
+
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -71,7 +73,7 @@ public class RobotContainer {
   private final Hopper hopper;
   private final Shooter shooter;
   public final Intake intake;
-  private final BallCounter ballCounter;
+//   private final BallCounter ballCounter;
   private final Vision vision;
 
   // Controller
@@ -83,8 +85,10 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Check if the robot is real before using the ball counter!
-    if (Robot.isReal()) ballCounter = new BallCounter(new LaserCan(1));
-    else ballCounter = null;
+    // if (Robot.isReal()) ballCounter = new BallCounter(new LaserCan(1));
+    // else ballCounter = null;
+
+    BaseStatusSignal.setUpdateFrequencyForAll(50.0);
 
     switch (Constants.currentMode) {
       case REAL:
@@ -344,17 +348,17 @@ public class RobotContainer {
     // controller.y().onTrue(Commands.runOnce(() -> intake.setVelocity(RotationsPerSecond.of(10))));
     // controller.a().onTrue(intake.intake());
     // controller.x().onTrue(intake.stowAndStopRollers());
-    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(10)));
+    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(20)));
     controller.leftBumper().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
     controller.rightBumper().whileTrue(Commands.parallel(intake.runRollers(RotationsPerSecond.of(100)), hopper.runSpindexer(100), shooter.runTower(RotationsPerSecond.of(100))));
     controller.rightBumper().onFalse(Commands.parallel(intake.runRollers(RotationsPerSecond.of(0)), hopper.runSpindexer(0), shooter.runTower(RotationsPerSecond.of(0))));
 
-    controller.a().whileTrue((intake.runRollers(RotationsPerSecond.of(100))));
+    controller.a().whileTrue((intake.runRollers(RotationsPerSecond.of(20))));
     controller.a().onFalse((intake.runRollers(RotationsPerSecond.of(0))));
-    controller.x().whileTrue(hopper.runSpindexer(100));
+    controller.x().whileTrue(hopper.runSpindexer(50));
     controller.x().onFalse(hopper.runSpindexer(0));
-    controller.y().whileTrue(shooter.runTower(RotationsPerSecond.of(100)));
-     controller.y().onFalse(shooter.runTower(RotationsPerSecond.of(0)));
+    controller.y().whileTrue(shooter.runTower(RotationsPerSecond.of(15)));
+    controller.y().onFalse(shooter.runTower(RotationsPerSecond.of(0)));
   }
 
   /**

@@ -107,8 +107,8 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (_pivotIO.getPosition().in(Degree) < IntakePivotConstants.MAX_ANGLE.in(Degree))
-      _pivotIO.runVoltage(Volts.of(0.25));
+    // if (_pivotIO.getPosition().in(Degree) < IntakePivotConstants.MAX_ANGLE.in(Degree))
+    //   _pivotIO.runVoltage(Volts.of(0.25));
 
     _pivotIO.periodic();
     Logger.recordOutput(

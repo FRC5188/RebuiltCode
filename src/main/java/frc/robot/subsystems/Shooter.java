@@ -53,7 +53,7 @@ public class Shooter extends SubsystemBase {
   // Sets feeder motor speed
   public void runFeeder(AngularVelocity velocity) {
     _feeder.runVelocity(
-        velocity, FeederConstants.FEED_ACCELERATION, PIDSlot.SLOT_2);
+        velocity, FeederConstants.FEED_ACCELERATION, PIDSlot.SLOT_1);
   }
 
   // Sets the flywheel velocity based on an input.
@@ -144,10 +144,13 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command runFlywheel(AngularVelocity velocity) {
+        System.out.println("Flywheel");
+
     return Commands.runOnce(() -> setFlywheelVelocity(velocity));
   }
 
   public Command runTower(AngularVelocity velocity) {
+    System.out.println("Tower");
     return Commands.runOnce(() -> runFeeder(velocity));
   }
 
@@ -195,16 +198,16 @@ public class Shooter extends SubsystemBase {
     // _feeder.periodic();
     // _flywheel.periodic();
 
-    double pitch =
-        Math.toRadians(
-            Math.abs(Math.sin(Timer.getFPGATimestamp()) * 45)); // Placeholder for position
+    // double pitch =
+    //     Math.toRadians(
+    //         Math.abs(Math.sin(Timer.getFPGATimestamp()) * 45)); // Placeholder for position
 
     // The pitch of the Rotation3D should be '_hood.getPosition().in(Radians)', change after fixing
     // motor configs.
-    Logger.recordOutput(
-        "3DField/3_Hood",
-        new Pose3d(new Translation3d(-0.0075, 0.0, 0.523), new Rotation3d(0, pitch, 0)));
+    // Logger.recordOutput(
+    //     "3DField/3_Hood",
+    //     new Pose3d(new Translation3d(-0.0075, 0.0, 0.523), new Rotation3d(0, pitch, 0)));
 
-    _hood.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp()) * 0.25));
+    // _hood.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp()) * 0.25));
   }
 }

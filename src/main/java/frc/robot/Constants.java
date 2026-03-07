@@ -654,7 +654,58 @@ public final class Constants {
 
   public class FeederConstants {
     public static final AngularVelocity FEED_SPEED = RotationsPerSecond.of(20.0);
-    public static final AngularAcceleration FEED_ACCELERATION = RotationsPerSecondPerSecond.of(100.0);
+    public static final AngularAcceleration FEED_ACCELERATION = RotationsPerSecondPerSecond.of(50);
+
+    public static String NAME = "ShooterTower";
+
+    public static final AngularVelocity MAX_VELOCITY = RadiansPerSecond.of(2 * Math.PI);
+    public static final AngularAcceleration MAX_ACCELERATION = MAX_VELOCITY.per(Second);
+
+    private static final double GEARING = (15.0 / 7.0);
+
+    public static final AngularVelocity TOLERANCE = MAX_VELOCITY.times(0.1);
+
+    public static final DCMotor DCMOTOR = DCMotor.getKrakenX60(1);
+    public static final MomentOfInertia MOI = KilogramSquareMeters.of(1.0);
+
+    // Velocity PID
+    private static Slot0Configs SLOT0CONFIG =
+        new Slot0Configs().withKP(25.0).withKI(0.0).withKD(0.0).withKS(0.05).withKS(10.0);
+
+    public static TalonFXConfiguration getFXConfig(boolean invert) {
+      TalonFXConfiguration config = new TalonFXConfiguration();
+
+      config.CurrentLimits.SupplyCurrentLimitEnable = Robot.isReal();
+      config.CurrentLimits.SupplyCurrentLimit = 40.0;
+      config.CurrentLimits.SupplyCurrentLowerLimit = 40.0;
+      config.CurrentLimits.SupplyCurrentLowerTime = 0.1;
+
+      config.CurrentLimits.StatorCurrentLimitEnable = Robot.isReal();
+      config.CurrentLimits.StatorCurrentLimit = 80.0;
+
+      config.Voltage.PeakForwardVoltage = 12.0;
+      config.Voltage.PeakReverseVoltage = -12.0;
+
+      config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+      // config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      if (invert == true) {
+        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+      } else {
+        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      }
+
+      config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+
+      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
+
+      config.Feedback.RotorToSensorRatio = 1.0;
+
+      config.Feedback.SensorToMechanismRatio = GEARING;
+
+      config.Slot0 = SLOT0CONFIG;
+
+      return config;
+    }
   }
 
   public class ClimberConstants {
