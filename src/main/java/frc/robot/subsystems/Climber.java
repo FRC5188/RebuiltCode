@@ -2,12 +2,9 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.linear.LinearMechanism;
@@ -103,12 +100,9 @@ public class Climber extends SubsystemBase {
     return this.run(
             () ->
                 _io.runVelocity(
-                    ClimberConstants.LOWER_VELOCITY,
-                    ClimberConstants.ACCELERATION,
-                    PIDSlot.SLOT_0))
+                    ClimberConstants.LOWER_VELOCITY, ClimberConstants.ACCELERATION, PIDSlot.SLOT_0))
         .until(() -> isAboveCurrentLimit());
   }
-
 
   public boolean nearGoalposition() {
     if (Math.abs(

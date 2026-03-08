@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -14,8 +13,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Velocity;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,7 +22,6 @@ import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
 import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.Constants.ShooterFlywheelConstants;
 import frc.robot.Robot;
 import org.littletonrobotics.junction.Logger;
 
@@ -56,8 +52,7 @@ public class Shooter extends SubsystemBase {
 
   // Sets feeder motor speed
   public void runFeeder(AngularVelocity velocity) {
-    _feeder.runVelocity(
-        velocity, FeederConstants.FEED_ACCELERATION, PIDSlot.SLOT_0);
+    _feeder.runVelocity(velocity, FeederConstants.FEED_ACCELERATION, PIDSlot.SLOT_0);
     feederTargetVelocity = velocity;
   }
 
@@ -70,7 +65,6 @@ public class Shooter extends SubsystemBase {
     _lflywheel.runVelocity(velocity, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
     _rflywheel.runVelocity(velocity, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
     targetVelocity = velocity;
-
   }
 
   public enum State {
@@ -143,8 +137,13 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command calibrateHood() {
-    return this.run(() -> _hood.runVelocity(ShooterConstants.HOOD_VELOCITY, ShooterConstants.HOOD_ACCELERATION, PIDSlot.SLOT_0))
-    .until(() -> isAboveCurrentLimit());
+    return this.run(
+            () ->
+                _hood.runVelocity(
+                    ShooterConstants.HOOD_VELOCITY,
+                    ShooterConstants.HOOD_ACCELERATION,
+                    PIDSlot.SLOT_0))
+        .until(() -> isAboveCurrentLimit());
   }
 
   public Command shoot(AngularVelocity velocity) {
@@ -161,7 +160,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command runFlywheel(AngularVelocity velocity) {
-        System.out.println("Flywheel");
+    System.out.println("Flywheel");
 
     return Commands.run(() -> setFlywheelVelocity(velocity), this);
   }
@@ -212,8 +211,8 @@ public class Shooter extends SubsystemBase {
     _lflywheel.periodic();
     _rflywheel.periodic();
     _feeder.periodic();
-   Logger.recordOutput("Flywheel/TargetVelocity", targetVelocity);
-   Logger.recordOutput("Feeder/TargetVelocity", feederTargetVelocity);
+    Logger.recordOutput("Flywheel/TargetVelocity", targetVelocity);
+    Logger.recordOutput("Feeder/TargetVelocity", feederTargetVelocity);
     // _feeder.periodic();
     // _flywheel.periodic();
 

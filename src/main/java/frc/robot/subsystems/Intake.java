@@ -115,7 +115,7 @@ public class Intake extends SubsystemBase {
     Logger.recordOutput("Intake/TargetSpeed", targetSpeed);
 
     _pivotIO.periodic();
-    //Logger.recordOutput("Intake/TargetPivot", null);
+    // Logger.recordOutput("Intake/TargetPivot", null);
     Logger.recordOutput(
         "3DField/1_Intake",
         new Pose3d(

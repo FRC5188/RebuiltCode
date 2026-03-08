@@ -153,7 +153,7 @@ public class RobotContainer {
                         ClimberConstants.MOTOR_NAME,
                         ClimberConstants.getFXConfig(),
                         Ports.ClimberMotor),
-                        ClimberConstants.CHARACTERISTICS));
+                    ClimberConstants.CHARACTERISTICS));
         vision =
             new Vision(
                 new VisionIOPhotonVision(
@@ -254,10 +254,10 @@ public class RobotContainer {
                         ClimberConstants.MOTOR_NAME,
                         ClimberConstants.getFXConfig(),
                         Ports.ClimberMotor),
-                        ClimberConstants.DCMOTOR,
-                        ClimberConstants.CARRIAGE_MASS,
-                        ClimberConstants.CHARACTERISTICS,
-                        false));
+                    ClimberConstants.DCMOTOR,
+                    ClimberConstants.CARRIAGE_MASS,
+                    ClimberConstants.CHARACTERISTICS,
+                    false));
         break;
 
       default:
@@ -382,9 +382,7 @@ public class RobotContainer {
         .whileTrue(
             Commands.parallel(
                 // intake.runRollers(RotationsPerSecond.of(30)),
-                hopper.runSpindexer(15),
-                shooter.runTower(RotationsPerSecond.of(70))));
-
+                hopper.runSpindexer(15), shooter.runTower(RotationsPerSecond.of(70))));
 
     controller
         .rightBumper()
