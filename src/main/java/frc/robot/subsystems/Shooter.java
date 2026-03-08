@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -128,6 +129,19 @@ public class Shooter extends SubsystemBase {
   // Checks if hood is at angle
   public boolean hoodAtAngle() {
     return Math.abs(hoodAngle - _hood.getPosition().in(Degrees)) < ShooterConstants.HOOD_TOLERANCE;
+  }
+
+  public boolean isAboveCurrentLimit() {
+    if (_hood.getSupplyCurrent().in(Amps) > ShooterConstants.HARD_STOP_CURRENT_LIMIT) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public Command calibrateHood() {
+    return this.run(() -> _hood.runVelocity(ShooterConstants.HOOD_VELOCITY, ShooterConstants.HOOD_ACCELERATION, PIDSlot.SLOT_0))
+    .until(() -> isAboveCurrentLimit());
   }
 
   public Command shoot(AngularVelocity velocity) {

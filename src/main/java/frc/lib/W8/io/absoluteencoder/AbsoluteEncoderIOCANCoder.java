@@ -41,9 +41,11 @@ public class AbsoluteEncoderIOCANCoder implements AbsoluteEncoderIO {
 
     angle = CANCoder.getAbsolutePosition();
 
-    // Further reduce update frequency for absolute encoder since it's mainly used for initialization
-    updateThread.CTRECheckErrorAndRetry(() -> angle.setUpdateFrequency(10.0)); // Further reduced from 25.0
-    
+    // Further reduce update frequency for absolute encoder since it's mainly used for
+    // initialization
+    updateThread.CTRECheckErrorAndRetry(
+        () -> angle.setUpdateFrequency(10.0)); // Further reduced from 25.0
+
     // Optimize bus utilization
     CANCoder.optimizeBusUtilization(1.0);
   }

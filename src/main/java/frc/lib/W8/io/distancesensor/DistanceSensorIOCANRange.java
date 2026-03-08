@@ -51,11 +51,11 @@ public class DistanceSensorIOCANRange implements DistanceSensorIO {
 
     ambientSignal = CANRange.getAmbientSignal();
     distance = CANRange.getDistance();
-    
+
     // Set very low update frequencies for distance sensors (not critical for control)
-    updateThread.CTRECheckErrorAndRetry(() -> 
-        BaseStatusSignal.setUpdateFrequencyForAll(10.0, ambientSignal, distance));
-    
+    updateThread.CTRECheckErrorAndRetry(
+        () -> BaseStatusSignal.setUpdateFrequencyForAll(10.0, ambientSignal, distance));
+
     // Optimize bus utilization
     CANRange.optimizeBusUtilization(1.0);
   }

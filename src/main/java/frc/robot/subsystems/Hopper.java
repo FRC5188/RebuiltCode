@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.flywheel.FlywheelMechanism;
 import frc.robot.Constants.HopperConstants;
-import frc.robot.Constants.IntakeFlywheelConstants;
 
 public class Hopper extends SubsystemBase {
   private FlywheelMechanism _io;
@@ -36,9 +35,8 @@ public class Hopper extends SubsystemBase {
   }
 
   public Command runSpindexer(double velocity) {
-      return Commands.runOnce(() -> setVelocity(velocity), this);
+    return Commands.runOnce(() -> setVelocity(velocity), this);
   }
-  
 
   @Override
   public void periodic() {}

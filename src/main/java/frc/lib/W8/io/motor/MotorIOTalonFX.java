@@ -168,7 +168,7 @@ public class MotorIOTalonFX implements MotorIO {
 
     // Optimize bus utilization with longer timeout for better optimization
     motor.optimizeBusUtilization(1.0, 1.0); // Increased timeout for better optimization
-    
+
     // Optimize follower bus utilization
     for (TalonFX follower : followers) {
       follower.optimizeBusUtilization(1.0, 1.0);
@@ -266,10 +266,11 @@ public class MotorIOTalonFX implements MotorIO {
     // Refresh signals in groups based on priority
     // Refresh critical signals first
     boolean criticalSignalsOk = BaseStatusSignal.refreshAll(position, velocity).isOK();
-    
+
     // Refresh telemetry signals
-    boolean telemetrySignalsOk = BaseStatusSignal.refreshAll(
-        supplyCurrent, torqueCurrent, temperature, supplyVoltage).isOK();
+    boolean telemetrySignalsOk =
+        BaseStatusSignal.refreshAll(supplyCurrent, torqueCurrent, temperature, supplyVoltage)
+            .isOK();
 
     inputs.connected = criticalSignalsOk && telemetrySignalsOk;
 
@@ -288,7 +289,7 @@ public class MotorIOTalonFX implements MotorIO {
     // Only update closed-loop signals when in closed-loop modes
     if (isRunningPositionControl || isRunningVelocityControl) {
       BaseStatusSignal.refreshAll(closedLoopError, closedLoopReference, closedLoopReferenceSlope);
-      
+
       // Interpret control-loop status signals conditionally based on current mode
       Double closedLoopErrorValue = closedLoopError.getValue();
       Double closedLoopTargetValue = closedLoopReference.getValue();

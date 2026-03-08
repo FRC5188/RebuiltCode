@@ -176,15 +176,14 @@ public class ModuleIOTalonFX implements ModuleIO {
     // Odometry signals need high frequency for accurate pose estimation
     BaseStatusSignal.setUpdateFrequencyForAll(
         Drive.ODOMETRY_FREQUENCY, drivePosition, turnPosition);
-    
+
     // Control signals need reduced frequency
-    BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0, driveVelocity, turnVelocity);
-    
+    BaseStatusSignal.setUpdateFrequencyForAll(50.0, driveVelocity, turnVelocity);
+
     // Telemetry signals can use very low frequency
     BaseStatusSignal.setUpdateFrequencyForAll(
         10.0, driveAppliedVolts, driveCurrent, turnAppliedVolts, turnCurrent);
-    
+
     // Absolute encoder only needs very low updates since it's mainly used for initialization
     BaseStatusSignal.setUpdateFrequencyForAll(20.0, turnAbsolutePosition);
 
@@ -199,11 +198,11 @@ public class ModuleIOTalonFX implements ModuleIO {
     // Refresh critical odometry signals first
     var driveStatus = BaseStatusSignal.refreshAll(drivePosition, driveVelocity);
     var turnStatus = BaseStatusSignal.refreshAll(turnPosition, turnVelocity);
-    
+
     // Refresh telemetry signals
     BaseStatusSignal.refreshAll(driveAppliedVolts, driveCurrent);
     BaseStatusSignal.refreshAll(turnAppliedVolts, turnCurrent);
-    
+
     // Refresh absolute encoder with lower priority
     var turnEncoderStatus = BaseStatusSignal.refreshAll(turnAbsolutePosition);
 

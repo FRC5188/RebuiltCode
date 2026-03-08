@@ -13,7 +13,7 @@
 
 package frc.robot;
 
-import au.grapplerobotics.LaserCan;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -42,7 +42,6 @@ import frc.robot.Constants.ShooterFlywheelConstants;
 import frc.robot.Constants.ShooterRotaryConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.BallCounter;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -53,10 +52,6 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-
-import static edu.wpi.first.units.Units.Rotation;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
 import java.util.Optional;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
@@ -74,7 +69,7 @@ public class RobotContainer {
   private final Hopper hopper;
   private final Shooter shooter;
   public final Intake intake;
-//   private final BallCounter ballCounter;
+  //   private final BallCounter ballCounter;
   private final Vision vision;
 
   // Controller
@@ -122,9 +117,7 @@ public class RobotContainer {
                         Ports.RightFlywheel)),
                 new FlywheelMechanismReal(
                     new MotorIOTalonFX(
-                        "ShooterTower",
-                        FeederConstants.getFXConfig(false),
-                        Ports.TowerRoller)),
+                        "ShooterTower", FeederConstants.getFXConfig(false), Ports.TowerRoller)),
                 new RotaryMechanismReal(
                     new MotorIOTalonFX(
                         ShooterRotaryConstants.NAME,
@@ -349,16 +342,38 @@ public class RobotContainer {
     // controller.y().onTrue(Commands.runOnce(() -> intake.setVelocity(RotationsPerSecond.of(10))));
     // controller.a().onTrue(intake.intake());
     // controller.x().onTrue(intake.stowAndStopRollers());
-    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(5)));
-    controller.leftBumper().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
-    controller.rightBumper().whileTrue(Commands.parallel(intake.runRollers(RotationsPerSecond.of(20)), hopper.runSpindexer(20), shooter.runTower(RotationsPerSecond.of(50))));
-    controller.rightBumper().onFalse(Commands.parallel(intake.runRollers(RotationsPerSecond.of(0)), hopper.runSpindexer(0), shooter.runTower(RotationsPerSecond.of(0))));
 
+    // Flywheel
+    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(50)));
+    controller.leftBumper().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
+
+    // Intake + Spindexer + Tower
+    controller
+        .rightBumper()
+        .whileTrue(
+            Commands.parallel(
+                intake.runRollers(RotationsPerSecond.of(30)),
+                hopper.runSpindexer(21),
+                shooter.runTower(RotationsPerSecond.of(45))));
+    controller
+        .rightBumper()
+        .onFalse(
+            Commands.parallel(
+                intake.runRollers(RotationsPerSecond.of(0)),
+                hopper.runSpindexer(0),
+                shooter.runTower(RotationsPerSecond.of(0))));
+
+    // Intake Rollers 11 Motor: 9 Intake
     controller.a().whileTrue((intake.runRollers(RotationsPerSecond.of(20))));
     controller.a().onFalse((intake.runRollers(RotationsPerSecond.of(0))));
-    controller.x().whileTrue(hopper.runSpindexer(20));
+
+    // Spindexer 1:1
+    controller.x().whileTrue(hopper.runSpindexer(21));
     controller.x().onFalse(hopper.runSpindexer(0));
-    controller.y().whileTrue(shooter.runTower(RotationsPerSecond.of(20)));
+
+    // Tower - 15 Motor:7 Tower
+
+    controller.y().whileTrue(shooter.runTower(RotationsPerSecond.of(50)));
     controller.y().onFalse(shooter.runTower(RotationsPerSecond.of(0)));
   }
 

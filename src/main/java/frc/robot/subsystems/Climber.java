@@ -2,19 +2,13 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Volts;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.linear.LinearMechanism;
 import frc.robot.Constants.ClimberConstants;
-import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
   private LinearMechanism _io;
@@ -67,6 +61,16 @@ public class Climber extends SubsystemBase {
                 ClimberConstants.ACCELERATION,
                 ClimberConstants.JERK,
                 PIDSlot.SLOT_0));
+  }
+
+  public Command calibrateClimber() {
+    return this.run(
+            () ->
+                _io.runVelocity(
+                    ClimberConstants.CALIBRATE_VELOCITY,
+                    ClimberConstants.ACCELERATION,
+                    PIDSlot.SLOT_0))
+        .until(() -> isAboveCurrentLimit());
   }
 
   public boolean nearGoalposition() {

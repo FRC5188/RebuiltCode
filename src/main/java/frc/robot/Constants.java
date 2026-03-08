@@ -13,12 +13,15 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Foot;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
@@ -31,7 +34,7 @@ import com.ctre.phoenix6.configs.CANdleFeaturesConfigs;
 import com.ctre.phoenix6.configs.LEDConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.*;
+import com.ctre.phoenix6.controls.RainbowAnimation;
 import com.ctre.phoenix6.signals.Enable5VRailValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -284,6 +287,8 @@ public final class Constants {
     public static final double IDLE_HOOD_ANGLE = 25.0; // degrees
     public static final RotaryMechCharacteristics CONSTANTS =
         new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
+
+    public static final double HARD_STOP_CURRENT_LIMIT = 50.0;
   }
 
   public class ShooterFlywheelConstants {
@@ -546,7 +551,6 @@ public final class Constants {
     private static Slot0Configs SLOT0CONFIG =
         new Slot0Configs().withKP(25.0).withKI(0.0).withKD(0.0).withKV(0.05).withKS(10.0);
 
-
     public static TalonFXConfiguration getFXConfig() {
       TalonFXConfiguration config = new TalonFXConfiguration();
 
@@ -724,8 +728,12 @@ public final class Constants {
     public static final Distance STARTING_DISTANCE = Inches.of(0.0);
     public static final Distance DRUM_RADIUS = Inches.of(2.0);
     public static final DistanceAngleConverter CONVERTER = new DistanceAngleConverter(DRUM_RADIUS);
+
     public static final AngularVelocity CRUISE_VELOCITY =
         RadiansPerSecond.of(2 * Math.PI).times(10.0);
+    public static final AngularVelocity CALIBRATE_VELOCITY =
+        RadiansPerSecond.of(-2 * Math.PI).times(1.0);
+
     public static final AngularAcceleration ACCELERATION = CRUISE_VELOCITY.div(0.1).per(Second);
     public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
     public static final Distance BOTTOM = Inches.of(0.0);

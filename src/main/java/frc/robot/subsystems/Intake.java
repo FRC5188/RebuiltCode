@@ -2,9 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -73,7 +71,8 @@ public class Intake extends SubsystemBase {
 
   public Command intake() {
     return Commands.sequence(
-        Commands.run(() -> setVelocity(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))),
+        Commands.run(
+            () -> setVelocity(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))),
         setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
   }
 
@@ -90,7 +89,8 @@ public class Intake extends SubsystemBase {
 
   public Command stowAndStopRollers() {
     return Commands.sequence(
-        Commands.run(() -> setVelocity(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))),
+        Commands.run(
+            () -> setVelocity(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))),
         setStowAngle(IntakePivotConstants.STOW_ANGLE));
   }
 
