@@ -26,6 +26,7 @@ public class Intake extends SubsystemBase {
   double pivotAngle;
   public double desiredAngle;
   public int simBalls;
+  public AngularVelocity targetSpeed = RotationsPerSecond.of(0);
 
   public Intake(FlywheelMechanism rollerIO, RotaryMechanism pivotIO) {
     _rollerIO = rollerIO;
@@ -39,6 +40,7 @@ public class Intake extends SubsystemBase {
     // AngularVelocity angVelo = RotationsPerSecond.of(velocity);
 
     _rollerIO.runVelocity(velocity, IntakeFlywheelConstants.ACCELERATION, PIDSlot.SLOT_0);
+    targetSpeed = velocity;
   }
 
   public Command setPivotAngle(Angle pivotAngle) {
@@ -109,8 +111,11 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     // if (_pivotIO.getPosition().in(Degree) < IntakePivotConstants.MAX_ANGLE.in(Degree))
     //   _pivotIO.runVoltage(Volts.of(0.25));
+    _rollerIO.periodic();
+    Logger.recordOutput("Intake/TargetSpeed", targetSpeed);
 
     _pivotIO.periodic();
+    //Logger.recordOutput("Intake/TargetPivot", null);
     Logger.recordOutput(
         "3DField/1_Intake",
         new Pose3d(

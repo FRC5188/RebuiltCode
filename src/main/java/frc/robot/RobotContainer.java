@@ -344,7 +344,7 @@ public class RobotContainer {
     // controller.x().onTrue(intake.stowAndStopRollers());
 
     // Flywheel
-    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(50)));
+    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(25)));
     controller.leftBumper().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
 
     // Intake + Spindexer + Tower
@@ -354,7 +354,7 @@ public class RobotContainer {
             Commands.parallel(
                 intake.runRollers(RotationsPerSecond.of(30)),
                 hopper.runSpindexer(21),
-                shooter.runTower(RotationsPerSecond.of(45))));
+                shooter.runTower(RotationsPerSecond.of(50))));
     controller
         .rightBumper()
         .onFalse(
@@ -364,11 +364,11 @@ public class RobotContainer {
                 shooter.runTower(RotationsPerSecond.of(0))));
 
     // Intake Rollers 11 Motor: 9 Intake
-    controller.a().whileTrue((intake.runRollers(RotationsPerSecond.of(20))));
+controller.a().whileTrue((intake.runRollers(RotationsPerSecond.of(15))));
     controller.a().onFalse((intake.runRollers(RotationsPerSecond.of(0))));
 
     // Spindexer 1:1
-    controller.x().whileTrue(hopper.runSpindexer(21));
+    controller.x().whileTrue(hopper.runSpindexer(18));
     controller.x().onFalse(hopper.runSpindexer(0));
 
     // Tower - 15 Motor:7 Tower

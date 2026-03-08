@@ -15,6 +15,8 @@ import frc.robot.Constants.HopperConstants;
 public class Hopper extends SubsystemBase {
   private FlywheelMechanism _io;
 
+  public AngularVelocity targetVelocity = RotationsPerSecond.of(0.0);
+
   public Hopper(FlywheelMechanism io) {
     _io = io;
   }
@@ -34,6 +36,7 @@ public class Hopper extends SubsystemBase {
     AngularVelocity angVelo = RotationsPerSecond.of(velocity);
 
     _io.runVelocity(angVelo, HopperConstants.ACCELERATION, PIDSlot.SLOT_0);
+    targetVelocity = angVelo;
   }
 
   public Command runSpindexer(double velocity) {
@@ -42,6 +45,7 @@ public class Hopper extends SubsystemBase {
 
   @Override
   public void periodic() {
-    Logger.recordOutput("Spindexer/SupplyCurrent", _io.getSupplyCurrent());
-  }
+    _io.periodic();
+    Logger.recordOutput("Hopper/TargetVelocity", targetVelocity);
+      }
 }
