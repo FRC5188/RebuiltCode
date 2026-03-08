@@ -32,6 +32,7 @@ import frc.lib.W8.mechanisms.flywheel.*;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanismReal;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanismSim;
+import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.Constants.IntakeFlywheelConstants;
 import frc.robot.Constants.IntakeFlywheelConstants.VisionConstants;
@@ -122,7 +123,7 @@ public class RobotContainer {
                 new FlywheelMechanismReal(
                     new MotorIOTalonFX(
                         "ShooterTower",
-                        ShooterFlywheelConstants.getFXConfig(false),
+                        FeederConstants.getFXConfig(false),
                         Ports.TowerRoller)),
                 new RotaryMechanismReal(
                     new MotorIOTalonFX(
@@ -348,16 +349,16 @@ public class RobotContainer {
     // controller.y().onTrue(Commands.runOnce(() -> intake.setVelocity(RotationsPerSecond.of(10))));
     // controller.a().onTrue(intake.intake());
     // controller.x().onTrue(intake.stowAndStopRollers());
-    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(20)));
+    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(5)));
     controller.leftBumper().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
-    controller.rightBumper().whileTrue(Commands.parallel(intake.runRollers(RotationsPerSecond.of(100)), hopper.runSpindexer(100), shooter.runTower(RotationsPerSecond.of(100))));
+    controller.rightBumper().whileTrue(Commands.parallel(intake.runRollers(RotationsPerSecond.of(20)), hopper.runSpindexer(20), shooter.runTower(RotationsPerSecond.of(50))));
     controller.rightBumper().onFalse(Commands.parallel(intake.runRollers(RotationsPerSecond.of(0)), hopper.runSpindexer(0), shooter.runTower(RotationsPerSecond.of(0))));
 
     controller.a().whileTrue((intake.runRollers(RotationsPerSecond.of(20))));
     controller.a().onFalse((intake.runRollers(RotationsPerSecond.of(0))));
-    controller.x().whileTrue(hopper.runSpindexer(50));
+    controller.x().whileTrue(hopper.runSpindexer(20));
     controller.x().onFalse(hopper.runSpindexer(0));
-    controller.y().whileTrue(shooter.runTower(RotationsPerSecond.of(15)));
+    controller.y().whileTrue(shooter.runTower(RotationsPerSecond.of(20)));
     controller.y().onFalse(shooter.runTower(RotationsPerSecond.of(0)));
   }
 

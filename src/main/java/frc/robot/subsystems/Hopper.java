@@ -36,8 +36,9 @@ public class Hopper extends SubsystemBase {
   }
 
   public Command runSpindexer(double velocity) {
-    return Commands.runOnce(() -> setVelocity(velocity));
+      return Commands.runOnce(() -> setVelocity(velocity), this);
   }
+  
 
   @Override
   public void periodic() {}

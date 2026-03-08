@@ -227,21 +227,21 @@ public final class Constants {
       config.Voltage.PeakReverseVoltage = -12.0;
 
       config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-      config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-      config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-      config.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-          CONVERTER.toAngle(MAX_DISTANCE).in(Rotations);
+      config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+      // config.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+      //     CONVERTER.toAngle(MAX_DISTANCE).in(Rotations);
 
-      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-      config.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
-          CONVERTER.toAngle(MIN_DISTANCE).in(Rotations);
+      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
+      // config.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+      //     CONVERTER.toAngle(MIN_DISTANCE).in(Rotations);
 
       config.Feedback.RotorToSensorRatio = 1.0;
 
       config.Feedback.SensorToMechanismRatio = GEARING;
 
-      config.Slot0 = new Slot0Configs().withKP(0.75).withKI(0.0).withKD(0.0);
+      config.Slot0 = new Slot0Configs().withKP(5).withKI(0.0).withKD(0.0);
 
       config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY.in(RotationsPerSecond);
       config.MotionMagic.MotionMagicAcceleration = ACCELERATION.in(RotationsPerSecondPerSecond);
@@ -302,7 +302,7 @@ public final class Constants {
 
     // Velocity PID
     private static Slot0Configs SLOT0CONFIG =
-        new Slot0Configs().withKP(25.0).withKI(0.0).withKD(0.0).withKS(0.05).withKS(10.0);
+        new Slot0Configs().withKP(25.0).withKI(0.0).withKD(0.0).withKV(0.05).withKS(10.0);
 
     public static TalonFXConfiguration getFXConfig(boolean invert) {
       TalonFXConfiguration config = new TalonFXConfiguration();
@@ -542,6 +542,11 @@ public final class Constants {
       }
     }
 
+    // config.Slot0 = new Slot0Configs().withKP(0.75).withKI(0.0).withKD(0.0);
+    private static Slot0Configs SLOT0CONFIG =
+        new Slot0Configs().withKP(25.0).withKI(0.0).withKD(0.0).withKV(0.05).withKS(10.0);
+
+
     public static TalonFXConfiguration getFXConfig() {
       TalonFXConfiguration config = new TalonFXConfiguration();
 
@@ -559,19 +564,19 @@ public final class Constants {
       config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
       config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-      config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-      config.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-          CONVERTER.toAngle(MAX_DISTANCE).in(Rotations);
+      config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+      // config.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+      //     CONVERTER.toAngle(MAX_DISTANCE).in(Rotations);
 
-      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-      config.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
-          CONVERTER.toAngle(MIN_DISTANCE).in(Rotations);
+      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
+      // config.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+      //     CONVERTER.toAngle(MIN_DISTANCE).in(Rotations);
 
       config.Feedback.RotorToSensorRatio = 1.0;
 
       config.Feedback.SensorToMechanismRatio = GEARING;
 
-      config.Slot0 = new Slot0Configs().withKP(0.75).withKI(0.0).withKD(0.0);
+      config.Slot0 = SLOT0CONFIG;
 
       config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY.in(RotationsPerSecond);
       config.MotionMagic.MotionMagicAcceleration = ACCELERATION.in(RotationsPerSecondPerSecond);
@@ -670,7 +675,7 @@ public final class Constants {
 
     // Velocity PID
     private static Slot0Configs SLOT0CONFIG =
-        new Slot0Configs().withKP(25.0).withKI(0.0).withKD(0.0).withKS(0.05).withKS(10.0);
+        new Slot0Configs().withKP(10.0).withKI(0.0).withKD(0.0).withKV(0.05).withKS(12.0);
 
     public static TalonFXConfiguration getFXConfig(boolean invert) {
       TalonFXConfiguration config = new TalonFXConfiguration();

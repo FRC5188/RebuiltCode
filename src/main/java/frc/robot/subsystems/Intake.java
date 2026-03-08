@@ -68,7 +68,7 @@ public class Intake extends SubsystemBase {
   }
 
   public Command runRollers(AngularVelocity velocity) {
-    return Commands.runOnce(() -> setVelocity(velocity));
+    return Commands.run(() -> setVelocity(velocity), this);
   }
 
   public Command intake() {

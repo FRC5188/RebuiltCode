@@ -53,7 +53,7 @@ public class Shooter extends SubsystemBase {
   // Sets feeder motor speed
   public void runFeeder(AngularVelocity velocity) {
     _feeder.runVelocity(
-        velocity, FeederConstants.FEED_ACCELERATION, PIDSlot.SLOT_1);
+        velocity, FeederConstants.FEED_ACCELERATION, PIDSlot.SLOT_0);
   }
 
   // Sets the flywheel velocity based on an input.
@@ -146,12 +146,12 @@ public class Shooter extends SubsystemBase {
   public Command runFlywheel(AngularVelocity velocity) {
         System.out.println("Flywheel");
 
-    return Commands.runOnce(() -> setFlywheelVelocity(velocity));
+    return Commands.run(() -> setFlywheelVelocity(velocity), this);
   }
 
   public Command runTower(AngularVelocity velocity) {
     System.out.println("Tower");
-    return Commands.runOnce(() -> runFeeder(velocity));
+    return Commands.run(() -> runFeeder(velocity), this);
   }
 
   public void simShoot() {
