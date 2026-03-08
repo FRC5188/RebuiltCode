@@ -395,7 +395,7 @@ public class RobotContainer {
                 shooter.runTower(RotationsPerSecond.of(0))));
 
     // Intake Rollers 11 Motor: 9 Intake
-controller.a().whileTrue((intake.runRollers(RotationsPerSecond.of(15))));
+    controller.a().whileTrue((intake.runRollers(RotationsPerSecond.of(15))));
     controller.a().onFalse((intake.runRollers(RotationsPerSecond.of(0))));
 
     // Spindexer 1:1
@@ -407,9 +407,9 @@ controller.a().whileTrue((intake.runRollers(RotationsPerSecond.of(15))));
     controller.y().whileTrue(shooter.runTower(RotationsPerSecond.of(70)));
     controller.y().onFalse(shooter.runTower(RotationsPerSecond.of(0)));
 
-    controller.povLeft().whileTrue(climber.calibrateClimber());
-    controller.povUp().whileTrue(climber.raiseClimber());
-    controller.povDown().whileTrue(climber.lowerClimber());
+    // controller.povLeft().whileTrue(climber.calibrateClimber());
+    // controller.povUp().whileTrue(climber.raiseClimber());
+    // controller.povDown().whileTrue(climber.lowerClimber());
   }
 
   /**
