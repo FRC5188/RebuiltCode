@@ -47,5 +47,5 @@ public class Hopper extends SubsystemBase {
   public void periodic() {
     _io.periodic();
     Logger.recordOutput("Hopper/TargetVelocity", targetVelocity);
-      }
+  }
 }

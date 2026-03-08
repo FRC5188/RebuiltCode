@@ -197,7 +197,7 @@ public final class Constants {
     public static final AngularAcceleration ACCELERATION = CRUISE_VELOCITY.div(0.1).per(Second);
     public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
 
-    public static final double GEARING = (5.0 / 1.0);
+    public static final double GEARING = (1.0 / 1.0);
     public static final Distance MIN_DISTANCE = Inches.of(0.0);
     public static final Distance MAX_DISTANCE = Inches.of(10.0);
     public static final Distance STARTING_DISTANCE = Inches.of(0.0);
@@ -244,7 +244,7 @@ public final class Constants {
 
       config.Feedback.SensorToMechanismRatio = GEARING;
 
-      config.Slot0 = new Slot0Configs().withKP(18).withKI(0.0).withKD(0.01).withKS(2.5).withKV(0.05);
+      config.Slot0 = new Slot0Configs().withKP(10).withKI(0.0).withKD(0.0).withKS(2.5).withKV(0.05);
 
       config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY.in(RotationsPerSecond);
       config.MotionMagic.MotionMagicAcceleration = ACCELERATION.in(RotationsPerSecondPerSecond);
@@ -670,7 +670,7 @@ public final class Constants {
     public static final AngularVelocity MAX_VELOCITY = RadiansPerSecond.of(2 * Math.PI);
     public static final AngularAcceleration MAX_ACCELERATION = MAX_VELOCITY.per(Second);
 
-    private static final double GEARING = (15.0 / 7.0);
+    private static final double GEARING = (15.0 / 30.0);
 
     public static final AngularVelocity TOLERANCE = MAX_VELOCITY.times(0.1);
 
@@ -679,7 +679,7 @@ public final class Constants {
 
     // Velocity PID
     private static Slot0Configs SLOT0CONFIG =
-        new Slot0Configs().withKP(10.0).withKI(0.0).withKD(0.0).withKV(0.05).withKS(12.0);
+        new Slot0Configs().withKP(5.0).withKI(0.0).withKD(0.0).withKV(0.05).withKS(12.0);
 
     public static TalonFXConfiguration getFXConfig(boolean invert) {
       TalonFXConfiguration config = new TalonFXConfiguration();
@@ -721,8 +721,9 @@ public final class Constants {
     public static final DCMotor DCMOTOR = DCMotor.getKrakenX60(1);
     public static final Mass CARRIAGE_MASS = Kilograms.of(2.5);
     public static final String MOTOR_NAME = "Climber motor";
+    public static final String NAME = "Climber";
     public static final Distance TOLERANCE = Inches.of(0.1);
-    public static final double GEARING = (5.0 / 1.0);
+    public static final double GEARING = 1;
     public static final Distance MIN_DISTANCE = Inches.of(0.0);
     public static final Distance MAX_DISTANCE = Inches.of(10.0);
     public static final Distance STARTING_DISTANCE = Inches.of(0.0);
@@ -730,9 +731,11 @@ public final class Constants {
     public static final DistanceAngleConverter CONVERTER = new DistanceAngleConverter(DRUM_RADIUS);
 
     public static final AngularVelocity CRUISE_VELOCITY =
-        RadiansPerSecond.of(2 * Math.PI).times(10.0);
+        RadiansPerSecond.of(2 * Math.PI).times(5000.0);
+    public static final AngularVelocity LOWER_VELOCITY =
+        RadiansPerSecond.of(-2 * Math.PI).times(5000.0);
     public static final AngularVelocity CALIBRATE_VELOCITY =
-        RadiansPerSecond.of(-2 * Math.PI).times(1.0);
+        RadiansPerSecond.of(-2 * Math.PI).times(5000.0);
 
     public static final AngularAcceleration ACCELERATION = CRUISE_VELOCITY.div(0.1).per(Second);
     public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
@@ -765,19 +768,20 @@ public final class Constants {
       config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
       config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-      config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-      config.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-          CONVERTER.toAngle(MAX_DISTANCE).in(Rotations);
-
-      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-      config.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
-          CONVERTER.toAngle(MIN_DISTANCE).in(Rotations);
+      config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+      // config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+      // config.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+      //     CONVERTER.toAngle(MAX_DISTANCE).in(Rotations);
+      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
+      // config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+      // config.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+      //     CONVERTER.toAngle(MIN_DISTANCE).in(Rotations);
 
       config.Feedback.RotorToSensorRatio = 1.0;
 
       config.Feedback.SensorToMechanismRatio = GEARING;
 
-      config.Slot0 = new Slot0Configs().withKP(0.75).withKI(0.0).withKD(0.0);
+      config.Slot0 = new Slot0Configs().withKP(50).withKI(0.0).withKD(0.0);
 
       config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY.in(RotationsPerSecond);
       config.MotionMagic.MotionMagicAcceleration = ACCELERATION.in(RotationsPerSecondPerSecond);
@@ -791,6 +795,6 @@ public final class Constants {
     public static final AngularAcceleration ANGULAR_ACCELERATION =
         RotationsPerSecondPerSecond.of(1);
     public static final double CLIMB_SPEED = 1.0;
-    public static final double HARD_STOP_CURRENT_LIMIT = 50.0;
+    public static final double HARD_STOP_CURRENT_LIMIT = 20.0;
   }
 }

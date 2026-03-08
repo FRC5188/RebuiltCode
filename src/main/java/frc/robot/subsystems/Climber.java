@@ -2,9 +2,12 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.linear.LinearMechanism;
@@ -37,6 +40,13 @@ public class Climber extends SubsystemBase {
     }
   }
 
+  // public Command homeCommand()
+  //   {
+  //       return Commands.sequence(
+  //           runOnce(() -> _io.runVoltage(Volts.of(-2))),
+  //           Commands.waitUntil(() -> isAboveCurrentLimit()));
+  //   }
+
   @Override
   public void periodic() {
     _io.periodic();
@@ -64,6 +74,8 @@ public class Climber extends SubsystemBase {
   }
 
   public Command calibrateClimber() {
+    System.out.println(ClimberConstants.CALIBRATE_VELOCITY);
+    System.out.println(ClimberConstants.ACCELERATION);
     return this.run(
             () ->
                 _io.runVelocity(
@@ -72,6 +84,31 @@ public class Climber extends SubsystemBase {
                     PIDSlot.SLOT_0))
         .until(() -> isAboveCurrentLimit());
   }
+
+  public Command raiseClimber() {
+    System.out.println(ClimberConstants.CRUISE_VELOCITY);
+    System.out.println(ClimberConstants.ACCELERATION);
+    return this.run(
+            () ->
+                _io.runVelocity(
+                    ClimberConstants.CRUISE_VELOCITY,
+                    ClimberConstants.ACCELERATION,
+                    PIDSlot.SLOT_0))
+        .until(() -> isAboveCurrentLimit());
+  }
+
+  public Command lowerClimber() {
+    System.out.println(ClimberConstants.LOWER_VELOCITY);
+    System.out.println(ClimberConstants.ACCELERATION);
+    return this.run(
+            () ->
+                _io.runVelocity(
+                    ClimberConstants.LOWER_VELOCITY,
+                    ClimberConstants.ACCELERATION,
+                    PIDSlot.SLOT_0))
+        .until(() -> isAboveCurrentLimit());
+  }
+
 
   public boolean nearGoalposition() {
     if (Math.abs(

@@ -41,6 +41,7 @@ public class Shooter extends SubsystemBase {
   private double hoodAngle;
 
   public AngularVelocity targetVelocity = RotationsPerSecond.of(0.0);
+  public AngularVelocity feederTargetVelocity = RotationsPerSecond.of(0.0);
 
   public Shooter(
       FlywheelMechanism lflywheel,
@@ -57,6 +58,7 @@ public class Shooter extends SubsystemBase {
   public void runFeeder(AngularVelocity velocity) {
     _feeder.runVelocity(
         velocity, FeederConstants.FEED_ACCELERATION, PIDSlot.SLOT_0);
+    feederTargetVelocity = velocity;
   }
 
   // Sets the flywheel velocity based on an input.
@@ -211,6 +213,7 @@ public class Shooter extends SubsystemBase {
     _rflywheel.periodic();
     _feeder.periodic();
    Logger.recordOutput("Flywheel/TargetVelocity", targetVelocity);
+   Logger.recordOutput("Feeder/TargetVelocity", feederTargetVelocity);
     // _feeder.periodic();
     // _flywheel.periodic();
 

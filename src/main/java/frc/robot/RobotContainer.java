@@ -29,9 +29,13 @@ import frc.lib.W8.io.motor.*;
 import frc.lib.W8.io.vision.VisionIOPhotonVision;
 import frc.lib.W8.io.vision.VisionIOPhotonVisionSim;
 import frc.lib.W8.mechanisms.flywheel.*;
+import frc.lib.W8.mechanisms.linear.LinearMechanism;
+import frc.lib.W8.mechanisms.linear.LinearMechanismReal;
+import frc.lib.W8.mechanisms.linear.LinearMechanismSim;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanismReal;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanismSim;
+import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.Constants.IntakeFlywheelConstants;
@@ -42,6 +46,7 @@ import frc.robot.Constants.ShooterFlywheelConstants;
 import frc.robot.Constants.ShooterRotaryConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -71,6 +76,7 @@ public class RobotContainer {
   public final Intake intake;
   //   private final BallCounter ballCounter;
   private final Vision vision;
+  private final Climber climber;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -140,6 +146,14 @@ public class RobotContainer {
                         Ports.IntakePivot),
                     IntakePivotConstants.CONSTANTS,
                     Optional.empty()));
+        climber =
+            new Climber(
+                new LinearMechanismReal(
+                    new MotorIOTalonFX(
+                        ClimberConstants.MOTOR_NAME,
+                        ClimberConstants.getFXConfig(),
+                        Ports.ClimberMotor),
+                        ClimberConstants.CHARACTERISTICS));
         vision =
             new Vision(
                 new VisionIOPhotonVision(
@@ -233,6 +247,17 @@ public class RobotContainer {
                     VisionConstants.aprilTagLayout,
                     PoseStrategy.CONSTRAINED_SOLVEPNP,
                     VisionConstants.getSystemSim()));
+        climber =
+            new Climber(
+                new LinearMechanismSim(
+                    new MotorIOTalonFXSim(
+                        ClimberConstants.MOTOR_NAME,
+                        ClimberConstants.getFXConfig(),
+                        Ports.ClimberMotor),
+                        ClimberConstants.DCMOTOR,
+                        ClimberConstants.CARRIAGE_MASS,
+                        ClimberConstants.CHARACTERISTICS,
+                        false));
         break;
 
       default:
@@ -259,6 +284,10 @@ public class RobotContainer {
                 new FlywheelMechanism() {},
                 new RotaryMechanism(IntakePivotConstants.NAME, IntakePivotConstants.CONSTANTS) {});
         vision = new Vision(null);
+
+        climber =
+            new Climber(
+                new LinearMechanism(ClimberConstants.NAME, ClimberConstants.CHARACTERISTICS) {});
         break;
     }
 
@@ -352,9 +381,11 @@ public class RobotContainer {
         .rightBumper()
         .whileTrue(
             Commands.parallel(
-                intake.runRollers(RotationsPerSecond.of(30)),
-                hopper.runSpindexer(21),
-                shooter.runTower(RotationsPerSecond.of(50))));
+                // intake.runRollers(RotationsPerSecond.of(30)),
+                hopper.runSpindexer(15),
+                shooter.runTower(RotationsPerSecond.of(70))));
+
+
     controller
         .rightBumper()
         .onFalse(
@@ -373,8 +404,12 @@ controller.a().whileTrue((intake.runRollers(RotationsPerSecond.of(15))));
 
     // Tower - 15 Motor:7 Tower
 
-    controller.y().whileTrue(shooter.runTower(RotationsPerSecond.of(50)));
+    controller.y().whileTrue(shooter.runTower(RotationsPerSecond.of(70)));
     controller.y().onFalse(shooter.runTower(RotationsPerSecond.of(0)));
+
+    controller.povLeft().whileTrue(climber.calibrateClimber());
+    controller.povUp().whileTrue(climber.raiseClimber());
+    controller.povDown().whileTrue(climber.lowerClimber());
   }
 
   /**
