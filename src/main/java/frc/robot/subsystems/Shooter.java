@@ -1,9 +1,9 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -13,7 +13,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -37,6 +36,9 @@ public class Shooter extends SubsystemBase {
   private double desiredVelo;
   private double hoodAngle;
 
+  public AngularVelocity targetVelocity = RotationsPerSecond.of(0.0);
+  public AngularVelocity feederTargetVelocity = RotationsPerSecond.of(0.0);
+
   public Shooter(
       FlywheelMechanism lflywheel,
       FlywheelMechanism rflywheel,
@@ -49,19 +51,20 @@ public class Shooter extends SubsystemBase {
   }
 
   // Sets feeder motor speed
-  public void runFeeder() {
-    _feeder.runVelocity(
-        FeederConstants.FEED_SPEED, FeederConstants.FEED_ACCELERATION, PIDSlot.SLOT_2);
+  public void runFeeder(AngularVelocity velocity) {
+    _feeder.runVelocity(velocity, FeederConstants.FEED_ACCELERATION, PIDSlot.SLOT_0);
+    feederTargetVelocity = velocity;
   }
 
   // Sets the flywheel velocity based on an input.
-  public void setFlywheelVelocity(double velocity) {
+  public void setFlywheelVelocity(AngularVelocity velocity) {
     // store the desired velocity then send converted velocity to the mechanism
-    this.desiredVelo = velocity;
-    AngularVelocity angVelo = RotationsPerSecond.of(velocity);
-    AngularVelocity negangVelo = RotationsPerSecond.of(velocity);
-    _lflywheel.runVelocity(angVelo, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
-    _rflywheel.runVelocity(negangVelo, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
+    // this.desiredVelo = velocity;
+    // AngularVelocity angVelo = RotationsPerSecond.of(velocity);
+    // AngularVelocity negangVelo = RotationsPerSecond.of(velocity);
+    _lflywheel.runVelocity(velocity, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
+    _rflywheel.runVelocity(velocity, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
+    targetVelocity = velocity;
   }
 
   public enum State {
@@ -125,7 +128,25 @@ public class Shooter extends SubsystemBase {
     return Math.abs(hoodAngle - _hood.getPosition().in(Degrees)) < ShooterConstants.HOOD_TOLERANCE;
   }
 
-  public Command shoot(double velocity) {
+  public boolean isAboveCurrentLimit() {
+    if (_hood.getSupplyCurrent().in(Amps) > ShooterConstants.HARD_STOP_CURRENT_LIMIT) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public Command calibrateHood() {
+    return this.run(
+            () ->
+                _hood.runVelocity(
+                    ShooterConstants.HOOD_VELOCITY,
+                    ShooterConstants.HOOD_ACCELERATION,
+                    PIDSlot.SLOT_0))
+        .until(() -> isAboveCurrentLimit());
+  }
+
+  public Command shoot(AngularVelocity velocity) {
     // Prepare targets
     return Commands.sequence(
         // Set and wait in parallel for both hood and flywheel
@@ -133,13 +154,20 @@ public class Shooter extends SubsystemBase {
             Commands.run(() -> setFlywheelVelocity(velocity)).until(this::flyAtVelocity),
             Commands.run(() -> setHoodAngle(hoodAngle)).until(this::hoodAtAngle)),
         // feed once ready
-        Commands.runOnce(() -> runFeeder()),
+        Commands.runOnce(() -> runFeeder(FeederConstants.FEED_SPEED)),
         // stop flywheel when finished
-        Commands.runOnce(() -> setFlywheelVelocity(0)));
+        Commands.runOnce(() -> setFlywheelVelocity(RotationsPerSecond.of(0.0))));
   }
 
-  public Command runFlywheel() {
-    return Commands.runOnce(() -> setFlywheelVelocity(1));
+  public Command runFlywheel(AngularVelocity velocity) {
+    System.out.println("Flywheel");
+
+    return Commands.run(() -> setFlywheelVelocity(velocity), this);
+  }
+
+  public Command runTower(AngularVelocity velocity) {
+    System.out.println("Tower");
+    return Commands.run(() -> runFeeder(velocity), this);
   }
 
   public void simShoot() {
@@ -180,19 +208,24 @@ public class Shooter extends SubsystemBase {
 
   public void periodic() {
     _hood.periodic();
+    _lflywheel.periodic();
+    _rflywheel.periodic();
+    _feeder.periodic();
+    Logger.recordOutput("Flywheel/TargetVelocity", targetVelocity);
+    Logger.recordOutput("Feeder/TargetVelocity", feederTargetVelocity);
     // _feeder.periodic();
     // _flywheel.periodic();
 
-    double pitch =
-        Math.toRadians(
-            Math.abs(Math.sin(Timer.getFPGATimestamp()) * 45)); // Placeholder for position
+    // double pitch =
+    //     Math.toRadians(
+    //         Math.abs(Math.sin(Timer.getFPGATimestamp()) * 45)); // Placeholder for position
 
     // The pitch of the Rotation3D should be '_hood.getPosition().in(Radians)', change after fixing
     // motor configs.
-    Logger.recordOutput(
-        "3DField/3_Hood",
-        new Pose3d(new Translation3d(-0.0075, 0.0, 0.523), new Rotation3d(0, pitch, 0)));
+    // Logger.recordOutput(
+    //     "3DField/3_Hood",
+    //     new Pose3d(new Translation3d(-0.0075, 0.0, 0.523), new Rotation3d(0, pitch, 0)));
 
-    _hood.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp()) * 0.25));
+    // _hood.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp()) * 0.25));
   }
 }
