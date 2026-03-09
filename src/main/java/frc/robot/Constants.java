@@ -61,6 +61,9 @@ import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycle;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.lib.W8.mechanisms.linear.LinearMechanism.LinearMechCharacteristics;
@@ -617,6 +620,11 @@ public final class Constants {
 
     public static final DCMotor DCMOTOR = DCMotor.getKrakenX60(1);
     public static final MomentOfInertia MOI = KilogramSquareMeters.of(0.25);
+
+    public static final int ENCODER_CHANNEL = 9;
+    public static final DutyCycleEncoder ENCODER1 =
+        new DutyCycleEncoder(new DutyCycle(new DigitalInput(ENCODER_CHANNEL)));
+    // public static final Encoder ENCODER = new Encoder(ENCODER_CHANNEL, ENCODER_CHANNEL);
 
     // Positional PID
     public static final Slot0Configs SLOT_0_CONFIG =
