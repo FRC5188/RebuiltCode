@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import edu.wpi.first.math.geometry.Pose3d;
@@ -15,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.flywheel.FlywheelMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
+import frc.robot.Robot;
 import frc.robot.Constants.IntakeFlywheelConstants;
 import frc.robot.Constants.IntakePivotConstants;
 import org.littletonrobotics.junction.Logger;
@@ -31,6 +33,8 @@ public class Intake extends SubsystemBase {
   public Intake(FlywheelMechanism rollerIO, RotaryMechanism pivotIO) {
     _rollerIO = rollerIO;
     _pivotIO = pivotIO;
+
+    if (Robot.isReal()) tunePivotPosition();
 
     simBalls = 0;
   }
@@ -105,6 +109,12 @@ public class Intake extends SubsystemBase {
                 IntakePivotConstants.ACCELERATION,
                 IntakePivotConstants.JERK,
                 PIDSlot.SLOT_0));
+  }
+
+  public void tunePivotPosition()
+  {
+    System.out.println(IntakePivotConstants.ENCODER1.get());
+    _pivotIO.setEncoderPosition(Rotations.of(IntakePivotConstants.ENCODER1.get()));
   }
 
   @Override
