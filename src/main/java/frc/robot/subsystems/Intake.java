@@ -16,9 +16,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.flywheel.FlywheelMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
-import frc.robot.Robot;
 import frc.robot.Constants.IntakeFlywheelConstants;
 import frc.robot.Constants.IntakePivotConstants;
+import frc.robot.Robot;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
@@ -111,8 +111,7 @@ public class Intake extends SubsystemBase {
                 PIDSlot.SLOT_0));
   }
 
-  public void tunePivotPosition()
-  {
+  public void tunePivotPosition() {
     System.out.println(IntakePivotConstants.ENCODER1.get());
     _pivotIO.setEncoderPosition(Rotations.of(IntakePivotConstants.ENCODER1.get()));
   }
