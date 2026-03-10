@@ -17,8 +17,6 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -343,31 +341,31 @@ public class RobotContainer {
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+    // controller
+    //     .b()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //                 drive)
+    //             .ignoringDisable(true));
 
     // controller
     //     .x()
     //     .onTrue(Commands.runOnce(() -> hopper.setGoal(HopperConstants.HOPPER_POSITION), hopper));
 
-    controller.rightTrigger().onTrue(Commands.runOnce(() -> shooter.simShoot()));
+    // controller.rightTrigger().onTrue(Commands.runOnce(() -> shooter.simShoot()));
 
-    controller
-        .leftTrigger()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  Robot.fuelSim.clearFuel();
-                  Robot.fuelSim.spawnStartingFuel();
-                  intake.simBalls = 0;
-                }));
+    // controller
+    //  .leftTrigger()
+    // .onTrue(
+    //  Commands.runOnce(
+    //    () -> {
+    //    Robot.fuelSim.clearFuel();
+    //  Robot.fuelSim.spawnStartingFuel();
+    //       intake.simBalls = 0;
+    //   }));
     // controller.y().onTrue(Commands.runOnce(() -> intake.setVelocity(RotationsPerSecond.of(10))));
     // controller.a().onTrue(intake.intake());
     // controller.x().onTrue(intake.stowAndStopRollers());
@@ -397,17 +395,26 @@ public class RobotContainer {
     controller.a().onFalse((intake.runRollers(RotationsPerSecond.of(0))));
 
     // Spindexer 1:1
-    controller.x().whileTrue(hopper.runSpindexer(18));
-    controller.x().onFalse(hopper.runSpindexer(0));
+    // controller.x().whileTrue(hopper.runSpindexer(18));
+    // controller.x().onFalse(hopper.runSpindexer(0));
 
     // Tower - 15 Motor:7 Tower
 
     controller.y().whileTrue(shooter.runTower(RotationsPerSecond.of(70)));
     controller.y().onFalse(shooter.runTower(RotationsPerSecond.of(0)));
 
-    // controller.povLeft().whileTrue(climber.calibrateClimber());
+    // controller.b().onFalse(shooter.setHoodAngle(ShooterRotaryConstants.STARTING_ANGLE.magnitude()));
+    controller.b().whileTrue(shooter.setHoodAngle(5));
+
+    // controller.x().onFalse(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
+    controller.x().whileTrue(intake.setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
+
+    controller.povRight().onTrue(shooter.calibrateHood());
+
     // controller.povUp().whileTrue(climber.raiseClimber());
+    // controller.povUp().onFalse(climber.stopClimber());
     // controller.povDown().whileTrue(climber.lowerClimber());
+    // controller.povDown().onFalse(climber.stopClimber());
   }
 
   /**

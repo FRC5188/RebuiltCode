@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 
 import edu.wpi.first.units.measure.Distance;
@@ -80,6 +81,13 @@ public class Climber extends SubsystemBase {
                     ClimberConstants.ACCELERATION,
                     PIDSlot.SLOT_0))
         .until(() -> isAboveCurrentLimit());
+  }
+
+  public Command stopClimber() {
+    return this.run(
+        () ->
+            _io.runVelocity(
+                DegreesPerSecond.of(0.0), ClimberConstants.ACCELERATION, PIDSlot.SLOT_0));
   }
 
   public Command raiseClimber() {

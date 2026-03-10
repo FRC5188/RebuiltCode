@@ -4,7 +4,10 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -13,15 +16,18 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.flywheel.FlywheelMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
 import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.ShooterRotaryConstants;
 import frc.robot.Robot;
 import org.littletonrobotics.junction.Logger;
 
@@ -35,9 +41,13 @@ public class Shooter extends SubsystemBase {
   // desired target values
   private double desiredVelo;
   private double hoodAngle;
+  private double desiredHoodAngle;
 
   public AngularVelocity targetVelocity = RotationsPerSecond.of(0.0);
   public AngularVelocity feederTargetVelocity = RotationsPerSecond.of(0.0);
+
+  private Debouncer homeDebouncer = new Debouncer(0.1, DebounceType.kRising);
+  private Trigger homedTrigger;
 
   public Shooter(
       FlywheelMechanism lflywheel,
@@ -48,6 +58,13 @@ public class Shooter extends SubsystemBase {
     _rflywheel = rflywheel;
     _feeder = feeder;
     _hood = hood;
+    homedTrigger =
+        new Trigger(
+            () ->
+                homeDebouncer.calculate(
+                    _hood
+                        .getSupplyCurrent()
+                        .gte(Amps.of(ShooterConstants.HARD_STOP_CURRENT_LIMIT))));
   }
 
   // Sets feeder motor speed
@@ -113,14 +130,22 @@ public class Shooter extends SubsystemBase {
   }
 
   // Sets hood angle
-  public void setHoodAngle(double angleDegrees) {
+  public Command setHoodAngle(double angleDegrees) {
     hoodAngle = angleDegrees;
-    _hood.runPosition(
-        Angle.ofBaseUnits(angleDegrees, Degrees),
-        ShooterConstants.HOOD_VELOCITY,
-        ShooterConstants.HOOD_ACCELERATION,
-        ShooterConstants.HOOD_JERK,
-        PIDSlot.SLOT_0);
+    desiredHoodAngle = angleDegrees;
+    return this.runOnce(
+            () -> {
+              System.out.println("Command");
+              _hood.runPosition(
+                  Angle.ofBaseUnits(angleDegrees, Degrees),
+                  ShooterRotaryConstants.CRUISE_VELOCITY,
+                  ShooterRotaryConstants.ACCELERATION,
+                  ShooterRotaryConstants.JERK,
+                  PIDSlot.SLOT_0);
+              // _hood.runVelocity(ShooterConstants.HOOD_VELOCITY,
+              // ShooterConstants.HOOD_ACCELERATION, PIDSlot.SLOT_0);
+            })
+        .andThen(() -> System.out.println("Command ran"));
   }
 
   // Checks if hood is at angle
@@ -129,7 +154,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean isAboveCurrentLimit() {
-    if (_hood.getSupplyCurrent().in(Amps) > ShooterConstants.HARD_STOP_CURRENT_LIMIT) {
+    if (Math.abs(_hood.getSupplyCurrent().in(Amps)) > ShooterConstants.HARD_STOP_CURRENT_LIMIT) {
       return true;
     } else {
       return false;
@@ -137,14 +162,23 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command calibrateHood() {
-    return this.run(
-            () ->
-                _hood.runVelocity(
-                    ShooterConstants.HOOD_VELOCITY,
-                    ShooterConstants.HOOD_ACCELERATION,
-                    PIDSlot.SLOT_0))
-        .until(() -> isAboveCurrentLimit());
+    return Commands.sequence(
+        runOnce(() -> _hood.runVoltage(Voltage.ofBaseUnits(-1, Volts))),
+        Commands.waitUntil(homedTrigger),
+        runOnce(() -> _hood.setEncoderPosition(Angle.ofBaseUnits(0, Degrees))),
+        runOnce(() -> _hood.runVoltage(Voltage.ofBaseUnits(0, Volts))));
   }
+
+  // public Command calibrateHood() {
+  //   return this.run(
+  //           () ->
+  //               _hood.runVelocity(
+  //                   ShooterConstants.HOOD_VELOCITY,
+  //                   ShooterConstants.HOOD_ACCELERATION,
+  //                   PIDSlot.SLOT_1))
+  //       .until(() -> isAboveCurrentLimit()).andThen(this.run( () ->
+  // _hood.setEncoderPosition(Angle.ofBaseUnits(0, Degrees))));
+  // }
 
   public Command shoot(AngularVelocity velocity) {
     // Prepare targets
@@ -213,6 +247,9 @@ public class Shooter extends SubsystemBase {
     _feeder.periodic();
     Logger.recordOutput("Flywheel/TargetVelocity", targetVelocity);
     Logger.recordOutput("Feeder/TargetVelocity", feederTargetVelocity);
+    Logger.recordOutput("Hood/position", _hood.getPosition());
+    Logger.recordOutput("Hood/desired_position", desiredHoodAngle);
+    Logger.recordOutput("Hood/current", _hood.getSupplyCurrent());
     // _feeder.periodic();
     // _flywheel.periodic();
 
