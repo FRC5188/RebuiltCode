@@ -33,6 +33,7 @@ import com.ctre.phoenix6.configs.CANdleConfiguration;
 import com.ctre.phoenix6.configs.CANdleFeaturesConfigs;
 import com.ctre.phoenix6.configs.LEDConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.RainbowAnimation;
 import com.ctre.phoenix6.signals.Enable5VRailValue;
@@ -282,8 +283,8 @@ public final class Constants {
     public static final double HEIGHT_DIFFERENCE =
         1.295; // Meters between flywheel center and top of hub opening
     public static final double EXIT_VELOCITY = 7.4; // m/s from ReCalc Flywheel Calculator
-    public static final AngularVelocity HOOD_VELOCITY = RotationsPerSecond.of(1.0);
-    public static final AngularAcceleration HOOD_ACCELERATION = RotationsPerSecondPerSecond.of(1.0);
+    public static final AngularVelocity HOOD_VELOCITY = RotationsPerSecond.of(-0.0005);
+    public static final AngularAcceleration HOOD_ACCELERATION = RotationsPerSecondPerSecond.of(.2);
     public static final Velocity<AngularAccelerationUnit> HOOD_JERK = HOOD_ACCELERATION.per(Second);
     public static final double HOOD_TOLERANCE = 1.0; // In degrees
     public static final double GRAVITY = 9.81; // m/s^2
@@ -291,7 +292,7 @@ public final class Constants {
     public static final RotaryMechCharacteristics CONSTANTS =
         new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
 
-    public static final double HARD_STOP_CURRENT_LIMIT = 50.0;
+    public static final double HARD_STOP_CURRENT_LIMIT = 2.5;
   }
 
   public class ShooterFlywheelConstants {
@@ -353,20 +354,19 @@ public final class Constants {
 
     public static final Angle TOLERANCE = Degrees.of(2.0);
 
-    // public static final AngularVelocity CRUISE_VELOCITY = Units.RadiansPerSecond.of(1);
-    // public static final AngularAcceleration ACCELERATION =
-    //     CRUISE_VELOCITY.div(0.1).per(Units.Second);
-    // public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
+    public static final AngularVelocity CRUISE_VELOCITY = RadiansPerSecond.of(100);
+    public static final AngularAcceleration ACCELERATION = RadiansPerSecondPerSecond.of(200);
+    public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
 
-    private static final double ROTOR_TO_SENSOR = (2.0 / 1.0);
-    private static final double SENSOR_TO_MECHANISM = (2.0 / 1.0);
+    private static final double ROTOR_TO_SENSOR = (1.0 / 1.0);
+    private static final double SENSOR_TO_MECHANISM = 1 / 50;
 
     public static final Translation3d OFFSET = Translation3d.kZero;
 
     public static final Angle MIN_ANGLE = Degrees.of(0.0);
-    public static final Angle MAX_ANGLE = Rotations.of(45.0);
-    public static final Angle STARTING_ANGLE = Rotations.of(0.0);
-    public static final Distance ARM_LENGTH = Meters.of(1.0);
+    public static final Angle MAX_ANGLE = Degrees.of(25);
+    public static final Angle STARTING_ANGLE = Degrees.of(0.0);
+    public static final Distance ARM_LENGTH = Meters.of(0.0);
 
     public static final RotaryMechCharacteristics CONSTANTS =
         new RotaryMechCharacteristics(OFFSET, ARM_LENGTH, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
@@ -381,7 +381,10 @@ public final class Constants {
 
     // Positional PID
     private static Slot0Configs SLOT0CONFIG =
-        new Slot0Configs().withKP(30.0).withKI(0.0).withKD(5.0);
+        new Slot0Configs().withKP(250.0).withKI(0.0).withKD(0.0).withKS(10.0).withKV(0.0);
+    // Velocity PID
+    private static Slot1Configs SLOT1CONFIG =
+        new Slot1Configs().withKP(30.0).withKI(0.0).withKD(0.0).withKS(40.0).withKV(0.0);
 
     /**
      * Creates and returns the TalonFX motor controller configuration for the rotary mechanism.
@@ -409,7 +412,7 @@ public final class Constants {
       config.CurrentLimits.SupplyCurrentLowerTime = 0.1;
 
       config.CurrentLimits.StatorCurrentLimitEnable = false;
-      config.CurrentLimits.StatorCurrentLimit = 80.0;
+      config.CurrentLimits.StatorCurrentLimit = 120.0;
 
       config.Voltage.PeakForwardVoltage = 12.0;
       config.Voltage.PeakReverseVoltage = -12.0;
@@ -417,18 +420,22 @@ public final class Constants {
       config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
       config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-      config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
-      // config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = MAX_ANGLE.in(Units.Rotaitons);
+      config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+      config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = MAX_ANGLE.in(Degrees);
 
-      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
-      // config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = MIN_ANGLE.in(Units.Rotations);
+      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+      config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = MIN_ANGLE.in(Degrees);
 
       config.Feedback.RotorToSensorRatio = ROTOR_TO_SENSOR;
       config.Feedback.SensorToMechanismRatio = SENSOR_TO_MECHANISM;
 
-      config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+      config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
 
       config.Slot0 = SLOT0CONFIG;
+      config.Slot1 = SLOT1CONFIG;
+
+      config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY.in(RotationsPerSecond);
+      config.MotionMagic.MotionMagicAcceleration = ACCELERATION.in(RotationsPerSecondPerSecond);
 
       return config;
     }
@@ -596,8 +603,8 @@ public final class Constants {
   public class IntakePivotConstants {
     public static final String NAME = "Intake";
 
-    public static final Angle PICKUP_ANGLE = Rotations.of(0.0);
-    public static final Angle STOW_ANGLE = Rotations.of(0.0);
+    public static final Angle PICKUP_ANGLE = Degrees.of(120.0);
+    public static final Angle STOW_ANGLE = Degrees.of(0.0);
 
     public static final Angle TOLERANCE = Degrees.of(1.0);
 
@@ -628,7 +635,7 @@ public final class Constants {
 
     // Positional PID
     public static final Slot0Configs SLOT_0_CONFIG =
-        new Slot0Configs().withKP(100.0).withKI(0.0).withKD(0).withKS(0.07).withKV(0.1);
+        new Slot0Configs().withKP(.0).withKI(0.0).withKD(0).withKS(0.00).withKV(0.0);
 
     //                              ^^^ CHANGE
 
@@ -739,11 +746,11 @@ public final class Constants {
     public static final DistanceAngleConverter CONVERTER = new DistanceAngleConverter(DRUM_RADIUS);
 
     public static final AngularVelocity CRUISE_VELOCITY =
-        RadiansPerSecond.of(2 * Math.PI).times(5000.0);
+        RadiansPerSecond.of(2 * Math.PI).times(8000.0);
     public static final AngularVelocity LOWER_VELOCITY =
-        RadiansPerSecond.of(-2 * Math.PI).times(5000.0);
+        RadiansPerSecond.of(-2 * Math.PI).times(8000.0);
     public static final AngularVelocity CALIBRATE_VELOCITY =
-        RadiansPerSecond.of(-2 * Math.PI).times(5000.0);
+        RadiansPerSecond.of(-2 * Math.PI).times(1000.0);
 
     public static final AngularAcceleration ACCELERATION = CRUISE_VELOCITY.div(0.1).per(Second);
     public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
@@ -789,7 +796,7 @@ public final class Constants {
 
       config.Feedback.SensorToMechanismRatio = GEARING;
 
-      config.Slot0 = new Slot0Configs().withKP(50).withKI(0.0).withKD(0.0);
+      config.Slot0 = new Slot0Configs().withKP(10).withKI(0.0).withKD(0.0);
 
       config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY.in(RotationsPerSecond);
       config.MotionMagic.MotionMagicAcceleration = ACCELERATION.in(RotationsPerSecondPerSecond);
