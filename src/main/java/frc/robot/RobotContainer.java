@@ -294,16 +294,20 @@ public class RobotContainer {
     }
 
     // Extends climber arm
-    NamedCommands.registerCommand("ExtendClimber", climber.runClimber(ClimberConstants.L1));
+    NamedCommands.registerCommand("ExtendClimber", getAutonomousCommand());
     // Retracts climber arm
-    NamedCommands.registerCommand("Climb", climber.runClimber(ClimberConstants.STOW));
+    NamedCommands.registerCommand("Climb", getAutonomousCommand());
+    
     // Bring flywheel up to speed + hood to position for known locations?
     NamedCommands.registerCommand("ReadyUp", getAutonomousCommand());
     // Shoots
     NamedCommands.registerCommand("Shoot", getAutonomousCommand());
-    // Pulls in fuel - sets intake mode to 
+    
+    // Moves Intake Up and Down to Help Feed
+    NamedCommands.registerCommand("JostlingMyBalls", getAutonomousCommand());
+    // Runs Intake Rollers 
     NamedCommands.registerCommand("IntakeOn", getAutonomousCommand());
-    // Turns intake off - sets intake mode to  
+    // Stops Intake Rollers  
     NamedCommands.registerCommand("IntakeOff", getAutonomousCommand());
     // Extends the intake
     NamedCommands.registerCommand("IntakeDown", getAutonomousCommand());
