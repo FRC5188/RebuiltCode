@@ -1,18 +1,16 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.units.AngleUnit;
+import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,8 +22,10 @@ import frc.robot.Constants.ClimberConstants;
 
 public class Climber extends SubsystemBase {
   private final RotaryMechanism _climber;
+  private Debouncer homedDebounce = new Debouncer(0.1, DebounceType.kRising);
   private Trigger homedTrigger;
   private AngleUnit Degrees;
+  private VoltageUnit Volts;
   private LinearMechanism _io;
   RotaryMechanism climber;
   Distance goalDistance;
@@ -35,6 +35,13 @@ public class Climber extends SubsystemBase {
   public Climber(LinearMechanism io) {
     _io = io;
     _climber = climber;
+    homedTrigger =
+        new Trigger(
+            () ->
+                homedDebounce.calculate(
+                    _climber
+                        .getSupplyCurrent()
+                        .gte(Amps.of(ClimberConstants.HARD_STOP_CURRENT_LIMIT))));
   }
 
   // public void Position(double position) {
