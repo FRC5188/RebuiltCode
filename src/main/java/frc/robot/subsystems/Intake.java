@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degree;
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -34,7 +35,7 @@ public class Intake extends SubsystemBase {
     _rollerIO = rollerIO;
     _pivotIO = pivotIO;
 
-    if (Robot.isReal()) tunePivotPosition();
+    // if (Robot.isReal()) tunePivotPosition();
 
     simBalls = 0;
   }
@@ -52,9 +53,9 @@ public class Intake extends SubsystemBase {
         () ->
             _pivotIO.runPosition(
                 pivotAngle,
-                IntakeFlywheelConstants.CRUISE_VELOCITY,
-                IntakeFlywheelConstants.ACCELERATION,
-                IntakeFlywheelConstants.JERK,
+                IntakePivotConstants.CRUISE_VELOCITY,
+                IntakePivotConstants.ACCELERATION,
+                IntakePivotConstants.JERK,
                 PIDSlot.SLOT_0));
     // .withName("Go To " + setpoint.toString() + " Setpoint");
   }
@@ -114,6 +115,11 @@ public class Intake extends SubsystemBase {
   public void tunePivotPosition() {
     System.out.println(IntakePivotConstants.ENCODER1.get());
     _pivotIO.setEncoderPosition(Rotations.of(IntakePivotConstants.ENCODER1.get()));
+  }
+
+  public Command zeroEncoder()
+  {
+    return Commands.runOnce(() -> _pivotIO.setEncoderPosition(Degrees.of(0)));
   }
 
   @Override

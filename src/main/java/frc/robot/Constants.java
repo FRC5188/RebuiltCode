@@ -292,7 +292,7 @@ public final class Constants {
     public static final RotaryMechCharacteristics CONSTANTS =
         new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
 
-    public static final double HARD_STOP_CURRENT_LIMIT = 2.5;
+    public static final double HARD_STOP_CURRENT_LIMIT = 3.0;
   }
 
   public class ShooterFlywheelConstants {
@@ -381,7 +381,7 @@ public final class Constants {
 
     // Positional PID
     private static Slot0Configs SLOT0CONFIG =
-        new Slot0Configs().withKP(250.0).withKI(0.0).withKD(0.0).withKS(10.0).withKV(0.0);
+        new Slot0Configs().withKP(600.0).withKI(0.0).withKD(0.0).withKS(10.0).withKV(0.0);
     // Velocity PID
     private static Slot1Configs SLOT1CONFIG =
         new Slot1Configs().withKP(30.0).withKI(0.0).withKD(0.0).withKS(40.0).withKV(0.0);
@@ -423,7 +423,7 @@ public final class Constants {
       config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
       config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = MAX_ANGLE.in(Degrees);
 
-      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
       config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = MIN_ANGLE.in(Degrees);
 
       config.Feedback.RotorToSensorRatio = ROTOR_TO_SENSOR;
@@ -603,7 +603,7 @@ public final class Constants {
   public class IntakePivotConstants {
     public static final String NAME = "Intake";
 
-    public static final Angle PICKUP_ANGLE = Degrees.of(120.0);
+    public static final Angle PICKUP_ANGLE = Degrees.of(20.0);
     public static final Angle STOW_ANGLE = Degrees.of(0.0);
 
     public static final Angle TOLERANCE = Degrees.of(1.0);
@@ -613,8 +613,8 @@ public final class Constants {
     public static final Velocity<AngularAccelerationUnit> JERK =
         RadiansPerSecondPerSecond.per(Second).of(0.1);
 
-    private static final double ROTOR_TO_SENSOR = (50.0 / 1.0);
-    private static final double SENSOR_TO_MECHANISM = 1.0;
+    private static final double ROTOR_TO_SENSOR = (1.0 / 1.0);
+    private static final double SENSOR_TO_MECHANISM = 17.35;
 
     public static final Angle MIN_ANGLE = Degrees.of(0.0);
     public static final Angle MAX_ANGLE = Degrees.of(130.0);
@@ -635,7 +635,7 @@ public final class Constants {
 
     // Positional PID
     public static final Slot0Configs SLOT_0_CONFIG =
-        new Slot0Configs().withKP(.0).withKI(0.0).withKD(0).withKS(0.00).withKV(0.0);
+        new Slot0Configs().withKP(5.0).withKI(0.0).withKD(0.0).withKS(5.0).withKV(0.0);
 
     //                              ^^^ CHANGE
 
@@ -656,10 +656,10 @@ public final class Constants {
       config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
       config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-      config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+      config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
       config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = MAX_ANGLE.in(Rotations);
 
-      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
       config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = MIN_ANGLE.in(Rotations);
 
       config.Feedback.RotorToSensorRatio = ROTOR_TO_SENSOR;

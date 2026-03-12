@@ -404,12 +404,18 @@ public class RobotContainer {
     controller.y().onFalse(shooter.runTower(RotationsPerSecond.of(0)));
 
     // controller.b().onFalse(shooter.setHoodAngle(ShooterRotaryConstants.STARTING_ANGLE.magnitude()));
-    controller.b().whileTrue(shooter.setHoodAngle(5));
+    controller.povUp().onTrue(shooter.calibrateHood());
+    controller.povLeft().onTrue(shooter.setHoodAngle(10));
+    controller.povDown().onTrue(shooter.setHoodAngle(15));
+    controller.povRight().onTrue(shooter.setHoodAngle(20));
+    
 
     // controller.x().onFalse(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
     controller.x().whileTrue(intake.setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
 
-    controller.povRight().onTrue(shooter.calibrateHood());
+    controller.b().whileTrue(intake.zeroEncoder());
+
+    // controller.povRight().onTrue(shooter.calibrateHood());
 
     // controller.povUp().whileTrue(climber.raiseClimber());
     // controller.povUp().onFalse(climber.stopClimber());
