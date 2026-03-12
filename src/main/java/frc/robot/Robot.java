@@ -13,11 +13,21 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+
+import au.grapplerobotics.CanBridge;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.lib.Rebuilt2026.FuelSim;
 import frc.robot.generated.TunerConstants;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -32,13 +42,11 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
-  import au.grapplerobotics.CanBridge;
-  
-      
-  
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
-  private RobotContainer robotContainer;
+  public static RobotContainer robotContainer;
+  private Alert lowBatteryAlert = new Alert("The robot is low on battery!", AlertType.kWarning);
+  public static FuelSim fuelSim = new FuelSim();
 
   public Robot() {
     CanBridge.runTCP();
@@ -119,7 +127,10 @@ public class Robot extends LoggedRobot {
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
-
+    if (0.0 <= RobotController.getBatteryVoltage()
+        && RobotController.getBatteryVoltage() <= 11.01) {
+      lowBatteryAlert.set(true);
+    }
     // Return to non-RT thread priority (do not modify the first argument)
     // Threads.setCurrentThreadPriority(false, 10);
   }
@@ -176,9 +187,41 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    fuelSim.spawnStartingFuel(); // spawns fuel in the depots and neutral zone
+
+    // Register a robot for collision with fuel
+    fuelSim.registerRobot(
+        0.8, // from left to right in meters
+        0.8, // from front to back in meters
+        Inches.of(7).in(Meters), // from floor to top of bumpers in meters
+        () -> robotContainer.drive.getPose(), // Supplier<Pose2d> of robot pose
+        robotContainer.drive
+            ::getChassisSpeeds); // Supplier<ChassisSpeeds> of field-centric chassis speed
+
+    fuelSim.registerIntake(
+        0.4,
+        0.5,
+        -0.4,
+        0.4,
+        () -> robotContainer.intake.canIntake(),
+        () -> {
+          robotContainer.intake.simBalls++;
+        });
+
+    fuelSim.start(); // enables the simulation to run (updateSim must still be called periodically)
+
+    fuelSim.enableAirResistance(); // an additional drag force will be applied to fuel in physics
+    // update step
+  }
 
   /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+    fuelSim.updateSim();
+
+    Logger.recordOutput("Zero Pose", new Pose3d());
+
+    SmartDashboard.putNumber("Sim Balls", (double) robotContainer.intake.simBalls);
+  }
 }

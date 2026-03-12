@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class BallCounter extends SubsystemBase {
@@ -57,7 +56,9 @@ public class BallCounter extends SubsystemBase {
 
   public boolean ballShot() {
     Measurement measurement = _laserCAN.getMeasurement();
-    return measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT && measurement.distance_mm <= 30;
+    return measurement != null
+        && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
+        && measurement.distance_mm <= 30;
   }
 
   public double calculateFireRate() {
@@ -87,12 +88,12 @@ public class BallCounter extends SubsystemBase {
 
     SmartDashboard.putNumber("Balls Fired", getBallsShot());
     SmartDashboard.putNumber("Ball Fire Rate (per second)", Math.round(fireRate * 100.0) / 100.0);
-    SmartDashboard.putNumber("Seconds Since Last Fire", Math.round(secondsSinceLastFired() * 100.0) / 100.0);
+    SmartDashboard.putNumber(
+        "Seconds Since Last Fire", Math.round(secondsSinceLastFired() * 100.0) / 100.0);
 
     if (!isBlocked && !canFire) {
       canFire = true;
-    }
-    else if (isBlocked && canFire) {
+    } else if (isBlocked && canFire) {
       shootBall();
       canFire = false;
     }
