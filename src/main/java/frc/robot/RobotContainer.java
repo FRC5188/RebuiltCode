@@ -400,18 +400,18 @@ public class RobotContainer {
 
     // Tower - 15 Motor:7 Tower
 
-    controller.y().whileTrue(shooter.runTower(RotationsPerSecond.of(70)));
-    controller.y().onFalse(shooter.runTower(RotationsPerSecond.of(0)));
+    // controller.y().whileTrue(shooter.runTower(RotationsPerSecond.of(70)));
+    // controller.y().onFalse(shooter.runTower(RotationsPerSecond.of(0)));
 
     // controller.b().onFalse(shooter.setHoodAngle(ShooterRotaryConstants.STARTING_ANGLE.magnitude()));
     controller.povUp().onTrue(shooter.calibrateHood());
     controller.povLeft().onTrue(shooter.setHoodAngle(10));
     controller.povDown().onTrue(shooter.setHoodAngle(15));
     controller.povRight().onTrue(shooter.setHoodAngle(20));
-    
 
     // controller.x().onFalse(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
     controller.x().whileTrue(intake.setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
+    controller.y().whileTrue(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
 
     controller.b().whileTrue(intake.zeroEncoder());
 

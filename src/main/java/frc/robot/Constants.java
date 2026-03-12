@@ -19,7 +19,6 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
@@ -38,6 +37,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.RainbowAnimation;
 import com.ctre.phoenix6.signals.Enable5VRailValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.LossOfSignalBehaviorValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -603,22 +603,21 @@ public final class Constants {
   public class IntakePivotConstants {
     public static final String NAME = "Intake";
 
-    public static final Angle PICKUP_ANGLE = Degrees.of(20.0);
+    public static final Angle PICKUP_ANGLE = Degrees.of(100.0);
     public static final Angle STOW_ANGLE = Degrees.of(0.0);
 
     public static final Angle TOLERANCE = Degrees.of(1.0);
 
-    public static final AngularVelocity CRUISE_VELOCITY = RadiansPerSecond.of(10);
-    public static final AngularAcceleration ACCELERATION = RadiansPerSecondPerSecond.of(100);
-    public static final Velocity<AngularAccelerationUnit> JERK =
-        RadiansPerSecondPerSecond.per(Second).of(0.1);
+    public static final AngularVelocity CRUISE_VELOCITY = RadiansPerSecond.of(100);
+    public static final AngularAcceleration ACCELERATION = RadiansPerSecondPerSecond.of(200);
+    public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
 
     private static final double ROTOR_TO_SENSOR = (1.0 / 1.0);
     private static final double SENSOR_TO_MECHANISM = 17.35;
 
     public static final Angle MIN_ANGLE = Degrees.of(0.0);
     public static final Angle MAX_ANGLE = Degrees.of(130.0);
-    public static final Angle STARTING_ANGLE = Radians.zero();
+    public static final Angle STARTING_ANGLE = Degrees.of(0.0);
     public static final Distance ARM_LENGTH = Foot.one();
 
     public static final RotaryMechCharacteristics CONSTANTS =
@@ -635,9 +634,14 @@ public final class Constants {
 
     // Positional PID
     public static final Slot0Configs SLOT_0_CONFIG =
-        new Slot0Configs().withKP(5.0).withKI(0.0).withKD(0.0).withKS(5.0).withKV(0.0);
-
-    //                              ^^^ CHANGE
+        new Slot0Configs()
+            .withKP(200.0)
+            .withKI(0.0)
+            .withKD(0.01)
+            .withKS(8.0)
+            .withKV(0.0)
+            .withKG(15)
+            .withGravityType(GravityTypeValue.Arm_Cosine);
 
     public static TalonFXConfiguration getFXConfig() {
       TalonFXConfiguration config = new TalonFXConfiguration();

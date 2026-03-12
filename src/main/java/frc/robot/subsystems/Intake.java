@@ -19,7 +19,6 @@ import frc.lib.W8.mechanisms.flywheel.FlywheelMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
 import frc.robot.Constants.IntakeFlywheelConstants;
 import frc.robot.Constants.IntakePivotConstants;
-import frc.robot.Robot;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
@@ -117,8 +116,7 @@ public class Intake extends SubsystemBase {
     _pivotIO.setEncoderPosition(Rotations.of(IntakePivotConstants.ENCODER1.get()));
   }
 
-  public Command zeroEncoder()
-  {
+  public Command zeroEncoder() {
     return Commands.runOnce(() -> _pivotIO.setEncoderPosition(Degrees.of(0)));
   }
 
