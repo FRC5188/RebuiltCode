@@ -758,6 +758,9 @@ public final class Constants {
     public static final Distance MIDDLE = Inches.of(15.0);
     public static final Distance TOP = Inches.of(30.0);
 
+    public static final double L1 = 10;
+    public static final double STOW = 0;
+
     public static final LinearMechCharacteristics CHARACTERISTICS =
         new LinearMechCharacteristics(
             new Translation3d(0.0, 0.0, 0.0),
