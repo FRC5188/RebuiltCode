@@ -302,9 +302,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("ReadyUp", getAutonomousCommand());
     // Shoots
     NamedCommands.registerCommand("Shoot", getAutonomousCommand());
-    
-    // Moves Intake Up and Down to Help Feed
-    NamedCommands.registerCommand("JostlingMyBalls", getAutonomousCommand());
+
     // Runs Intake Rollers 
     NamedCommands.registerCommand("IntakeOn", getAutonomousCommand());
     // Stops Intake Rollers  
