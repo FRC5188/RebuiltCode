@@ -315,7 +315,7 @@ public final class Constants {
 
     // Velocity PID
     private static Slot0Configs SLOT0CONFIG =
-        new Slot0Configs().withKP(3.5).withKI(0.0).withKD(0.0).withKV(0.0).withKS(8.0);
+        new Slot0Configs().withKP(3.0).withKI(0.15).withKD(0.0).withKV(0.1).withKS(8.5);
 
     public static TalonFXConfiguration getFXConfig(boolean invert) {
       TalonFXConfiguration config = new TalonFXConfiguration();
