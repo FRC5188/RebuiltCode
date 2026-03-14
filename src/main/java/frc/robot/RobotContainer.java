@@ -411,6 +411,8 @@ public class RobotContainer {
 
     controller.povRight().onTrue(shooter.calibrateHood());
 
+    controller.back().whileTrue(intake.jostleIntake());
+
     // controller.povUp().whileTrue(climber.raiseClimber());
     // controller.povUp().onFalse(climber.stopClimber());
     // controller.povDown().whileTrue(climber.lowerClimber());

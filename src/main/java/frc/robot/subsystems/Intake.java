@@ -19,6 +19,8 @@ import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
 import frc.robot.Constants.IntakeFlywheelConstants;
 import frc.robot.Constants.IntakePivotConstants;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
@@ -110,6 +112,34 @@ public class Intake extends SubsystemBase {
                 IntakePivotConstants.JERK,
                 PIDSlot.SLOT_0));
   }
+
+  public Command jostleIntake() {
+    return Commands.sequence(
+      this.runOnce(
+        () -> 
+          _pivotIO.runPosition(
+            IntakePivotConstants.JOSTLE_ANGLE_START,
+            IntakePivotConstants.CRUISE_VELOCITY,
+            IntakePivotConstants.ACCELERATION,
+            IntakePivotConstants.JERK,
+            PIDSlot.SLOT_0)),
+      Commands.waitUntil(
+        () ->
+          isIntendedAngle()
+      ),
+      this.runOnce(
+        () ->
+          _pivotIO.runPosition(
+            IntakePivotConstants.JOSTLE_ANGLE_END, 
+            IntakePivotConstants.CRUISE_VELOCITY,
+            IntakePivotConstants.ACCELERATION,
+            IntakePivotConstants.JERK,
+            PIDSlot.SLOT_0)),
+      Commands.waitUntil(
+        () ->
+          isIntendedAngle()));
+  }
+
 
   public void tunePivotPosition() {
     System.out.println(IntakePivotConstants.ENCODER1.get());
