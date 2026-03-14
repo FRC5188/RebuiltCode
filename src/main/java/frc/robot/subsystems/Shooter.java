@@ -48,6 +48,8 @@ public class Shooter extends SubsystemBase {
   private Debouncer homeDebouncer = new Debouncer(0.1, DebounceType.kRising);
   private Trigger homedTrigger;
 
+  private Angle currentHoodAngle;
+
   public Shooter(
       FlywheelMechanism rflywheel,
       FlywheelMechanism feeder,
@@ -145,6 +147,16 @@ public class Shooter extends SubsystemBase {
   // Checks if hood is at angle
   public boolean hoodAtAngle() {
     return Math.abs(hoodAngle - _hood.getPosition().in(Degrees)) < ShooterConstants.HOOD_TOLERANCE;
+  }
+
+  public Command incrementHoodAngle() {
+    currentHoodAngle = _hood.getPosition().plus(Degrees.of(2.5));
+    return setHoodAngle(currentHoodAngle.in(Degrees));
+  }
+
+  public Command decrementHoodAngle() {
+    currentHoodAngle = _hood.getPosition().minus(Degrees.of(0.5));
+    return setHoodAngle(currentHoodAngle.in(Degrees));
   }
 
   public boolean isAboveCurrentLimit() {
