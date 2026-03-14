@@ -315,7 +315,7 @@ public final class Constants {
 
     // Velocity PID
     private static Slot0Configs SLOT0CONFIG =
-        new Slot0Configs().withKP(18.0).withKI(0.0).withKD(0.01).withKV(0.05).withKS(8.0);
+        new Slot0Configs().withKP(3.5).withKI(0.0).withKD(0.0).withKV(0.0).withKS(8.0);
 
     public static TalonFXConfiguration getFXConfig(boolean invert) {
       TalonFXConfiguration config = new TalonFXConfiguration();
@@ -693,7 +693,7 @@ public final class Constants {
     public static final AngularVelocity MAX_VELOCITY = RadiansPerSecond.of(2 * Math.PI);
     public static final AngularAcceleration MAX_ACCELERATION = MAX_VELOCITY.per(Second);
 
-    private static final double GEARING = (15.0 / 30.0);
+    private static final double GEARING = (15.0 / 7.0);
 
     public static final AngularVelocity TOLERANCE = MAX_VELOCITY.times(0.1);
 
