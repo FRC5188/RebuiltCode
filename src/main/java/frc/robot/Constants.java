@@ -40,6 +40,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.LossOfSignalBehaviorValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.RGBWColor;
 import com.ctre.phoenix6.signals.StatusLedWhenActiveValue;
@@ -67,6 +68,7 @@ import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import frc.lib.W8.io.motor.MotorIOTalonFX.TalonFXFollower;
 import frc.lib.W8.mechanisms.linear.LinearMechanism.LinearMechCharacteristics;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism.RotaryMechCharacteristics;
 import frc.lib.W8.util.Device;
@@ -302,12 +304,14 @@ public final class Constants {
     public static final AngularVelocity MAX_VELOCITY = RadiansPerSecond.of(2 * Math.PI);
     public static final AngularAcceleration MAX_ACCELERATION = MAX_VELOCITY.per(Second);
 
-    private static final double GEARING = (2.0 / 1.0);
+    private static final double GEARING = (1.0 / 1.0);
 
     public static final AngularVelocity TOLERANCE = MAX_VELOCITY.times(0.1);
 
     public static final DCMotor DCMOTOR = DCMotor.getKrakenX60(1);
     public static final MomentOfInertia MOI = KilogramSquareMeters.of(1.0);
+
+    public static final TalonFXFollower FOLLOWER_1 = new TalonFXFollower(Ports.LeftFlywheel, MotorAlignmentValue.Opposed);
 
     // Velocity PID
     private static Slot0Configs SLOT0CONFIG =

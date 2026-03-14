@@ -18,6 +18,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.controls.Follower;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.units.measure.Voltage;
@@ -117,14 +118,9 @@ public class RobotContainer {
             new Shooter(
                 new FlywheelMechanismReal(
                     new MotorIOTalonFX(
-                        "ShooterLeftFlywheel",
-                        ShooterFlywheelConstants.getFXConfig(true),
-                        Ports.LeftFlywheel)),
-                new FlywheelMechanismReal(
-                    new MotorIOTalonFX(
                         "ShooterRightFlywheel",
                         ShooterFlywheelConstants.getFXConfig(false),
-                        Ports.RightFlywheel)),
+                        Ports.RightFlywheel, ShooterFlywheelConstants.FOLLOWER_1)),
                 new FlywheelMechanismReal(
                     new MotorIOTalonFX(
                         "ShooterTower", FeederConstants.getFXConfig(false), Ports.TowerRoller)),
@@ -190,16 +186,8 @@ public class RobotContainer {
                 new FlywheelMechanismSim(
                     new MotorIOTalonFXSim(
                         ShooterFlywheelConstants.NAME,
-                        ShooterFlywheelConstants.getFXConfig(false),
-                        Ports.LeftFlywheel),
-                    ShooterFlywheelConstants.DCMOTOR,
-                    ShooterFlywheelConstants.MOI,
-                    ShooterFlywheelConstants.TOLERANCE),
-                new FlywheelMechanismSim(
-                    new MotorIOTalonFXSim(
-                        ShooterFlywheelConstants.NAME,
                         ShooterFlywheelConstants.getFXConfig(true),
-                        Ports.RightFlywheel),
+                        Ports.RightFlywheel, ShooterFlywheelConstants.FOLLOWER_1),
                     ShooterFlywheelConstants.DCMOTOR,
                     ShooterFlywheelConstants.MOI,
                     ShooterFlywheelConstants.TOLERANCE),
@@ -278,7 +266,6 @@ public class RobotContainer {
 
         shooter =
             new Shooter(
-                new FlywheelMechanism() {},
                 new FlywheelMechanism() {},
                 new FlywheelMechanism() {},
                 new RotaryMechanism(null, null) {});
@@ -377,7 +364,7 @@ public class RobotContainer {
     // controller.x().onTrue(intake.stowAndStopRollers());
 
     // Flywheel
-    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(25)));
+    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(20)));
     controller.leftBumper().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
 
     // Intake + Spindexer + Tower
