@@ -22,7 +22,7 @@ import frc.robot.Constants.IntakePivotConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
-  private FlywheelMechanism _rollerIO;
+  public FlywheelMechanism _rollerIO;
   private RotaryMechanism _pivotIO;
   double velocity;
   double pivotAngle;
@@ -55,7 +55,10 @@ public class Intake extends SubsystemBase {
                 IntakePivotConstants.CRUISE_VELOCITY,
                 IntakePivotConstants.ACCELERATION,
                 IntakePivotConstants.JERK,
-                PIDSlot.SLOT_0));
+                PIDSlot.SLOT_0)
+        // () ->
+        //   _pivotIO.runVelocity(IntakePivotConstants.CRUISE_VELOCITY, IntakePivotConstants.ACCELERATION, PIDSlot.SLOT_0)
+                );
     // .withName("Go To " + setpoint.toString() + " Setpoint");
   }
 

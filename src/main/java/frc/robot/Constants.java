@@ -486,7 +486,7 @@ public final class Constants {
     public static final AngularAcceleration ACCELERATION = CRUISE_VELOCITY.div(0.1).per(Second);
     public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
 
-    public static final double GEARING = (5.0 / 1.0);
+    public static final double GEARING = (22.0 / 18.0);
     public static final Distance MIN_DISTANCE = Inches.of(0.0);
     public static final Distance MAX_DISTANCE = Inches.of(10.0);
     public static final Distance STARTING_DISTANCE = Inches.of(0.0);
@@ -513,53 +513,9 @@ public final class Constants {
       return config;
     }
 
-    public class VisionConstants {
-      // AprilTag layout
-      public static AprilTagFieldLayout aprilTagLayout =
-          AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
-
-      // Camera names, must match names configured on coprocessor
-      public static String camera0Name = "camera_0";
-      public static String camera1Name = "camera_1";
-
-      // Robot to camera transforms
-      // (Not used by Limelight, configure in web UI instead)
-      public static Transform3d robotToCamera0 =
-          new Transform3d(0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, 0.0));
-      public static Transform3d robotToCamera1 =
-          new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
-
-      // Basic filtering thresholds
-      public static double maxAmbiguity = 0.3;
-      public static double maxZError = 0.75;
-
-      // Standard deviation baselines, for 1 meter distance and 1 tag
-      // (Adjusted automatically based on distance and # of tags)
-      public static double linearStdDevBaseline = 0.02; // Meters
-      public static double angularStdDevBaseline = 0.06; // Radians
-
-      // Standard deviation multipliers for each camera
-      // (Adjust to trust some cameras more than others)
-      public static double[] cameraStdDevFactors =
-          new double[] {
-            1.0, // Camera 0
-            1.0 // Camera 1
-          };
-
-      /** Tags used for reef alignment */
-      public static List<Integer> alignmentTags =
-          Arrays.asList(6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22);
-
-      public static VisionSystemSim getSystemSim() {
-        var system = new VisionSystemSim("main");
-        system.addAprilTags(aprilTagLayout);
-        return system;
-      }
-    }
-
     // config.Slot0 = new Slot0Configs().withKP(0.75).withKI(0.0).withKD(0.0);
     private static Slot0Configs SLOT0CONFIG =
-        new Slot0Configs().withKP(30).withKI(0.0).withKD(0.0).withKV(0.05).withKS(8.0);
+        new Slot0Configs().withKP(10).withKI(0.0).withKD(0.0).withKV(0.05).withKS(8.0);
 
     public static TalonFXConfiguration getFXConfig() {
       TalonFXConfiguration config = new TalonFXConfiguration();
@@ -600,10 +556,54 @@ public final class Constants {
     }
   }
 
+  public class VisionConstants {
+    // AprilTag layout
+    public static AprilTagFieldLayout aprilTagLayout =
+        AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+
+    // Camera names, must match names configured on coprocessor
+    public static String camera0Name = "camera_0";
+    public static String camera1Name = "camera_1";
+
+    // Robot to camera transforms
+    // (Not used by Limelight, configure in web UI instead)
+    public static Transform3d robotToCamera0 =
+        new Transform3d(0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, 0.0));
+    public static Transform3d robotToCamera1 =
+        new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
+
+    // Basic filtering thresholds
+    public static double maxAmbiguity = 0.3;
+    public static double maxZError = 0.75;
+
+    // Standard deviation baselines, for 1 meter distance and 1 tag
+    // (Adjusted automatically based on distance and # of tags)
+    public static double linearStdDevBaseline = 0.02; // Meters
+    public static double angularStdDevBaseline = 0.06; // Radians
+
+    // Standard deviation multipliers for each camera
+    // (Adjust to trust some cameras more than others)
+    public static double[] cameraStdDevFactors =
+        new double[] {
+          1.0, // Camera 0
+          1.0 // Camera 1
+        };
+
+    /** Tags used for reef alignment */
+    public static List<Integer> alignmentTags =
+        Arrays.asList(6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22);
+
+    public static VisionSystemSim getSystemSim() {
+      var system = new VisionSystemSim("main");
+      system.addAprilTags(aprilTagLayout);
+      return system;
+    }
+  }
+
   public class IntakePivotConstants {
     public static final String NAME = "Intake";
 
-    public static final Angle PICKUP_ANGLE = Degrees.of(100.0);
+    public static final Angle PICKUP_ANGLE = Degrees.of(106.0);
     public static final Angle STOW_ANGLE = Degrees.of(0.0);
 
     public static final Angle TOLERANCE = Degrees.of(1.0);
@@ -635,13 +635,13 @@ public final class Constants {
     // Positional PID
     public static final Slot0Configs SLOT_0_CONFIG =
         new Slot0Configs()
-            .withKP(200.0)
-            .withKI(0.0)
-            .withKD(0.01)
+            .withKP(300.0)
+            .withKI(1000)
+            .withKD(80)
             .withKS(8.0)
-            .withKV(0.0)
-            .withKG(15)
-            .withGravityType(GravityTypeValue.Arm_Cosine);
+            .withKV(0.0);
+            // .withKG(15)
+            // .withGravityType(GravityTypeValue.Arm_Cosine);
 
     public static TalonFXConfiguration getFXConfig() {
       TalonFXConfiguration config = new TalonFXConfiguration();
@@ -742,7 +742,7 @@ public final class Constants {
     public static final String MOTOR_NAME = "Climber motor";
     public static final String NAME = "Climber";
     public static final Distance TOLERANCE = Inches.of(0.1);
-    public static final double GEARING = 1;
+    public static final double GEARING = 140.8;
     public static final Distance MIN_DISTANCE = Inches.of(0.0);
     public static final Distance MAX_DISTANCE = Inches.of(10.0);
     public static final Distance STARTING_DISTANCE = Inches.of(0.0);
@@ -750,11 +750,11 @@ public final class Constants {
     public static final DistanceAngleConverter CONVERTER = new DistanceAngleConverter(DRUM_RADIUS);
 
     public static final AngularVelocity CRUISE_VELOCITY =
-        RadiansPerSecond.of(2 * Math.PI).times(8000.0);
+        RadiansPerSecond.of(2 * Math.PI).times(800.0/GEARING);
     public static final AngularVelocity LOWER_VELOCITY =
-        RadiansPerSecond.of(-2 * Math.PI).times(8000.0);
+        RadiansPerSecond.of(-2 * Math.PI).times(800.0/GEARING);
     public static final AngularVelocity CALIBRATE_VELOCITY =
-        RadiansPerSecond.of(-2 * Math.PI).times(1000.0);
+        RadiansPerSecond.of(-2 * Math.PI).times(100.0/GEARING);
 
     public static final AngularAcceleration ACCELERATION = CRUISE_VELOCITY.div(0.1).per(Second);
     public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
@@ -801,6 +801,7 @@ public final class Constants {
       config.Feedback.SensorToMechanismRatio = GEARING;
 
       config.Slot0 = new Slot0Configs().withKP(10).withKI(0.0).withKD(0.0);
+      config.Slot1 = new Slot1Configs().withKP(1).withKI(0.0).withKD(0.0);
 
       config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY.in(RotationsPerSecond);
       config.MotionMagic.MotionMagicAcceleration = ACCELERATION.in(RotationsPerSecondPerSecond);
