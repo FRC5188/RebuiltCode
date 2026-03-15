@@ -31,11 +31,12 @@ public class Hopper extends SubsystemBase {
   }
 
   public Command runSpindexer(AngularVelocity velocity) {
-    return Commands.runOnce(() -> {
-
-      _io.runVelocity(velocity, HopperConstants.ACCELERATION, PIDSlot.SLOT_0);
-      targetVelocity = velocity;
-    }, this);
+    return Commands.runOnce(
+        () -> {
+          _io.runVelocity(velocity, HopperConstants.ACCELERATION, PIDSlot.SLOT_0);
+          targetVelocity = velocity;
+        },
+        this);
   }
 
   @Override

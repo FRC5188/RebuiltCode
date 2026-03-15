@@ -15,7 +15,6 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -380,19 +379,14 @@ public class RobotContainer {
         .whileTrue(
             Commands.parallel(
                 shooter.prepareToShoot(RotationsPerSecond.of(100), RotationsPerSecond.of(30)),
-                hopper.runSpindexer(RotationsPerSecond.of(15))
-            )
-        );
+                hopper.runSpindexer(RotationsPerSecond.of(15))));
 
-        
     controller
-    .leftTrigger()
-    .onFalse(
-        Commands.parallel(
-            shooter.prepareToShoot(RotationsPerSecond.of(0), RotationsPerSecond.of(0)),
-            hopper.runSpindexer(RotationsPerSecond.of(0))
-        )
-    );
+        .leftTrigger()
+        .onFalse(
+            Commands.parallel(
+                shooter.prepareToShoot(RotationsPerSecond.of(0), RotationsPerSecond.of(0)),
+                hopper.runSpindexer(RotationsPerSecond.of(0))));
 
     // Align
     // controller.a().onTrue();

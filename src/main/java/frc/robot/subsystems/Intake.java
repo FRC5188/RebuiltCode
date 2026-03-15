@@ -82,8 +82,7 @@ public class Intake extends SubsystemBase {
   public Command intake() {
     return Commands.parallel(
         runRollers(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED)),
-        setPivotAngle(IntakePivotConstants.PICKUP_ANGLE)
-        );
+        setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
   }
 
   public boolean isIntendedAngle() {
@@ -98,10 +97,7 @@ public class Intake extends SubsystemBase {
   }
 
   public Command stowAndStopRollers() {
-    return Commands.parallel(
-        runRollers(RotationsPerSecond.of(0.0)),
-        setStowAngle()
-        );
+    return Commands.parallel(runRollers(RotationsPerSecond.of(0.0)), setStowAngle());
   }
 
   private Command setStowAngle() {
@@ -112,8 +108,7 @@ public class Intake extends SubsystemBase {
                 IntakePivotConstants.CRUISE_VELOCITY,
                 IntakePivotConstants.ACCELERATION,
                 IntakePivotConstants.JERK,
-                PIDSlot.SLOT_0)
-                );
+                PIDSlot.SLOT_0));
   }
 
   public void tunePivotPosition() {
@@ -144,8 +139,6 @@ public class Intake extends SubsystemBase {
         new Pose3d(
             new Translation3d(Math.sin(_pivotIO.getPosition().in(Radians) * 0.1055), 0, 0),
             new Rotation3d(0, 0, 0)));
-
-    
 
     // _pivotIO.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp())*0.25)); //--- Tests the pivot
   }

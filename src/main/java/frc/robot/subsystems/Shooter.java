@@ -29,8 +29,6 @@ import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShooterRotaryConstants;
 import frc.robot.Robot;
-import frc.robot.RobotContainer;
-
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
@@ -186,10 +184,9 @@ public class Shooter extends SubsystemBase {
   public Command prepareToShoot(AngularVelocity flywheelVelocity, AngularVelocity towerVelocity) {
     // Prepare targets
     return Commands.parallel(
-              Commands.run(() -> setFlywheelVelocity(flywheelVelocity)).until(this::flyAtVelocity),
-              Commands.run(() -> setHoodAngle(hoodAngle)).until(this::hoodAtAngle),
-              runTower(towerVelocity)
-            );
+        Commands.run(() -> setFlywheelVelocity(flywheelVelocity)).until(this::flyAtVelocity),
+        Commands.run(() -> setHoodAngle(hoodAngle)).until(this::hoodAtAngle),
+        runTower(towerVelocity));
   }
 
   public Command runFlywheel(AngularVelocity velocity) {
