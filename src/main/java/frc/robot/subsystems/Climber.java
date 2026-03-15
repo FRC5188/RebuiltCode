@@ -104,41 +104,6 @@ public class Climber extends SubsystemBase {
         runOnce(() -> _climber.runVoltage(Voltage.ofBaseUnits(0, Volts))));
   }
 
-   public Command stopClimber() {
-    return this.run(
-        () ->
-            _io.runVelocity(
-                DegreesPerSecond.of(0.0), ClimberConstants.ACCELERATION, PIDSlot.SLOT_0));
-  }
-
-  public Command raiseClimber() {
-    System.out.println(ClimberConstants.CRUISE_VELOCITY);
-    System.out.println(ClimberConstants.ACCELERATION);
-    return this.run(
-            () ->
-                _io.runVelocity(
-                    ClimberConstants.CRUISE_VELOCITY,
-                    ClimberConstants.ACCELERATION,
-                    PIDSlot.SLOT_0))
-        .until(() -> isAboveCurrentLimit());
-  }
-
-  public Command lowerClimber() {
-    System.out.println(ClimberConstants.LOWER_VELOCITY);
-    System.out.println(ClimberConstants.ACCELERATION);
-    return this.run(
-            () ->
-                _io.runVelocity(
-                    ClimberConstants.LOWER_VELOCITY, ClimberConstants.ACCELERATION, PIDSlot.SLOT_0))
-        .until(() -> isAboveCurrentLimit());
-    return Commands.sequence(
-        runOnce(() -> _climber.runVoltage(Voltage.ofBaseUnits(-1, Volts))),
-        Commands.waitUntil(homedTrigger),
-        runOnce(() -> _climber.setEncoderPosition(Angle.ofBaseUnits(0, Degrees))),
-        runOnce(() -> _climber.runVoltage(Voltage.ofBaseUnits(0, Volts))));
-  }
-  
-
   public boolean nearGoalposition() {
     if (Math.abs(
             goalDistance.in(Meters)
