@@ -264,10 +264,11 @@ public class Shooter extends SubsystemBase {
         feedFlywheelMap.put(8.0, 60.0);
         feedFlywheelMap.put(20.0, 60.0);
     }
-  public void setAngleForDistance(Distance distance) {
+
+  public Command setAngleForDistance(Distance distance) {
     double distanceMeters = distance.in(Meters);
     double angle = hoodAngleMap.get(distanceMeters);
-    setHoodAngle(angle);
+    return Commands.runOnce(() -> setHoodAngle(angle));
   }
 
   public void periodic() {
@@ -293,5 +294,6 @@ public class Shooter extends SubsystemBase {
     //     new Pose3d(new Translation3d(-0.0075, 0.0, 0.523), new Rotation3d(0, pitch, 0)));
 
     // _hood.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp()) * 0.25));
-  }
+  } 
+
 }
