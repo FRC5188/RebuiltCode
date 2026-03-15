@@ -33,8 +33,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
 
-  private final FlywheelMechanism _rflywheel;
-  private final FlywheelMechanism _lflywheel;
+  private final FlywheelMechanism _flywheel;
   private final FlywheelMechanism _feeder;
   private final RotaryMechanism _hood;
 
@@ -49,13 +48,8 @@ public class Shooter extends SubsystemBase {
   private Debouncer homeDebouncer = new Debouncer(0.1, DebounceType.kRising);
   private Trigger homedTrigger;
 
-  public Shooter(
-      FlywheelMechanism lflywheel,
-      FlywheelMechanism rflywheel,
-      FlywheelMechanism feeder,
-      RotaryMechanism hood) {
-    _lflywheel = lflywheel;
-    _rflywheel = rflywheel;
+  public Shooter(FlywheelMechanism rflywheel, FlywheelMechanism feeder, RotaryMechanism hood) {
+    _flywheel = rflywheel;
     _feeder = feeder;
     _hood = hood;
     homedTrigger =
@@ -79,8 +73,7 @@ public class Shooter extends SubsystemBase {
     // this.desiredVelo = velocity;
     // AngularVelocity angVelo = RotationsPerSecond.of(velocity);
     // AngularVelocity negangVelo = RotationsPerSecond.of(velocity);
-    _lflywheel.runVelocity(velocity, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
-    _rflywheel.runVelocity(velocity, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
+    _flywheel.runVelocity(velocity, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
     targetVelocity = velocity;
   }
 
@@ -101,9 +94,7 @@ public class Shooter extends SubsystemBase {
 
   // Checks if the flywheel is at speed and returns a boolean
   public boolean flyAtVelocity() {
-    return ((Math.abs(desiredVelo - _lflywheel.getVelocity().in(RotationsPerSecond))
-                + Math.abs(desiredVelo - _rflywheel.getVelocity().in(RotationsPerSecond)))
-            / 2)
+    return (Math.abs(desiredVelo - _flywheel.getVelocity().in(RotationsPerSecond)))
         <= ShooterConstants.FLYWHEEL_VELOCITY_TOLERANCE;
   }
 
@@ -153,6 +144,16 @@ public class Shooter extends SubsystemBase {
     return Math.abs(hoodAngle - _hood.getPosition().in(Degrees)) < ShooterConstants.HOOD_TOLERANCE;
   }
 
+  public Command incrementHoodAngle() {
+    Angle currentHoodAngle = _hood.getPosition().plus(Degrees.of(2.5));
+    return setHoodAngle(currentHoodAngle.in(Degrees));
+  }
+
+  public Command decrementHoodAngle() {
+    Angle currentHoodAngle = _hood.getPosition().minus(Degrees.of(0.5));
+    return setHoodAngle(currentHoodAngle.in(Degrees));
+  }
+
   public boolean isAboveCurrentLimit() {
     if (Math.abs(_hood.getSupplyCurrent().in(Amps)) > ShooterConstants.HARD_STOP_CURRENT_LIMIT) {
       return true;
@@ -180,17 +181,12 @@ public class Shooter extends SubsystemBase {
   // _hood.setEncoderPosition(Angle.ofBaseUnits(0, Degrees))));
   // }
 
-  public Command shoot(AngularVelocity velocity) {
+  public Command prepareToShoot(AngularVelocity flywheelVelocity, AngularVelocity towerVelocity) {
     // Prepare targets
-    return Commands.sequence(
-        // Set and wait in parallel for both hood and flywheel
-        Commands.parallel(
-            Commands.run(() -> setFlywheelVelocity(velocity)).until(this::flyAtVelocity),
-            Commands.run(() -> setHoodAngle(hoodAngle)).until(this::hoodAtAngle)),
-        // feed once ready
-        Commands.runOnce(() -> runFeeder(FeederConstants.FEED_SPEED)),
-        // stop flywheel when finished
-        Commands.runOnce(() -> setFlywheelVelocity(RotationsPerSecond.of(0.0))));
+    return Commands.parallel(
+        Commands.run(() -> setFlywheelVelocity(flywheelVelocity)).until(this::flyAtVelocity),
+        Commands.run(() -> setHoodAngle(hoodAngle)).until(this::hoodAtAngle),
+        runTower(towerVelocity));
   }
 
   public Command runFlywheel(AngularVelocity velocity) {
@@ -242,8 +238,7 @@ public class Shooter extends SubsystemBase {
 
   public void periodic() {
     _hood.periodic();
-    _lflywheel.periodic();
-    _rflywheel.periodic();
+    _flywheel.periodic();
     _feeder.periodic();
     Logger.recordOutput("Flywheel/TargetVelocity", targetVelocity);
     Logger.recordOutput("Feeder/TargetVelocity", feederTargetVelocity);

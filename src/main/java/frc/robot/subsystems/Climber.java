@@ -12,7 +12,7 @@ import frc.lib.W8.mechanisms.linear.LinearMechanism;
 import frc.robot.Constants.ClimberConstants;
 
 public class Climber extends SubsystemBase {
-  private LinearMechanism _io;
+  public LinearMechanism _io;
   Distance goalDistance;
 
   public Climber(LinearMechanism io) {
@@ -91,8 +91,6 @@ public class Climber extends SubsystemBase {
   }
 
   public Command raiseClimber() {
-    System.out.println(ClimberConstants.CRUISE_VELOCITY);
-    System.out.println(ClimberConstants.ACCELERATION);
     return this.run(
             () ->
                 _io.runVelocity(

@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degree;
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -18,11 +19,10 @@ import frc.lib.W8.mechanisms.flywheel.FlywheelMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
 import frc.robot.Constants.IntakeFlywheelConstants;
 import frc.robot.Constants.IntakePivotConstants;
-import frc.robot.Robot;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
-  private FlywheelMechanism _rollerIO;
+  public FlywheelMechanism _rollerIO;
   private RotaryMechanism _pivotIO;
   double velocity;
   double pivotAngle;
@@ -34,7 +34,7 @@ public class Intake extends SubsystemBase {
     _rollerIO = rollerIO;
     _pivotIO = pivotIO;
 
-    if (Robot.isReal()) tunePivotPosition();
+    // if (Robot.isReal()) tunePivotPosition();
 
     simBalls = 0;
   }
@@ -52,10 +52,14 @@ public class Intake extends SubsystemBase {
         () ->
             _pivotIO.runPosition(
                 pivotAngle,
-                IntakeFlywheelConstants.CRUISE_VELOCITY,
-                IntakeFlywheelConstants.ACCELERATION,
-                IntakeFlywheelConstants.JERK,
-                PIDSlot.SLOT_0));
+                IntakePivotConstants.CRUISE_VELOCITY,
+                IntakePivotConstants.ACCELERATION,
+                IntakePivotConstants.JERK,
+                PIDSlot.SLOT_0)
+        // () ->
+        //   _pivotIO.runVelocity(IntakePivotConstants.CRUISE_VELOCITY,
+        // IntakePivotConstants.ACCELERATION, PIDSlot.SLOT_0)
+        );
     // .withName("Go To " + setpoint.toString() + " Setpoint");
   }
 
@@ -72,13 +76,12 @@ public class Intake extends SubsystemBase {
   }
 
   public Command runRollers(AngularVelocity velocity) {
-    return Commands.run(() -> setVelocity(velocity), this);
+    return Commands.run(() -> setVelocity(velocity));
   }
 
   public Command intake() {
-    return Commands.sequence(
-        Commands.run(
-            () -> setVelocity(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))),
+    return Commands.parallel(
+        runRollers(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED)),
         setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
   }
 
@@ -94,17 +97,14 @@ public class Intake extends SubsystemBase {
   }
 
   public Command stowAndStopRollers() {
-    return Commands.sequence(
-        Commands.run(
-            () -> setVelocity(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))),
-        setStowAngle(IntakePivotConstants.STOW_ANGLE));
+    return Commands.parallel(runRollers(RotationsPerSecond.of(0.0)), setStowAngle());
   }
 
-  private Command setStowAngle(Angle stowAngle) {
+  private Command setStowAngle() {
     return this.runOnce(
         () ->
             _pivotIO.runPosition(
-                stowAngle,
+                IntakePivotConstants.STOW_ANGLE,
                 IntakePivotConstants.CRUISE_VELOCITY,
                 IntakePivotConstants.ACCELERATION,
                 IntakePivotConstants.JERK,
@@ -116,6 +116,10 @@ public class Intake extends SubsystemBase {
     _pivotIO.setEncoderPosition(Rotations.of(IntakePivotConstants.ENCODER1.get()));
   }
 
+  public Command zeroEncoder() {
+    return Commands.runOnce(() -> _pivotIO.setEncoderPosition(Degrees.of(0)));
+  }
+
   @Override
   public void periodic() {
     // if (_pivotIO.getPosition().in(Degree) < IntakePivotConstants.MAX_ANGLE.in(Degree))
@@ -124,7 +128,7 @@ public class Intake extends SubsystemBase {
     Logger.recordOutput("Intake/TargetSpeed", targetSpeed);
 
     _pivotIO.periodic();
-    // Logger.recordOutput("Intake/TargetPivot", null);
+    Logger.recordOutput("Intake/TargetPivot", _pivotIO.getPosition().in(Degrees));
     Logger.recordOutput(
         "3DField/1_Intake",
         new Pose3d(

@@ -19,7 +19,6 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
@@ -40,6 +39,7 @@ import com.ctre.phoenix6.signals.Enable5VRailValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.LossOfSignalBehaviorValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.RGBWColor;
 import com.ctre.phoenix6.signals.StatusLedWhenActiveValue;
@@ -67,6 +67,7 @@ import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import frc.lib.W8.io.motor.MotorIOTalonFX.TalonFXFollower;
 import frc.lib.W8.mechanisms.linear.LinearMechanism.LinearMechCharacteristics;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism.RotaryMechCharacteristics;
 import frc.lib.W8.util.Device;
@@ -292,7 +293,15 @@ public final class Constants {
     public static final RotaryMechCharacteristics CONSTANTS =
         new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
 
-    public static final double HARD_STOP_CURRENT_LIMIT = 2.5;
+    public static final double HARD_STOP_CURRENT_LIMIT = 3.0;
+
+    public static final double TOWER_ANGLE = 8.9; // degrees // Distance 120.5 Inches
+    public static final double HUB_ANGLE = 2.3; // degrees // Distance 49.5 inches
+    public static final double TRENCH_ANGLE = 9.8; // degrees
+
+    public static final double ANGLE_AT_96 = 6.8; // degrees // Distance 96 inches
+    public static final double ANGLE_AT_152 = 12.1; // degrees  // Distance 152 inches
+    public static final double ANGLE_AT_197 = 18.6; // degrees // Distance
   }
 
   public class ShooterFlywheelConstants {
@@ -302,16 +311,19 @@ public final class Constants {
     public static final AngularVelocity MAX_VELOCITY = RadiansPerSecond.of(2 * Math.PI);
     public static final AngularAcceleration MAX_ACCELERATION = MAX_VELOCITY.per(Second);
 
-    private static final double GEARING = (2.0 / 1.0);
+    private static final double GEARING = (1.0 / 1.0);
 
     public static final AngularVelocity TOLERANCE = MAX_VELOCITY.times(0.1);
 
     public static final DCMotor DCMOTOR = DCMotor.getKrakenX60(1);
     public static final MomentOfInertia MOI = KilogramSquareMeters.of(1.0);
 
+    public static final TalonFXFollower FOLLOWER_1 =
+        new TalonFXFollower(Ports.LeftFlywheel, MotorAlignmentValue.Opposed);
+
     // Velocity PID
     private static Slot0Configs SLOT0CONFIG =
-        new Slot0Configs().withKP(18.0).withKI(0.0).withKD(0.01).withKV(0.05).withKS(8.0);
+        new Slot0Configs().withKP(3.5).withKI(0.15).withKD(0.0).withKV(0.1).withKS(8.5);
 
     public static TalonFXConfiguration getFXConfig(boolean invert) {
       TalonFXConfiguration config = new TalonFXConfiguration();
@@ -381,7 +393,7 @@ public final class Constants {
 
     // Positional PID
     private static Slot0Configs SLOT0CONFIG =
-        new Slot0Configs().withKP(250.0).withKI(0.0).withKD(0.0).withKS(10.0).withKV(0.0);
+        new Slot0Configs().withKP(600.0).withKI(0.0).withKD(0.0).withKS(10.0).withKV(0.0);
     // Velocity PID
     private static Slot1Configs SLOT1CONFIG =
         new Slot1Configs().withKP(30.0).withKI(0.0).withKD(0.0).withKS(40.0).withKV(0.0);
@@ -423,7 +435,7 @@ public final class Constants {
       config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
       config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = MAX_ANGLE.in(Degrees);
 
-      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
       config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = MIN_ANGLE.in(Degrees);
 
       config.Feedback.RotorToSensorRatio = ROTOR_TO_SENSOR;
@@ -467,7 +479,7 @@ public final class Constants {
     public static final Angle MIN_ANGLE = Rotations.of(0.0);
     public static final Angle MAX_ANGLE = Rotations.of(1);
     public static final Angle STARTING_ANGLE = Rotations.of(0.0);
-    public static final double PICKUP_SPEED = 0.0;
+    public static final double PICKUP_SPEED = 30.0;
     public static final Distance WHEEL_RADIUS = Meters.of(0.05);
     public static final Translation3d OFFSET = Translation3d.kZero;
     public static final MomentOfInertia MOI = KilogramSquareMeters.of(0.0028125);
@@ -486,7 +498,7 @@ public final class Constants {
     public static final AngularAcceleration ACCELERATION = CRUISE_VELOCITY.div(0.1).per(Second);
     public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
 
-    public static final double GEARING = (5.0 / 1.0);
+    public static final double GEARING = (22.0 / 18.0);
     public static final Distance MIN_DISTANCE = Inches.of(0.0);
     public static final Distance MAX_DISTANCE = Inches.of(10.0);
     public static final Distance STARTING_DISTANCE = Inches.of(0.0);
@@ -513,53 +525,9 @@ public final class Constants {
       return config;
     }
 
-    public class VisionConstants {
-      // AprilTag layout
-      public static AprilTagFieldLayout aprilTagLayout =
-          AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
-
-      // Camera names, must match names configured on coprocessor
-      public static String camera0Name = "camera_0";
-      public static String camera1Name = "camera_1";
-
-      // Robot to camera transforms
-      // (Not used by Limelight, configure in web UI instead)
-      public static Transform3d robotToCamera0 =
-          new Transform3d(0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, 0.0));
-      public static Transform3d robotToCamera1 =
-          new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
-
-      // Basic filtering thresholds
-      public static double maxAmbiguity = 0.3;
-      public static double maxZError = 0.75;
-
-      // Standard deviation baselines, for 1 meter distance and 1 tag
-      // (Adjusted automatically based on distance and # of tags)
-      public static double linearStdDevBaseline = 0.02; // Meters
-      public static double angularStdDevBaseline = 0.06; // Radians
-
-      // Standard deviation multipliers for each camera
-      // (Adjust to trust some cameras more than others)
-      public static double[] cameraStdDevFactors =
-          new double[] {
-            1.0, // Camera 0
-            1.0 // Camera 1
-          };
-
-      /** Tags used for reef alignment */
-      public static List<Integer> alignmentTags =
-          Arrays.asList(6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22);
-
-      public static VisionSystemSim getSystemSim() {
-        var system = new VisionSystemSim("main");
-        system.addAprilTags(aprilTagLayout);
-        return system;
-      }
-    }
-
     // config.Slot0 = new Slot0Configs().withKP(0.75).withKI(0.0).withKD(0.0);
     private static Slot0Configs SLOT0CONFIG =
-        new Slot0Configs().withKP(30).withKI(0.0).withKD(0.0).withKV(0.05).withKS(8.0);
+        new Slot0Configs().withKP(10).withKI(0.0).withKD(0.0).withKV(0.05).withKS(8.0);
 
     public static TalonFXConfiguration getFXConfig() {
       TalonFXConfiguration config = new TalonFXConfiguration();
@@ -600,25 +568,68 @@ public final class Constants {
     }
   }
 
+  public class VisionConstants {
+    // AprilTag layout
+    public static AprilTagFieldLayout aprilTagLayout =
+        AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+
+    // Camera names, must match names configured on coprocessor
+    public static String camera0Name = "camera_0";
+    public static String camera1Name = "camera_1";
+
+    // Robot to camera transforms
+    // (Not used by Limelight, configure in web UI instead)
+    public static Transform3d robotToCamera0 =
+        new Transform3d(0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, 0.0));
+    public static Transform3d robotToCamera1 =
+        new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
+
+    // Basic filtering thresholds
+    public static double maxAmbiguity = 0.3;
+    public static double maxZError = 0.75;
+
+    // Standard deviation baselines, for 1 meter distance and 1 tag
+    // (Adjusted automatically based on distance and # of tags)
+    public static double linearStdDevBaseline = 0.02; // Meters
+    public static double angularStdDevBaseline = 0.06; // Radians
+
+    // Standard deviation multipliers for each camera
+    // (Adjust to trust some cameras more than others)
+    public static double[] cameraStdDevFactors =
+        new double[] {
+          1.0, // Camera 0
+          1.0 // Camera 1
+        };
+
+    /** Tags used for reef alignment */
+    public static List<Integer> alignmentTags =
+        Arrays.asList(6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22);
+
+    public static VisionSystemSim getSystemSim() {
+      var system = new VisionSystemSim("main");
+      system.addAprilTags(aprilTagLayout);
+      return system;
+    }
+  }
+
   public class IntakePivotConstants {
     public static final String NAME = "Intake";
 
-    public static final Angle PICKUP_ANGLE = Degrees.of(120.0);
+    public static final Angle PICKUP_ANGLE = Degrees.of(123.0);
     public static final Angle STOW_ANGLE = Degrees.of(0.0);
 
     public static final Angle TOLERANCE = Degrees.of(1.0);
 
-    public static final AngularVelocity CRUISE_VELOCITY = RadiansPerSecond.of(10);
-    public static final AngularAcceleration ACCELERATION = RadiansPerSecondPerSecond.of(100);
-    public static final Velocity<AngularAccelerationUnit> JERK =
-        RadiansPerSecondPerSecond.per(Second).of(0.1);
+    public static final AngularVelocity CRUISE_VELOCITY = RadiansPerSecond.of(100);
+    public static final AngularAcceleration ACCELERATION = RadiansPerSecondPerSecond.of(200);
+    public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
 
-    private static final double ROTOR_TO_SENSOR = (50.0 / 1.0);
-    private static final double SENSOR_TO_MECHANISM = 1.0;
+    private static final double ROTOR_TO_SENSOR = (1.0 / 1.0);
+    private static final double SENSOR_TO_MECHANISM = 17.35;
 
     public static final Angle MIN_ANGLE = Degrees.of(0.0);
-    public static final Angle MAX_ANGLE = Degrees.of(130.0);
-    public static final Angle STARTING_ANGLE = Radians.zero();
+    public static final Angle MAX_ANGLE = Degrees.of(126.0);
+    public static final Angle STARTING_ANGLE = Degrees.of(0.0);
     public static final Distance ARM_LENGTH = Foot.one();
 
     public static final RotaryMechCharacteristics CONSTANTS =
@@ -635,9 +646,10 @@ public final class Constants {
 
     // Positional PID
     public static final Slot0Configs SLOT_0_CONFIG =
-        new Slot0Configs().withKP(.0).withKI(0.0).withKD(0).withKS(0.00).withKV(0.0);
+        new Slot0Configs().withKP(300.0).withKI(1000).withKD(80).withKS(8.0).withKV(0.0);
 
-    //                              ^^^ CHANGE
+    // .withKG(15)
+    // .withGravityType(GravityTypeValue.Arm_Cosine);
 
     public static TalonFXConfiguration getFXConfig() {
       TalonFXConfiguration config = new TalonFXConfiguration();
@@ -656,10 +668,10 @@ public final class Constants {
       config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
       config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-      config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+      config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
       config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = MAX_ANGLE.in(Rotations);
 
-      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
       config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = MIN_ANGLE.in(Rotations);
 
       config.Feedback.RotorToSensorRatio = ROTOR_TO_SENSOR;
@@ -685,7 +697,7 @@ public final class Constants {
     public static final AngularVelocity MAX_VELOCITY = RadiansPerSecond.of(2 * Math.PI);
     public static final AngularAcceleration MAX_ACCELERATION = MAX_VELOCITY.per(Second);
 
-    private static final double GEARING = (15.0 / 30.0);
+    private static final double GEARING = (15.0 / 7.0);
 
     public static final AngularVelocity TOLERANCE = MAX_VELOCITY.times(0.1);
 
@@ -738,7 +750,7 @@ public final class Constants {
     public static final String MOTOR_NAME = "Climber motor";
     public static final String NAME = "Climber";
     public static final Distance TOLERANCE = Inches.of(0.1);
-    public static final double GEARING = 1;
+    public static final double GEARING = 140.8;
     public static final Distance MIN_DISTANCE = Inches.of(0.0);
     public static final Distance MAX_DISTANCE = Inches.of(10.0);
     public static final Distance STARTING_DISTANCE = Inches.of(0.0);
@@ -746,11 +758,11 @@ public final class Constants {
     public static final DistanceAngleConverter CONVERTER = new DistanceAngleConverter(DRUM_RADIUS);
 
     public static final AngularVelocity CRUISE_VELOCITY =
-        RadiansPerSecond.of(2 * Math.PI).times(8000.0);
+        RadiansPerSecond.of(2 * Math.PI).times(800.0 / GEARING);
     public static final AngularVelocity LOWER_VELOCITY =
-        RadiansPerSecond.of(-2 * Math.PI).times(8000.0);
+        RadiansPerSecond.of(-2 * Math.PI).times(800.0 / GEARING);
     public static final AngularVelocity CALIBRATE_VELOCITY =
-        RadiansPerSecond.of(-2 * Math.PI).times(1000.0);
+        RadiansPerSecond.of(-2 * Math.PI).times(100.0 / GEARING);
 
     public static final AngularAcceleration ACCELERATION = CRUISE_VELOCITY.div(0.1).per(Second);
     public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
@@ -800,6 +812,7 @@ public final class Constants {
       config.Feedback.SensorToMechanismRatio = GEARING;
 
       config.Slot0 = new Slot0Configs().withKP(10).withKI(0.0).withKD(0.0);
+      config.Slot1 = new Slot1Configs().withKP(1).withKI(0.0).withKD(0.0);
 
       config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY.in(RotationsPerSecond);
       config.MotionMagic.MotionMagicAcceleration = ACCELERATION.in(RotationsPerSecondPerSecond);
