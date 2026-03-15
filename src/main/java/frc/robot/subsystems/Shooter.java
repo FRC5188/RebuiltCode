@@ -144,6 +144,16 @@ public class Shooter extends SubsystemBase {
     return Math.abs(hoodAngle - _hood.getPosition().in(Degrees)) < ShooterConstants.HOOD_TOLERANCE;
   }
 
+  public Command incrementHoodAngle() {
+    Angle currentHoodAngle = _hood.getPosition().plus(Degrees.of(2.5));
+    return setHoodAngle(currentHoodAngle.in(Degrees));
+  }
+
+  public Command decrementHoodAngle() {
+    Angle currentHoodAngle = _hood.getPosition().minus(Degrees.of(0.5));
+    return setHoodAngle(currentHoodAngle.in(Degrees));
+  }
+
   public boolean isAboveCurrentLimit() {
     if (Math.abs(_hood.getSupplyCurrent().in(Amps)) > ShooterConstants.HARD_STOP_CURRENT_LIMIT) {
       return true;

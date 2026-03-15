@@ -381,7 +381,7 @@ public class RobotContainer {
     // controller.x().onTrue(intake.stowAndStopRollers());
 
     // Flywheel
-    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(20)));
+    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(100)));
     controller.leftBumper().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
 
     // Intake + Spindexer + Tower
@@ -390,7 +390,7 @@ public class RobotContainer {
         .whileTrue(
             Commands.parallel(
                 // intake.runRollers(RotationsPerSecond.of(30)),
-                hopper.runSpindexer(15), shooter.runTower(RotationsPerSecond.of(70))));
+                hopper.runSpindexer(15), shooter.runTower(RotationsPerSecond.of(30))));
 
     controller
         .rightBumper()
@@ -417,7 +417,7 @@ public class RobotContainer {
     // controller.y().onFalse(shooter.runTower(RotationsPerSecond.of(0)));
 
     // controller.b().onFalse(shooter.setHoodAngle(ShooterRotaryConstants.STARTING_ANGLE.magnitude()));
-    // controller.povUp().onTrue(shooter.calibrateHood());
+    controller.povLeft().onTrue(shooter.calibrateHood());
     // controller.povLeft().onTrue(shooter.setHoodAngle(10));
     // controller.povDown().onTrue(shooter.setHoodAngle(15));
     // controller.povRight().onTrue(shooter.setHoodAngle(20));

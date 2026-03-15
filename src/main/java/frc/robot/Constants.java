@@ -294,6 +294,14 @@ public final class Constants {
         new RotaryMechCharacteristics(OFFSET, WHEEL_RADIUS, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
 
     public static final double HARD_STOP_CURRENT_LIMIT = 3.0;
+
+    public static final double TOWER_ANGLE = 8.9; // degrees // Distance 120.5 Inches
+    public static final double HUB_ANGLE = 2.3; // degrees // Distance 49.5 inches
+    public static final double TRENCH_ANGLE = 9.8; // degrees
+
+    public static final double ANGLE_AT_96 = 6.8; // degrees // Distance 96 inches
+    public static final double ANGLE_AT_152 = 12.1; // degrees  // Distance 152 inches
+    public static final double ANGLE_AT_197 = 18.6; // degrees // Distance
   }
 
   public class ShooterFlywheelConstants {
@@ -315,7 +323,7 @@ public final class Constants {
 
     // Velocity PID
     private static Slot0Configs SLOT0CONFIG =
-        new Slot0Configs().withKP(3.0).withKI(0.15).withKD(0.0).withKV(0.1).withKS(8.5);
+        new Slot0Configs().withKP(3.5).withKI(0.15).withKD(0.0).withKV(0.1).withKS(8.5);
 
     public static TalonFXConfiguration getFXConfig(boolean invert) {
       TalonFXConfiguration config = new TalonFXConfiguration();
@@ -607,7 +615,7 @@ public final class Constants {
   public class IntakePivotConstants {
     public static final String NAME = "Intake";
 
-    public static final Angle PICKUP_ANGLE = Degrees.of(106.0);
+    public static final Angle PICKUP_ANGLE = Degrees.of(130.0);
     public static final Angle STOW_ANGLE = Degrees.of(0.0);
 
     public static final Angle TOLERANCE = Degrees.of(1.0);
