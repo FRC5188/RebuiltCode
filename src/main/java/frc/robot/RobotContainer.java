@@ -13,11 +13,10 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
-import com.ctre.phoenix6.BaseStatusSignal;
+import au.grapplerobotics.LaserCan;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -36,7 +35,6 @@ import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanismReal;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanismSim;
 import frc.robot.Constants.ClimberConstants;
-import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.Constants.IntakeFlywheelConstants;
 import frc.robot.Constants.IntakeFlywheelConstants.VisionConstants;
@@ -78,9 +76,8 @@ public class RobotContainer {
   private final Climber climber;
   private final Shooter shooter;
   public final Intake intake;
-  //   private final BallCounter ballCounter;
+  private final BallCounter ballCounter;
   private final Vision vision;
-  private final Climber climber;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -91,10 +88,8 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Check if the robot is real before using the ball counter!
-    // if (Robot.isReal()) ballCounter = new BallCounter(new LaserCan(1));
-    // else ballCounter = null;
-
-    BaseStatusSignal.setUpdateFrequencyForAll(50.0);
+    if (Robot.isReal()) ballCounter = new BallCounter(new LaserCan(1));
+    else ballCounter = null;
 
     switch (Constants.currentMode) {
       case REAL:
@@ -117,17 +112,24 @@ public class RobotContainer {
             new Shooter(
                 new FlywheelMechanismReal(
                     new MotorIOTalonFX(
-                        "ShooterLeftFlywheel",
-                        ShooterFlywheelConstants.getFXConfig(true),
+                        ShooterFlywheelConstants.NAME_L,
+                        ShooterFlywheelConstants.getFXConfig(),
                         Ports.LeftFlywheel)),
                 new FlywheelMechanismReal(
                     new MotorIOTalonFX(
-                        "ShooterRightFlywheel",
-                        ShooterFlywheelConstants.getFXConfig(false),
+                        ShooterFlywheelConstants.NAME_R,
+                        ShooterFlywheelConstants.getFXConfig(),
                         Ports.RightFlywheel)),
                 new FlywheelMechanismReal(
                     new MotorIOTalonFX(
-                        "ShooterTower", FeederConstants.getFXConfig(false), Ports.TowerRoller)),
+                        ShooterFeederConstants.NAME,
+                        ShooterFeederConstants.getFXConfig(false),
+                        Ports.Spindexer)),
+                new FlywheelMechanismReal(
+                    new MotorIOTalonFX(
+                        ShooterTowerConstants.NAME,
+                        ShooterTowerConstants.getFXConfig(),
+                        Ports.TowerRoller)),
                 new RotaryMechanismReal(
                     new MotorIOTalonFX(
                         ShooterRotaryConstants.NAME,
@@ -150,14 +152,6 @@ public class RobotContainer {
                         Ports.IntakePivot),
                     IntakePivotConstants.CONSTANTS,
                     Optional.empty()));
-        climber =
-            new Climber(
-                new LinearMechanismReal(
-                    new MotorIOTalonFX(
-                        ClimberConstants.MOTOR_NAME,
-                        ClimberConstants.getFXConfig(),
-                        Ports.ClimberMotor),
-                    ClimberConstants.CHARACTERISTICS));
         vision =
             new Vision(
                 new VisionIOPhotonVision(
@@ -206,8 +200,8 @@ public class RobotContainer {
                     ShooterFlywheelConstants.TOLERANCE),
                 new FlywheelMechanismSim(
                     new MotorIOTalonFXSim(
-                        ShooterFlywheelConstants.NAME,
-                        ShooterFlywheelConstants.getFXConfig(true),
+                        ShooterFlywheelConstants.NAME_R,
+                        ShooterFlywheelConstants.getFXConfig(),
                         Ports.RightFlywheel),
                     ShooterFlywheelConstants.DCMOTOR,
                     ShooterFlywheelConstants.MOI,
@@ -268,6 +262,7 @@ public class RobotContainer {
                     VisionConstants.aprilTagLayout,
                     PoseStrategy.CONSTRAINED_SOLVEPNP,
                     VisionConstants.getSystemSim()));
+
         climber =
             new Climber(
                 new LinearMechanismSim(
@@ -305,30 +300,13 @@ public class RobotContainer {
             new Intake(
                 new FlywheelMechanism() {},
                 new RotaryMechanism(IntakePivotConstants.NAME, IntakePivotConstants.CONSTANTS) {});
-        vision = new Vision(null);
-
+        vision = new Vision(new VisionIO() {});
         climber =
             new Climber(
-                new LinearMechanism(ClimberConstants.NAME, ClimberConstants.CHARACTERISTICS) {});
+                new LinearMechanism(
+                    ClimberConstants.MOTOR_NAME, ClimberConstants.CHARACTERISTICS) {});
         break;
     }
-
-    // Extends climber arm
-    NamedCommands.registerCommand("ExtendClimber", getAutonomousCommand());
-    // Retracts climber arm
-    NamedCommands.registerCommand("Climb", getAutonomousCommand());
-
-    // Bring flywheel up to speed + hood to position for known locations?
-    NamedCommands.registerCommand("ReadyUp", getAutonomousCommand());
-    // Shoots
-    NamedCommands.registerCommand("Shoot", getAutonomousCommand());
-
-    // Runs Intake Rollers
-    NamedCommands.registerCommand("IntakeOn", getAutonomousCommand());
-    // Stops Intake Rollers
-    NamedCommands.registerCommand("IntakeOff", getAutonomousCommand());
-    // Extends the intake
-    NamedCommands.registerCommand("IntakeDown", getAutonomousCommand());
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -382,59 +360,24 @@ public class RobotContainer {
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    // controller
-    //     .b()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //                 () ->
-    //                     drive.setPose(
-    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-    //                 drive)
-    //             .ignoringDisable(true));
-
-    // controller
-    //     .x()
-    //     .onTrue(Commands.runOnce(() -> hopper.setGoal(HopperConstants.HOPPER_POSITION), hopper));
-
-    // controller.rightTrigger().onTrue(Commands.runOnce(() -> shooter.simShoot()));
-
-    // controller
-    //  .leftTrigger()
-    // .onTrue(
-    //  Commands.runOnce(
-    //    () -> {
-    //    Robot.fuelSim.clearFuel();
-    //  Robot.fuelSim.spawnStartingFuel();
-    //       intake.simBalls = 0;
-    //   }));
-    // controller.y().onTrue(Commands.runOnce(() -> intake.setVelocity(RotationsPerSecond.of(10))));
-    // controller.a().onTrue(intake.intake());
-    // controller.x().onTrue(intake.stowAndStopRollers());
-
-    // Flywheel
-    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(25)));
-    controller.leftBumper().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
-
-    // Intake + Spindexer + Tower
     controller
-        .rightBumper()
-        .whileTrue(
-            Commands.parallel(
-                // intake.runRollers(RotationsPerSecond.of(30)),
-                hopper.runSpindexer(15), shooter.runTower(RotationsPerSecond.of(70))));
+        .b()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
 
     controller
-        .rightBumper()
-        .onFalse(
-            Commands.parallel(
-                intake.runRollers(RotationsPerSecond.of(0)),
-                hopper.runSpindexer(0),
-                shooter.runTower(RotationsPerSecond.of(0))));
+        .x()
+        .onTrue(Commands.runOnce(() -> hopper.setGoal(HopperConstants.HOPPER_POSITION), hopper));
 
     // Commands for sim testing!
-    //controller.rightTrigger().onTrue(Commands.runOnce(() -> shooter.simShoot()));
+    controller.rightTrigger().onTrue(Commands.runOnce(() -> shooter.simShoot()));
 
-    //controller
+    controller
         .leftTrigger()
         .onTrue(
             Commands.runOnce(
@@ -447,31 +390,6 @@ public class RobotContainer {
     // controller.leftBumper().onTrue(intake.intake());
     // controller.rightBumper().onTrue(intake.stowAndStopRollers());
     // controller.a().onTrue(shooter.runFlywheel());
-    // Intake Rollers 11 Motor: 9 Intake
-    controller.a().whileTrue((intake.runRollers(RotationsPerSecond.of(15))));
-    controller.a().onFalse((intake.runRollers(RotationsPerSecond.of(0))));
-
-    // Spindexer 1:1
-    // controller.x().whileTrue(hopper.runSpindexer(18));
-    // controller.x().onFalse(hopper.runSpindexer(0));
-
-    // Tower - 15 Motor:7 Tower
-
-    controller.y().whileTrue(shooter.runTower(RotationsPerSecond.of(70)));
-    controller.y().onFalse(shooter.runTower(RotationsPerSecond.of(0)));
-
-    // controller.b().onFalse(shooter.setHoodAngle(ShooterRotaryConstants.STARTING_ANGLE.magnitude()));
-    controller.b().whileTrue(shooter.setHoodAngle(5));
-
-    // controller.x().onFalse(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
-    controller.x().whileTrue(intake.setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
-
-    controller.povRight().onTrue(shooter.calibrateHood());
-
-    // controller.povUp().whileTrue(climber.raiseClimber());
-    // controller.povUp().onFalse(climber.stopClimber());
-    // controller.povDown().whileTrue(climber.lowerClimber());
-    // controller.povDown().onFalse(climber.stopClimber());
   }
 
   /**

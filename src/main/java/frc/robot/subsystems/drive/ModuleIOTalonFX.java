@@ -172,38 +172,28 @@ public class ModuleIOTalonFX implements ModuleIO {
     turnAppliedVolts = turnTalon.getMotorVoltage();
     turnCurrent = turnTalon.getStatorCurrent();
 
-    // Configure periodic frames with optimized frequencies
-    // Odometry signals need high frequency for accurate pose estimation
+    // Configure periodic frames
     BaseStatusSignal.setUpdateFrequencyForAll(
         Drive.ODOMETRY_FREQUENCY, drivePosition, turnPosition);
-
-    // Control signals need reduced frequency
-    BaseStatusSignal.setUpdateFrequencyForAll(50.0, driveVelocity, turnVelocity);
-
-    // Telemetry signals can use very low frequency
     BaseStatusSignal.setUpdateFrequencyForAll(
-        10.0, driveAppliedVolts, driveCurrent, turnAppliedVolts, turnCurrent);
-
-    // Absolute encoder only needs very low updates since it's mainly used for initialization
-    BaseStatusSignal.setUpdateFrequencyForAll(20.0, turnAbsolutePosition);
-
-    // Optimize bus utilization for each motor with longer timeout for better optimization
+        50.0,
+        driveVelocity,
+        driveAppliedVolts,
+        driveCurrent,
+        turnAbsolutePosition,
+        turnVelocity,
+        turnAppliedVolts,
+        turnCurrent);
     ParentDevice.optimizeBusUtilizationForAll(driveTalon, turnTalon);
-    cancoder.optimizeBusUtilization(1.0);
   }
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
-    // Refresh signals in priority groups
-    // Refresh critical odometry signals first
-    var driveStatus = BaseStatusSignal.refreshAll(drivePosition, driveVelocity);
-    var turnStatus = BaseStatusSignal.refreshAll(turnPosition, turnVelocity);
-
-    // Refresh telemetry signals
-    BaseStatusSignal.refreshAll(driveAppliedVolts, driveCurrent);
-    BaseStatusSignal.refreshAll(turnAppliedVolts, turnCurrent);
-
-    // Refresh absolute encoder with lower priority
+    // Refresh all signals
+    var driveStatus =
+        BaseStatusSignal.refreshAll(drivePosition, driveVelocity, driveAppliedVolts, driveCurrent);
+    var turnStatus =
+        BaseStatusSignal.refreshAll(turnPosition, turnVelocity, turnAppliedVolts, turnCurrent);
     var turnEncoderStatus = BaseStatusSignal.refreshAll(turnAbsolutePosition);
 
     // Update drive inputs

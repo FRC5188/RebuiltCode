@@ -107,9 +107,4 @@ public class RotaryMechanismReal extends RotaryMechanism {
   public AngularVelocity getVelocity() {
     return inputs.velocity;
   }
-
-  @Override
-  public Current getSupplyCurrent() {
-    return inputs.supplyCurrent;
-  }
 }
