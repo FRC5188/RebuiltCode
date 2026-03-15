@@ -282,6 +282,9 @@ public class RobotContainer {
         break;
     }
 
+    // Set up auto routines
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+
     // Extends climber arm
     NamedCommands.registerCommand("ExtendClimber", getAutonomousCommand());
     // Retracts climber arm
@@ -299,8 +302,6 @@ public class RobotContainer {
     // Extends the intake
     NamedCommands.registerCommand("IntakeDown", getAutonomousCommand());
 
-    // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
     autoChooser.addOption(
