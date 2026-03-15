@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
@@ -13,9 +14,11 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -239,6 +242,32 @@ public class Shooter extends SubsystemBase {
             Math.sin(Math.PI / 2 - (_hood.getPosition().in(Radians) + Degrees.of(12).in(Radians)))
                 * flywheelSpeed));
     Robot.robotContainer.intake.simBalls--;
+  }
+
+  
+  private static final InterpolatingDoubleTreeMap hoodAngleMap = new InterpolatingDoubleTreeMap();
+
+    static {
+        hoodAngleMap.put(2.44, 6.8);
+        hoodAngleMap.put(3.86, 12.1);
+        hoodAngleMap.put(5.0, 18.6);
+        
+    }
+/** Distance from feed pose in meters -> flywheel speed in rotations per second */
+    private static final InterpolatingDoubleTreeMap feedFlywheelMap =
+            new InterpolatingDoubleTreeMap();
+
+    static {
+        feedFlywheelMap.put(0.0, 50.0);
+        feedFlywheelMap.put(6.0, 50.0);
+        feedFlywheelMap.put(7.0, 55.0);
+        feedFlywheelMap.put(8.0, 60.0);
+        feedFlywheelMap.put(20.0, 60.0);
+    }
+  public void setAngleForDistance(Distance distance) {
+    double distanceMeters = distance.in(Meters);
+    double angle = hoodAngleMap.get(distanceMeters);
+    setHoodAngle(angle);
   }
 
   public void periodic() {
