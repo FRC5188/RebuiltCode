@@ -48,10 +48,7 @@ public class Shooter extends SubsystemBase {
   private Debouncer homeDebouncer = new Debouncer(0.1, DebounceType.kRising);
   private Trigger homedTrigger;
 
-  public Shooter(
-      FlywheelMechanism rflywheel,
-      FlywheelMechanism feeder,
-      RotaryMechanism hood) {
+  public Shooter(FlywheelMechanism rflywheel, FlywheelMechanism feeder, RotaryMechanism hood) {
     _flywheel = rflywheel;
     _feeder = feeder;
     _hood = hood;

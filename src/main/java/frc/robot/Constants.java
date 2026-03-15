@@ -37,7 +37,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.RainbowAnimation;
 import com.ctre.phoenix6.signals.Enable5VRailValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.LossOfSignalBehaviorValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
@@ -311,7 +310,8 @@ public final class Constants {
     public static final DCMotor DCMOTOR = DCMotor.getKrakenX60(1);
     public static final MomentOfInertia MOI = KilogramSquareMeters.of(1.0);
 
-    public static final TalonFXFollower FOLLOWER_1 = new TalonFXFollower(Ports.LeftFlywheel, MotorAlignmentValue.Opposed);
+    public static final TalonFXFollower FOLLOWER_1 =
+        new TalonFXFollower(Ports.LeftFlywheel, MotorAlignmentValue.Opposed);
 
     // Velocity PID
     private static Slot0Configs SLOT0CONFIG =
@@ -638,14 +638,10 @@ public final class Constants {
 
     // Positional PID
     public static final Slot0Configs SLOT_0_CONFIG =
-        new Slot0Configs()
-            .withKP(300.0)
-            .withKI(1000)
-            .withKD(80)
-            .withKS(8.0)
-            .withKV(0.0);
-            // .withKG(15)
-            // .withGravityType(GravityTypeValue.Arm_Cosine);
+        new Slot0Configs().withKP(300.0).withKI(1000).withKD(80).withKS(8.0).withKV(0.0);
+
+    // .withKG(15)
+    // .withGravityType(GravityTypeValue.Arm_Cosine);
 
     public static TalonFXConfiguration getFXConfig() {
       TalonFXConfiguration config = new TalonFXConfiguration();
@@ -754,11 +750,11 @@ public final class Constants {
     public static final DistanceAngleConverter CONVERTER = new DistanceAngleConverter(DRUM_RADIUS);
 
     public static final AngularVelocity CRUISE_VELOCITY =
-        RadiansPerSecond.of(2 * Math.PI).times(800.0/GEARING);
+        RadiansPerSecond.of(2 * Math.PI).times(800.0 / GEARING);
     public static final AngularVelocity LOWER_VELOCITY =
-        RadiansPerSecond.of(-2 * Math.PI).times(800.0/GEARING);
+        RadiansPerSecond.of(-2 * Math.PI).times(800.0 / GEARING);
     public static final AngularVelocity CALIBRATE_VELOCITY =
-        RadiansPerSecond.of(-2 * Math.PI).times(100.0/GEARING);
+        RadiansPerSecond.of(-2 * Math.PI).times(100.0 / GEARING);
 
     public static final AngularAcceleration ACCELERATION = CRUISE_VELOCITY.div(0.1).per(Second);
     public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
