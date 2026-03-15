@@ -73,7 +73,7 @@ public class RobotContainer {
 
   // Subsystems
   public final Drive drive;
-  private final Hopper hopper;
+  public final Hopper hopper;
   private final Shooter shooter;
   public final Intake intake;
   //   private final BallCounter ballCounter;
@@ -366,28 +366,41 @@ public class RobotContainer {
     controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(100)));
     controller.leftBumper().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
 
-    // Intake + Spindexer + Tower
-    controller
-        .rightBumper()
-        .whileTrue(
-            Commands.parallel(
-                // intake.runRollers(RotationsPerSecond.of(30)),
-                hopper.runSpindexer(15), shooter.runTower(RotationsPerSecond.of(30))));
-
-    controller
-        .rightBumper()
-        .onFalse(
-            Commands.parallel(
-                intake.runRollers(RotationsPerSecond.of(0)),
-                hopper.runSpindexer(0),
-                shooter.runTower(RotationsPerSecond.of(0))));
-
     // Intake Rollers 11 Motor: 9 Intake
 
-    controller.a().whileTrue((intake.runRollers(RotationsPerSecond.of(22.5))));
+    // ALPHA KATIE REQUESTS INTAKE RIGHT TRIGGER, SHOOT LEFT TRIGGER, AUTO ALIGN "A"
+
+    // Intake
+    controller.rightTrigger().whileTrue(intake.intake());
+    controller.rightTrigger().onFalse(intake.stowAndStopRollers());
+
+    // Shoot
     controller
-        .a()
-        .onFalse(new RunCommand(() -> intake._rollerIO.runVoltage(Volts.of(0.0)), intake));
+        .leftTrigger()
+        .whileTrue(
+            Commands.parallel(
+                shooter.prepareToShoot(RotationsPerSecond.of(100), RotationsPerSecond.of(30)),
+                hopper.runSpindexer(RotationsPerSecond.of(15))
+            )
+        );
+
+        
+    controller
+    .leftTrigger()
+    .onFalse(
+        Commands.parallel(
+            shooter.prepareToShoot(RotationsPerSecond.of(0), RotationsPerSecond.of(0)),
+            hopper.runSpindexer(RotationsPerSecond.of(0))
+        )
+    );
+
+    // Align
+    // controller.a().onTrue();
+
+    // controller.a().whileTrue((intake.runRollers(RotationsPerSecond.of(22.5))));
+    // controller
+    //     .a()
+    //     .onFalse(new RunCommand(() -> intake._rollerIO.runVoltage(Volts.of(0.0)), intake));
 
     // Spindexer 1:1
     // controller.x().whileTrue(hopper.runSpindexer(18));
@@ -399,7 +412,7 @@ public class RobotContainer {
     // controller.y().onFalse(shooter.runTower(RotationsPerSecond.of(0)));
 
     // controller.b().onFalse(shooter.setHoodAngle(ShooterRotaryConstants.STARTING_ANGLE.magnitude()));
-    controller.povLeft().onTrue(shooter.calibrateHood());
+    // controller.povLeft().onTrue(shooter.calibrateHood());
     // controller.povLeft().onTrue(shooter.setHoodAngle(10));
     // controller.povDown().onTrue(shooter.setHoodAngle(15));
     // controller.povRight().onTrue(shooter.setHoodAngle(20));

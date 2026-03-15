@@ -76,14 +76,14 @@ public class Intake extends SubsystemBase {
   }
 
   public Command runRollers(AngularVelocity velocity) {
-    return Commands.run(() -> setVelocity(velocity), this);
+    return Commands.run(() -> setVelocity(velocity));
   }
 
   public Command intake() {
-    return Commands.sequence(
-        Commands.run(
-            () -> setVelocity(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))),
-        setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
+    return Commands.parallel(
+        runRollers(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED)),
+        setPivotAngle(IntakePivotConstants.PICKUP_ANGLE)
+        );
   }
 
   public boolean isIntendedAngle() {
@@ -98,21 +98,22 @@ public class Intake extends SubsystemBase {
   }
 
   public Command stowAndStopRollers() {
-    return Commands.sequence(
-        Commands.run(
-            () -> setVelocity(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))),
-        setStowAngle(IntakePivotConstants.STOW_ANGLE));
+    return Commands.parallel(
+        runRollers(RotationsPerSecond.of(0.0)),
+        setStowAngle()
+        );
   }
 
-  private Command setStowAngle(Angle stowAngle) {
+  private Command setStowAngle() {
     return this.runOnce(
         () ->
             _pivotIO.runPosition(
-                stowAngle,
+                IntakePivotConstants.STOW_ANGLE,
                 IntakePivotConstants.CRUISE_VELOCITY,
                 IntakePivotConstants.ACCELERATION,
                 IntakePivotConstants.JERK,
-                PIDSlot.SLOT_0));
+                PIDSlot.SLOT_0)
+                );
   }
 
   public void tunePivotPosition() {
@@ -132,7 +133,7 @@ public class Intake extends SubsystemBase {
     Logger.recordOutput("Intake/TargetSpeed", targetSpeed);
 
     _pivotIO.periodic();
-    // Logger.recordOutput("Intake/TargetPivot", null);
+    Logger.recordOutput("Intake/TargetPivot", _pivotIO.getPosition().in(Degrees));
     Logger.recordOutput(
         "3DField/1_Intake",
         new Pose3d(
@@ -143,6 +144,8 @@ public class Intake extends SubsystemBase {
         new Pose3d(
             new Translation3d(Math.sin(_pivotIO.getPosition().in(Radians) * 0.1055), 0, 0),
             new Rotation3d(0, 0, 0)));
+
+    
 
     // _pivotIO.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp())*0.25)); //--- Tests the pivot
   }
