@@ -76,13 +76,12 @@ public class Intake extends SubsystemBase {
   }
 
   public Command runRollers(AngularVelocity velocity) {
-    return Commands.run(() -> setVelocity(velocity), this);
+    return Commands.run(() -> setVelocity(velocity));
   }
 
   public Command intake() {
-    return Commands.sequence(
-        Commands.run(
-            () -> setVelocity(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))),
+    return Commands.parallel(
+        runRollers(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED)),
         setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
   }
 
@@ -98,17 +97,14 @@ public class Intake extends SubsystemBase {
   }
 
   public Command stowAndStopRollers() {
-    return Commands.sequence(
-        Commands.run(
-            () -> setVelocity(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))),
-        setStowAngle(IntakePivotConstants.STOW_ANGLE));
+    return Commands.parallel(runRollers(RotationsPerSecond.of(0.0)), setStowAngle());
   }
 
-  private Command setStowAngle(Angle stowAngle) {
+  private Command setStowAngle() {
     return this.runOnce(
         () ->
             _pivotIO.runPosition(
-                stowAngle,
+                IntakePivotConstants.STOW_ANGLE,
                 IntakePivotConstants.CRUISE_VELOCITY,
                 IntakePivotConstants.ACCELERATION,
                 IntakePivotConstants.JERK,
@@ -132,7 +128,7 @@ public class Intake extends SubsystemBase {
     Logger.recordOutput("Intake/TargetSpeed", targetSpeed);
 
     _pivotIO.periodic();
-    // Logger.recordOutput("Intake/TargetPivot", null);
+    Logger.recordOutput("Intake/TargetPivot", _pivotIO.getPosition().in(Degrees));
     Logger.recordOutput(
         "3DField/1_Intake",
         new Pose3d(

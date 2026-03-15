@@ -181,17 +181,12 @@ public class Shooter extends SubsystemBase {
   // _hood.setEncoderPosition(Angle.ofBaseUnits(0, Degrees))));
   // }
 
-  public Command shoot(AngularVelocity velocity) {
+  public Command prepareToShoot(AngularVelocity flywheelVelocity, AngularVelocity towerVelocity) {
     // Prepare targets
-    return Commands.sequence(
-        // Set and wait in parallel for both hood and flywheel
-        Commands.parallel(
-            Commands.run(() -> setFlywheelVelocity(velocity)).until(this::flyAtVelocity),
-            Commands.run(() -> setHoodAngle(hoodAngle)).until(this::hoodAtAngle)),
-        // feed once ready
-        Commands.runOnce(() -> runFeeder(FeederConstants.FEED_SPEED)),
-        // stop flywheel when finished
-        Commands.runOnce(() -> setFlywheelVelocity(RotationsPerSecond.of(0.0))));
+    return Commands.parallel(
+        Commands.run(() -> setFlywheelVelocity(flywheelVelocity)).until(this::flyAtVelocity),
+        Commands.run(() -> setHoodAngle(hoodAngle)).until(this::hoodAtAngle),
+        runTower(towerVelocity));
   }
 
   public Command runFlywheel(AngularVelocity velocity) {
