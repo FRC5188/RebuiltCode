@@ -33,8 +33,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
 
-  private final FlywheelMechanism _rflywheel;
-  private final FlywheelMechanism _lflywheel;
+  private final FlywheelMechanism _flywheel;
   private final FlywheelMechanism _feeder;
   private final RotaryMechanism _hood;
 
@@ -49,13 +48,8 @@ public class Shooter extends SubsystemBase {
   private Debouncer homeDebouncer = new Debouncer(0.1, DebounceType.kRising);
   private Trigger homedTrigger;
 
-  public Shooter(
-      FlywheelMechanism lflywheel,
-      FlywheelMechanism rflywheel,
-      FlywheelMechanism feeder,
-      RotaryMechanism hood) {
-    _lflywheel = lflywheel;
-    _rflywheel = rflywheel;
+  public Shooter(FlywheelMechanism rflywheel, FlywheelMechanism feeder, RotaryMechanism hood) {
+    _flywheel = rflywheel;
     _feeder = feeder;
     _hood = hood;
     homedTrigger =
@@ -79,8 +73,7 @@ public class Shooter extends SubsystemBase {
     // this.desiredVelo = velocity;
     // AngularVelocity angVelo = RotationsPerSecond.of(velocity);
     // AngularVelocity negangVelo = RotationsPerSecond.of(velocity);
-    _lflywheel.runVelocity(velocity, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
-    _rflywheel.runVelocity(velocity, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
+    _flywheel.runVelocity(velocity, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
     targetVelocity = velocity;
   }
 
@@ -101,9 +94,7 @@ public class Shooter extends SubsystemBase {
 
   // Checks if the flywheel is at speed and returns a boolean
   public boolean flyAtVelocity() {
-    return ((Math.abs(desiredVelo - _lflywheel.getVelocity().in(RotationsPerSecond))
-                + Math.abs(desiredVelo - _rflywheel.getVelocity().in(RotationsPerSecond)))
-            / 2)
+    return (Math.abs(desiredVelo - _flywheel.getVelocity().in(RotationsPerSecond)))
         <= ShooterConstants.FLYWHEEL_VELOCITY_TOLERANCE;
   }
 
@@ -242,8 +233,7 @@ public class Shooter extends SubsystemBase {
 
   public void periodic() {
     _hood.periodic();
-    _lflywheel.periodic();
-    _rflywheel.periodic();
+    _flywheel.periodic();
     _feeder.periodic();
     Logger.recordOutput("Flywheel/TargetVelocity", targetVelocity);
     Logger.recordOutput("Feeder/TargetVelocity", feederTargetVelocity);
