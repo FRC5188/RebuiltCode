@@ -364,7 +364,7 @@ public class RobotContainer {
     // controller.x().onTrue(intake.stowAndStopRollers());
 
     // Flywheel
-    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(67)));
+    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(100)));
     controller.leftBumper().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
 
     // Intake + Spindexer + Tower
@@ -385,8 +385,11 @@ public class RobotContainer {
                 ));
 
     // Intake Rollers 11 Motor: 9 Intake
+
+
+    // ALPHA KATIE REQUESTS INTAKE RIGHT TRIGGER, SHOOT LEFT TRIGGER, AUTO ALIGN "A"
     
-    controller.a().whileTrue((intake.runRollers(RotationsPerSecond.of(22.5))));
+    controller.a().whileTrue((intake.runRollers(RotationsPerSecond.of(40.5))));
     controller.a().onFalse(new RunCommand(() -> intake._rollerIO.runVoltage(Volts.of(0.0)), intake));
 
     // Spindexer 1:1
