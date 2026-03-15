@@ -18,10 +18,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.controls.Follower;
 import com.pathplanner.lib.auto.AutoBuilder;
-
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -44,11 +41,11 @@ import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.Constants.IntakeFlywheelConstants;
-import frc.robot.Constants.VisionConstants;
 import frc.robot.Constants.IntakePivotConstants;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.ShooterFlywheelConstants;
 import frc.robot.Constants.ShooterRotaryConstants;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
@@ -120,7 +117,8 @@ public class RobotContainer {
                     new MotorIOTalonFX(
                         "ShooterRightFlywheel",
                         ShooterFlywheelConstants.getFXConfig(false),
-                        Ports.RightFlywheel, ShooterFlywheelConstants.FOLLOWER_1)),
+                        Ports.RightFlywheel,
+                        ShooterFlywheelConstants.FOLLOWER_1)),
                 new FlywheelMechanismReal(
                     new MotorIOTalonFX(
                         "ShooterTower", FeederConstants.getFXConfig(false), Ports.TowerRoller)),
@@ -187,7 +185,8 @@ public class RobotContainer {
                     new MotorIOTalonFXSim(
                         ShooterFlywheelConstants.NAME,
                         ShooterFlywheelConstants.getFXConfig(true),
-                        Ports.RightFlywheel, ShooterFlywheelConstants.FOLLOWER_1),
+                        Ports.RightFlywheel,
+                        ShooterFlywheelConstants.FOLLOWER_1),
                     ShooterFlywheelConstants.DCMOTOR,
                     ShooterFlywheelConstants.MOI,
                     ShooterFlywheelConstants.TOLERANCE),
@@ -381,16 +380,14 @@ public class RobotContainer {
             Commands.parallel(
                 intake.runRollers(RotationsPerSecond.of(0)),
                 hopper.runSpindexer(0),
-                shooter.runTower(RotationsPerSecond.of(0))
-                ));
+                shooter.runTower(RotationsPerSecond.of(0))));
 
     // Intake Rollers 11 Motor: 9 Intake
 
-
-    // ALPHA KATIE REQUESTS INTAKE RIGHT TRIGGER, SHOOT LEFT TRIGGER, AUTO ALIGN "A"
-    
-    controller.a().whileTrue((intake.runRollers(RotationsPerSecond.of(40.5))));
-    controller.a().onFalse(new RunCommand(() -> intake._rollerIO.runVoltage(Volts.of(0.0)), intake));
+    controller.a().whileTrue((intake.runRollers(RotationsPerSecond.of(22.5))));
+    controller
+        .a()
+        .onFalse(new RunCommand(() -> intake._rollerIO.runVoltage(Volts.of(0.0)), intake));
 
     // Spindexer 1:1
     // controller.x().whileTrue(hopper.runSpindexer(18));
@@ -415,17 +412,25 @@ public class RobotContainer {
 
     // controller.povRight().onTrue(shooter.calibrateHood());
 
-//     controller.povLeft().whileTrue(new RunCommand(() -> climber._io.runPosition(Rotations.of(0.25), ClimberConstants.CRUISE_VELOCITY, ClimberConstants.ACCELERATION, ClimberConstants.JERK, PIDSlot.SLOT_1), climber));
-//     controller.povLeft().onFalse(climber.stopClimber());
-//     controller.povUp().whileTrue(climber.raiseClimber());
-//     controller.povUp().onFalse(climber.stopClimber());
-//     controller.povDown().whileTrue(climber.lowerClimber());
-//     controller.povDown().onFalse(climber.stopClimber());
-   
-    controller.povUp().onTrue(shooter.incrementHoodAngle());
-    controller.povDown().onTrue(shooter.decrementHoodAngle());
-  
-    }
+    controller
+        .povLeft()
+        .whileTrue(
+            new RunCommand(
+                () ->
+                    climber._io.runPosition(
+                        Rotations.of(0.25),
+                        ClimberConstants.CRUISE_VELOCITY,
+                        ClimberConstants.ACCELERATION,
+                        ClimberConstants.JERK,
+                        PIDSlot.SLOT_1),
+                climber));
+    controller.povLeft().onFalse(climber.stopClimber());
+    controller.povUp().whileTrue(climber.raiseClimber());
+    controller.povUp().onFalse(climber.stopClimber());
+    controller.povDown().whileTrue(climber.lowerClimber());
+    controller.povDown().onFalse(climber.stopClimber());
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

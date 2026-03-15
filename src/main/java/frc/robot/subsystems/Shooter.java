@@ -48,12 +48,7 @@ public class Shooter extends SubsystemBase {
   private Debouncer homeDebouncer = new Debouncer(0.1, DebounceType.kRising);
   private Trigger homedTrigger;
 
-  private Angle currentHoodAngle;
-
-  public Shooter(
-      FlywheelMechanism rflywheel,
-      FlywheelMechanism feeder,
-      RotaryMechanism hood) {
+  public Shooter(FlywheelMechanism rflywheel, FlywheelMechanism feeder, RotaryMechanism hood) {
     _flywheel = rflywheel;
     _feeder = feeder;
     _hood = hood;
@@ -150,12 +145,12 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command incrementHoodAngle() {
-    currentHoodAngle = _hood.getPosition().plus(Degrees.of(2.5));
+    Angle currentHoodAngle = _hood.getPosition().plus(Degrees.of(2.5));
     return setHoodAngle(currentHoodAngle.in(Degrees));
   }
 
   public Command decrementHoodAngle() {
-    currentHoodAngle = _hood.getPosition().minus(Degrees.of(0.5));
+    Angle currentHoodAngle = _hood.getPosition().minus(Degrees.of(0.5));
     return setHoodAngle(currentHoodAngle.in(Degrees));
   }
 

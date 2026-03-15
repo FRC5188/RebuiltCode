@@ -57,8 +57,9 @@ public class Intake extends SubsystemBase {
                 IntakePivotConstants.JERK,
                 PIDSlot.SLOT_0)
         // () ->
-        //   _pivotIO.runVelocity(IntakePivotConstants.CRUISE_VELOCITY, IntakePivotConstants.ACCELERATION, PIDSlot.SLOT_0)
-                );
+        //   _pivotIO.runVelocity(IntakePivotConstants.CRUISE_VELOCITY,
+        // IntakePivotConstants.ACCELERATION, PIDSlot.SLOT_0)
+        );
     // .withName("Go To " + setpoint.toString() + " Setpoint");
   }
 
