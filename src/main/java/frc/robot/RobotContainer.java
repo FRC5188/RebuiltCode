@@ -291,7 +291,8 @@ public class RobotContainer {
     }
 
     // Extends climber arm
-    NamedCommands.registerCommand("ExtendClimber", getAutonomousCommand());
+    NamedCommands.registerCommand("ExtendClimber", climber.runClimber());
+    
     // Retracts climber arm
     NamedCommands.registerCommand("Climb", getAutonomousCommand());
 
