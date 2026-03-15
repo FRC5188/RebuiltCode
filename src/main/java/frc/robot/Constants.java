@@ -295,13 +295,13 @@ public final class Constants {
 
     public static final double HARD_STOP_CURRENT_LIMIT = 3.0;
 
-    public static final double TOWER_ANGLE = 8.9; // degrees // Distance 120.5 Inches  
+    public static final double TOWER_ANGLE = 8.9; // degrees // Distance 120.5 Inches
     public static final double HUB_ANGLE = 2.3; // degrees // Distance 49.5 inches
     public static final double TRENCH_ANGLE = 9.8; // degrees
 
     public static final double ANGLE_AT_96 = 6.8; // degrees // Distance 96 inches
     public static final double ANGLE_AT_152 = 12.1; // degrees  // Distance 152 inches
-    public static final double ANGLE_AT_197 = 18.6; // degrees // Distance 
+    public static final double ANGLE_AT_197 = 18.6; // degrees // Distance
   }
 
   public class ShooterFlywheelConstants {
