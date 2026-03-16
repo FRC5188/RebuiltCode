@@ -383,7 +383,7 @@ public class RobotContainer {
     controller.y().onTrue(shooter.calibrateHood());
 
     // Stow Intake
-    controller.y().whileTrue(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
+    controller.x().whileTrue(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
 
     // Climber Raise/Lower
     controller.povUp().whileTrue(climber.raiseClimber());
@@ -392,7 +392,6 @@ public class RobotContainer {
     controller.povDown().onFalse(climber.stopClimber());
 
     // Testing Commands
-    controller.povLeft().onTrue(shooter.calibrateHood());
     controller.povLeft().onTrue(shooter.setHoodAngle(6.8));
     controller.povDown().onTrue(shooter.setHoodAngle(12.1));
     controller.povRight().onTrue(shooter.setHoodAngle(18.6));
