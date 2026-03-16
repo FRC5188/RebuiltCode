@@ -13,7 +13,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -22,11 +21,9 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.W8.io.motor.*;
-import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.io.vision.VisionIOPhotonVision;
 import frc.lib.W8.io.vision.VisionIOPhotonVisionSim;
 import frc.lib.W8.mechanisms.flywheel.*;
@@ -331,112 +328,55 @@ public class RobotContainer {
     // // Switch to X pattern when X button is pressed
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // Reset gyro to 0° when B button is pressed
-    // controller
-    //     .b()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //                 () ->
-    //                     drive.setPose(
-    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-    //                 drive)
-    //             .ignoringDisable(true));
-
-    // controller
-    //     .x()
-    //     .onTrue(Commands.runOnce(() -> hopper.setGoal(HopperConstants.HOPPER_POSITION), hopper));
-
-    // controller.rightTrigger().onTrue(Commands.runOnce(() -> shooter.simShoot()));
-
-    // controller
-    //  .leftTrigger()
-    // .onTrue(
-    //  Commands.runOnce(
-    //    () -> {
-    //    Robot.fuelSim.clearFuel();
-    //  Robot.fuelSim.spawnStartingFuel();
-    //       intake.simBalls = 0;
-    //   }));
-    // controller.y().onTrue(Commands.runOnce(() -> intake.setVelocity(RotationsPerSecond.of(10))));
-    // controller.a().onTrue(intake.intake());
-    // controller.x().onTrue(intake.stowAndStopRollers());
-
-    // Flywheel
-    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(20)));
-    controller.leftBumper().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
-
-    controller.rightBumper().whileTrue(Commands.parallel(shooter.runTower(RotationsPerSecond.of(30)), hopper.runSpindexer(RotationsPerSecond.of(15))));
-    controller.rightBumper().whileFalse(Commands.parallel(shooter.runTower(RotationsPerSecond.of(0)), hopper.runSpindexer(RotationsPerSecond.of(0))));
-
-    // ALPHA KATIE REQUESTS INTAKE RIGHT TRIGGER, SHOOT LEFT TRIGGER, AUTO ALIGN "A"
-
-    // Intake
-    controller.rightTrigger().whileTrue(intake.intake());
-    controller.rightTrigger().onFalse(Commands.run(()->intake.stop()));
-
     // Shoot
+    controller.leftTrigger().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(67)));
+    controller.leftTrigger().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
+
+    // Feed
     controller
-        .leftTrigger()
+        .leftBumper()
         .whileTrue(
             Commands.parallel(
-                shooter.prepareToShoot(RotationsPerSecond.of(67), RotationsPerSecond.of(30)),
-                hopper.runSpindexer(RotationsPerSecond.of(15))));
-
+                shooter.runTower(RotationsPerSecond.of(30)),
+                hopper.runSpindexer(RotationsPerSecond.of(15)),
+                intake.intake()));
     controller
-        .leftTrigger()
-        .onFalse(
+        .leftBumper()
+        .whileFalse(
             Commands.parallel(
-                shooter.prepareToShoot(RotationsPerSecond.of(0), RotationsPerSecond.of(0)),
-                hopper.runSpindexer(RotationsPerSecond.of(0))));
+                shooter.runTower(RotationsPerSecond.of(0)),
+                hopper.runSpindexer(RotationsPerSecond.of(0)),
+                Commands.run(() -> intake.stop())));
+
+    // Intake + Out
+    controller.rightTrigger().whileTrue(intake.intake());
+    controller.rightTrigger().onFalse(Commands.run(() -> intake.stop()));
 
     // Align
-    // controller.a().onTrue();
+    controller.a().onTrue(getAutonomousCommand());
+    controller.a().onFalse(getAutonomousCommand());
 
-    // controller.a().whileTrue((intake.runRollers(RotationsPerSecond.of(22.5))));
-    // controller
-    //     .a()
-    //     .onFalse(new RunCommand(() -> intake._rollerIO.runVoltage(Volts.of(0.0)), intake));
+    // Jostle
+    controller.b().onTrue(getAutonomousCommand());
+    controller.b().onFalse(getAutonomousCommand());
 
-    // Spindexer 1:1
-    // controller.x().whileTrue(hopper.runSpindexer(18));
-    // controller.x().onFalse(hopper.runSpindexer(0));
+    // Calibrate Hood
+    controller.y().onTrue(shooter.calibrateHood());
 
-    // Tower - 15 Motor:7 Tower
+    // Stow Intake
+    controller.y().whileTrue(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
 
-    // controller.y().whileTrue(shooter.runTower(RotationsPerSecond.of(70)));
-    // controller.y().onFalse(shooter.runTower(RotationsPerSecond.of(0)));
+    // Climber Raise/Lower
+    controller.povUp().whileTrue(climber.raiseClimber());
+    controller.povUp().onFalse(climber.stopClimber());
+    controller.povDown().whileTrue(climber.lowerClimber());
+    controller.povDown().onFalse(climber.stopClimber());
 
-    // controller.b().onFalse(shooter.setHoodAngle(ShooterRotaryConstants.STARTING_ANGLE.magnitude()));
+    // Testing Commands
     controller.povLeft().onTrue(shooter.calibrateHood());
     controller.povLeft().onTrue(shooter.setHoodAngle(6.8));
     controller.povDown().onTrue(shooter.setHoodAngle(12.1));
     controller.povRight().onTrue(shooter.setHoodAngle(18.6));
-
-    // controller.x().onFalse(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
-    controller.x().whileTrue(intake.setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
-    controller.y().whileTrue(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
-
-    controller.b().whileTrue(intake.zeroEncoder());
-
-    // controller.povRight().onTrue(shooter.calibrateHood());
-
-    // controller
-    //     .povLeft()
-    //     .whileTrue(
-    //         new RunCommand(
-    //             () ->
-    //                 climber._io.runPosition(
-    //                     Rotations.of(0.25),
-    //                     ClimberConstants.CRUISE_VELOCITY,
-    //                     ClimberConstants.ACCELERATION,
-    //                     ClimberConstants.JERK,
-    //                     PIDSlot.SLOT_1),
-    //             climber));
-    // controller.povLeft().onFalse(climber.stopClimber());
-    // controller.povUp().whileTrue(climber.raiseClimber());
-    // controller.povUp().onFalse(climber.stopClimber());
-    // controller.povDown().whileTrue(climber.lowerClimber());
-    // controller.povDown().onFalse(climber.stopClimber());
   }
 
   /**
