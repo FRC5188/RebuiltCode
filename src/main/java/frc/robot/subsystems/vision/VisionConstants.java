@@ -21,7 +21,7 @@ public class VisionConstants {
 
   // Camera names, must match names configured on coprocessor
   // Currently running only the front Limelight 4
-  public static String camera0Name = "camera_0";
+  public static String camera0Name = "limelight";
   //public static String camera1Name = "camera_1";
 
   // Robot to camera transforms
@@ -34,7 +34,7 @@ public class VisionConstants {
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
-  public static double maxZError = 0.75;
+  public static double maxZError = 0.4; // 0.75 default
 
   // Standard deviation baselines, for 1 meter distance and 1 tag
   // (Adjusted automatically based on distance and # of tags)

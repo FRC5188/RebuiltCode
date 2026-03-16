@@ -378,7 +378,7 @@ public final class Constants {
     public static final Angle MIN_ANGLE = Degrees.of(0.0);
     public static final Angle MAX_ANGLE = Degrees.of(25);
     public static final Angle STARTING_ANGLE = Degrees.of(0.0);
-    public static final Distance ARM_LENGTH = Meters.of(0.0);
+    public static final Distance ARM_LENGTH = Meters.of(0.00001); // Breaks sim if zero
 
     public static final RotaryMechCharacteristics CONSTANTS =
         new RotaryMechCharacteristics(OFFSET, ARM_LENGTH, MIN_ANGLE, MAX_ANGLE, STARTING_ANGLE);
