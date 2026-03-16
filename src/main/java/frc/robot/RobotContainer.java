@@ -278,6 +278,7 @@ public class RobotContainer {
     }
 
     // Set up auto routines
+    // LEAVE THIS UP HERE
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
