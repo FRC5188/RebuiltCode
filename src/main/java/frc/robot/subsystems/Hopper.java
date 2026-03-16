@@ -30,16 +30,13 @@ public class Hopper extends SubsystemBase {
         PIDSlot.SLOT_0);
   }
 
-  // Velocity of Rollers
-  public void setVelocity(double velocity) {
-    AngularVelocity angVelo = RotationsPerSecond.of(velocity);
-
-    _io.runVelocity(angVelo, HopperConstants.ACCELERATION, PIDSlot.SLOT_0);
-    targetVelocity = angVelo;
-  }
-
-  public Command runSpindexer(double velocity) {
-    return Commands.runOnce(() -> setVelocity(velocity), this);
+  public Command runSpindexer(AngularVelocity velocity) {
+    return Commands.runOnce(
+        () -> {
+          _io.runVelocity(velocity, HopperConstants.ACCELERATION, PIDSlot.SLOT_0);
+          targetVelocity = velocity;
+        },
+        this);
   }
 
   @Override
