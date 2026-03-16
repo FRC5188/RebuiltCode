@@ -362,23 +362,24 @@ public class RobotContainer {
     // controller.x().onTrue(intake.stowAndStopRollers());
 
     // Flywheel
-    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(100)));
+    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(20)));
     controller.leftBumper().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
 
-    // Intake Rollers 11 Motor: 9 Intake
+    controller.rightBumper().whileTrue(Commands.parallel(shooter.runTower(RotationsPerSecond.of(30)), hopper.runSpindexer(RotationsPerSecond.of(15))));
+    controller.rightBumper().whileFalse(Commands.parallel(shooter.runTower(RotationsPerSecond.of(0)), hopper.runSpindexer(RotationsPerSecond.of(0))));
 
     // ALPHA KATIE REQUESTS INTAKE RIGHT TRIGGER, SHOOT LEFT TRIGGER, AUTO ALIGN "A"
 
     // Intake
     controller.rightTrigger().whileTrue(intake.intake());
-    controller.rightTrigger().onFalse(intake.stowAndStopRollers());
+    controller.rightTrigger().onFalse(Commands.run(()->intake.stop()));
 
     // Shoot
     controller
         .leftTrigger()
         .whileTrue(
             Commands.parallel(
-                shooter.prepareToShoot(RotationsPerSecond.of(100), RotationsPerSecond.of(30)),
+                shooter.prepareToShoot(RotationsPerSecond.of(67), RotationsPerSecond.of(30)),
                 hopper.runSpindexer(RotationsPerSecond.of(15))));
 
     controller
@@ -406,10 +407,10 @@ public class RobotContainer {
     // controller.y().onFalse(shooter.runTower(RotationsPerSecond.of(0)));
 
     // controller.b().onFalse(shooter.setHoodAngle(ShooterRotaryConstants.STARTING_ANGLE.magnitude()));
-    // controller.povLeft().onTrue(shooter.calibrateHood());
-    // controller.povLeft().onTrue(shooter.setHoodAngle(10));
-    // controller.povDown().onTrue(shooter.setHoodAngle(15));
-    // controller.povRight().onTrue(shooter.setHoodAngle(20));
+    controller.povLeft().onTrue(shooter.calibrateHood());
+    controller.povLeft().onTrue(shooter.setHoodAngle(6.8));
+    controller.povDown().onTrue(shooter.setHoodAngle(12.1));
+    controller.povRight().onTrue(shooter.setHoodAngle(18.6));
 
     // controller.x().onFalse(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
     controller.x().whileTrue(intake.setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
@@ -419,23 +420,23 @@ public class RobotContainer {
 
     // controller.povRight().onTrue(shooter.calibrateHood());
 
-    controller
-        .povLeft()
-        .whileTrue(
-            new RunCommand(
-                () ->
-                    climber._io.runPosition(
-                        Rotations.of(0.25),
-                        ClimberConstants.CRUISE_VELOCITY,
-                        ClimberConstants.ACCELERATION,
-                        ClimberConstants.JERK,
-                        PIDSlot.SLOT_1),
-                climber));
-    controller.povLeft().onFalse(climber.stopClimber());
-    controller.povUp().whileTrue(climber.raiseClimber());
-    controller.povUp().onFalse(climber.stopClimber());
-    controller.povDown().whileTrue(climber.lowerClimber());
-    controller.povDown().onFalse(climber.stopClimber());
+    // controller
+    //     .povLeft()
+    //     .whileTrue(
+    //         new RunCommand(
+    //             () ->
+    //                 climber._io.runPosition(
+    //                     Rotations.of(0.25),
+    //                     ClimberConstants.CRUISE_VELOCITY,
+    //                     ClimberConstants.ACCELERATION,
+    //                     ClimberConstants.JERK,
+    //                     PIDSlot.SLOT_1),
+    //             climber));
+    // controller.povLeft().onFalse(climber.stopClimber());
+    // controller.povUp().whileTrue(climber.raiseClimber());
+    // controller.povUp().onFalse(climber.stopClimber());
+    // controller.povDown().whileTrue(climber.lowerClimber());
+    // controller.povDown().onFalse(climber.stopClimber());
   }
 
   /**
