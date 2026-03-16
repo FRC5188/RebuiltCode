@@ -568,21 +568,27 @@ public final class Constants {
     }
   }
 
+  /** 
   public class VisionConstants {
     // AprilTag layout
+
+    // Changed to AndyMark field from default since we are in Indiana
     public static AprilTagFieldLayout aprilTagLayout =
-        AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
 
     // Camera names, must match names configured on coprocessor
+    // Running only one from Limelight
     public static String camera0Name = "camera_0";
-    public static String camera1Name = "camera_1";
+    //public static String camera1Name = "camera_1";
 
     // Robot to camera transforms
     // (Not used by Limelight, configure in web UI instead)
-    public static Transform3d robotToCamera0 =
-        new Transform3d(0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, 0.0));
-    public static Transform3d robotToCamera1 =
-        new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
+
+    // not used since we are only using LimeLights
+    //public static Transform3d robotToCamera0 =
+    //    new Transform3d(0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, 0.0));
+    //public static Transform3d robotToCamera1 =
+    //    new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
 
     // Basic filtering thresholds
     public static double maxAmbiguity = 0.3;
@@ -595,15 +601,25 @@ public final class Constants {
 
     // Standard deviation multipliers for each camera
     // (Adjust to trust some cameras more than others)
-    public static double[] cameraStdDevFactors =
-        new double[] {
-          1.0, // Camera 0
-          1.0 // Camera 1
-        };
 
-    /** Tags used for reef alignment */
+
+    // kt-h has experience with these... let's have her tweak them
+    public static double[] cameraStdDevFactors =
+      new double[] {
+        1.0, // Camera 0
+        1.0 // Camera 1
+      };
+
+    
+    // Tags used for reef alignment 
     public static List<Integer> alignmentTags =
         Arrays.asList(6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22);
+    
+
+    // Multipliers to apply for MegaTag 2 observations
+    public static double linearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve
+    public static double angularStdDevMegatag2Factor =
+      Double.POSITIVE_INFINITY; // No rotation data available
 
     public static VisionSystemSim getSystemSim() {
       var system = new VisionSystemSim("main");
@@ -611,6 +627,8 @@ public final class Constants {
       return system;
     }
   }
+
+  */
 
   public class IntakePivotConstants {
     public static final String NAME = "Intake";
