@@ -156,6 +156,8 @@ public class Vision extends SubsystemBase {
         if (cameraIndex < cameraStdDevFactors.length) {
           linearStdDev *= cameraStdDevFactors[cameraIndex];
           angularStdDev *= cameraStdDevFactors[cameraIndex];
+
+          System.out.println(linearStdDev);
         }
 
         // Send vision observation
