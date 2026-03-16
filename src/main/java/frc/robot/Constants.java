@@ -310,6 +310,7 @@ public final class Constants {
 
     public static final AngularVelocity MAX_VELOCITY = RadiansPerSecond.of(2 * Math.PI);
     public static final AngularAcceleration MAX_ACCELERATION = MAX_VELOCITY.per(Second);
+    public static final AngularVelocity IDLE_SPEED = RotationsPerSecond.of(30);
 
     private static final double GEARING = (1.0 / 1.0);
 
@@ -615,7 +616,7 @@ public final class Constants {
   public class IntakePivotConstants {
     public static final String NAME = "Intake";
 
-    public static final Angle PICKUP_ANGLE = Degrees.of(130.0); // 123.0
+    public static final Angle PICKUP_ANGLE = Degrees.of(123.0); // 123.0
     public static final Angle STOW_ANGLE = Degrees.of(0.0);
     public static final Angle JOSTLE_ANGLE = Degrees.of(80.0);
 

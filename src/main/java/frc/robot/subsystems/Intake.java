@@ -121,10 +121,10 @@ public class Intake extends SubsystemBase {
         () -> 
           _pivotIO.runPosition(
             IntakePivotConstants.JOSTLE_ANGLE,
-            IntakePivotConstants.CRUISE_VELOCITY,
-            IntakePivotConstants.ACCELERATION,
-            IntakePivotConstants.JERK,
-            PIDSlot.SLOT_0)).until(this::isIntendedAngle).withTimeout(0.5),
+            IntakePivotConstants.CRUISE_VELOCITY.times(3),
+            IntakePivotConstants.ACCELERATION.times(2),
+            IntakePivotConstants.JERK.times(2),
+            PIDSlot.SLOT_0)).until(this::isIntendedAngle).withTimeout(0.25),
       this.run(
         () ->
           _pivotIO.runPosition(
@@ -132,7 +132,7 @@ public class Intake extends SubsystemBase {
             IntakePivotConstants.CRUISE_VELOCITY,
             IntakePivotConstants.ACCELERATION,
             IntakePivotConstants.JERK,
-            PIDSlot.SLOT_0))
+            PIDSlot.SLOT_0)).until(this::isIntendedAngle)
             );
   }
 

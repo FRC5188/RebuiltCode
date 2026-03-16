@@ -333,6 +333,10 @@ public class RobotContainer {
             () -> controller.getLeftY(),
             () -> controller.getLeftX(),
             () -> -controller.getRightX()));
+    
+    shooter.setDefaultCommand(
+        shooter.runFlywheel(ShooterFlywheelConstants.IDLE_SPEED)
+    );
 
     // Lock to 0° when A button is held
     // controller
@@ -372,11 +376,13 @@ public class RobotContainer {
     controller.rightTrigger().onFalse(Commands.run(() -> intake.stop()));
 
     // Align
-    controller.a().onTrue(getAutonomousCommand());
-    controller.a().onFalse(getAutonomousCommand());
+    // controller.a().onTrue(getAutonomousCommand());
+    // controller.a().onFalse(getAutonomousCommand());
 
     // Jostle
-    controller.b().onTrue(intake.jostleIntake());
+    //controller.b().whileTrue(intake.jostleIntake().repeatedly());
+    controller.b().whileTrue(Commands.runOnce(() -> intake.setPivotAngle(IntakePivotConstants.JOSTLE_ANGLE)));
+    controller.b().onFalse(Commands.runOnce(() -> intake.setPivotAngle(IntakePivotConstants.PICKUP_ANGLE)));
 
     // Calibrate Hood
     controller.y().onTrue(shooter.calibrateHood());
@@ -389,6 +395,8 @@ public class RobotContainer {
     controller.povUp().onFalse(climber.stopClimber());
     controller.povDown().whileTrue(climber.lowerClimber());
     controller.povDown().onFalse(climber.stopClimber());
+
+    controller.povLeft().onTrue(intake.zeroEncoder());
 
     // Testing Commands
     // controller.povLeft().onTrue(shooter.setHoodAngle(6.8));
