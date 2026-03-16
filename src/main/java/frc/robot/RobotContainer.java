@@ -376,8 +376,7 @@ public class RobotContainer {
     controller.a().onFalse(getAutonomousCommand());
 
     // Jostle
-    controller.b().onTrue(getAutonomousCommand());
-    controller.b().onFalse(getAutonomousCommand());
+    controller.b().onTrue(intake.jostleIntake());
 
     // Calibrate Hood
     controller.y().onTrue(shooter.calibrateHood());
@@ -392,9 +391,9 @@ public class RobotContainer {
     controller.povDown().onFalse(climber.stopClimber());
 
     // Testing Commands
-    controller.povLeft().onTrue(shooter.setHoodAngle(6.8));
-    controller.povDown().onTrue(shooter.setHoodAngle(12.1));
-    controller.povRight().onTrue(shooter.setHoodAngle(18.6));
+    // controller.povLeft().onTrue(shooter.setHoodAngle(6.8));
+    // controller.povDown().onTrue(shooter.setHoodAngle(12.1));
+    // controller.povRight().onTrue(shooter.setHoodAngle(18.6));
   }
 
   /**
