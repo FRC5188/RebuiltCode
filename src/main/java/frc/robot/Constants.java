@@ -608,7 +608,7 @@ public final class Constants {
     public static final Angle JOSTLE_ANGLE_START = Degrees.of(30.0);
     public static final Angle JOSTLE_ANGLE_END = Degrees.of(80.0);
 
-    public static final Angle TOLERANCE = Degrees.of(1.0);
+    public static final Angle TOLERANCE = Degrees.of(3.0);
 
     public static final AngularVelocity CRUISE_VELOCITY = RadiansPerSecond.of(10);
     public static final AngularAcceleration ACCELERATION = RadiansPerSecondPerSecond.of(100);

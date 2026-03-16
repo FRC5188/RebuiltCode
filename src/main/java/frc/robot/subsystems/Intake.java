@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degree;
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -85,7 +86,7 @@ public class Intake extends SubsystemBase {
   }
 
   public boolean isIntendedAngle() {
-    return Math.abs(desiredAngle - _pivotIO.getVelocity().in(RotationsPerSecond))
+    return Math.abs(desiredAngle - _pivotIO.getPosition().in(Degrees))
         <= IntakePivotConstants.TOLERANCE.magnitude();
   }
 
@@ -115,29 +116,23 @@ public class Intake extends SubsystemBase {
 
   public Command jostleIntake() {
     return Commands.sequence(
-      this.runOnce(
+      this.run(
         () -> 
           _pivotIO.runPosition(
             IntakePivotConstants.JOSTLE_ANGLE_START,
             IntakePivotConstants.CRUISE_VELOCITY,
             IntakePivotConstants.ACCELERATION,
             IntakePivotConstants.JERK,
-            PIDSlot.SLOT_0)),
-      Commands.waitUntil(
-        () ->
-          isIntendedAngle()
-      ),
-      this.runOnce(
+            PIDSlot.SLOT_0)).until(this::isIntendedAngle),
+      this.run(
         () ->
           _pivotIO.runPosition(
             IntakePivotConstants.JOSTLE_ANGLE_END, 
             IntakePivotConstants.CRUISE_VELOCITY,
             IntakePivotConstants.ACCELERATION,
             IntakePivotConstants.JERK,
-            PIDSlot.SLOT_0)),
-      Commands.waitUntil(
-        () ->
-          isIntendedAngle()));
+            PIDSlot.SLOT_0)).until(this::isIntendedAngle)
+            );
   }
 
 
