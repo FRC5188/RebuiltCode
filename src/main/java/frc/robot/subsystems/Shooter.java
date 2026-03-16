@@ -144,13 +144,14 @@ public class Shooter extends SubsystemBase {
     return Math.abs(hoodAngle - _hood.getPosition().in(Degrees)) < ShooterConstants.HOOD_TOLERANCE;
   }
 
+  // Increases Hood Angle
   public Command incrementHoodAngle() {
     Angle currentHoodAngle = _hood.getPosition().plus(Degrees.of(2.5));
     return setHoodAngle(currentHoodAngle.in(Degrees));
   }
 
   public Command decrementHoodAngle() {
-    Angle currentHoodAngle = _hood.getPosition().minus(Degrees.of(0.5));
+    Angle currentHoodAngle = _hood.getPosition().minus(Degrees.of(2.5));
     return setHoodAngle(currentHoodAngle.in(Degrees));
   }
 

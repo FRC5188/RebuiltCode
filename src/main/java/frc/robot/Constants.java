@@ -615,7 +615,7 @@ public final class Constants {
   public class IntakePivotConstants {
     public static final String NAME = "Intake";
 
-    public static final Angle PICKUP_ANGLE = Degrees.of(123.0);
+    public static final Angle PICKUP_ANGLE = Degrees.of(130.0); // 123.0
     public static final Angle STOW_ANGLE = Degrees.of(0.0);
 
     public static final Angle TOLERANCE = Degrees.of(1.0);
