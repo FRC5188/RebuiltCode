@@ -10,11 +10,16 @@
 
 * Set camera position coords. Since we're running a Limelight, this is done on the Limelight's web-ui instead
    of here in code.
+
 * Follow directions on https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltags to set up params
    such as gain. 
+
 * Make sure the map is loading correctly on the Limelight web-ui and check positioning to ensure accuracy.
+
 * Limelight should be publishing raw values to network tables. Make sure those look correct through AdvantageScope
+
 * vision should be logged in AdvantageKit. make sure those are showing in AdvantageScope
+
 * If possible, calibrate the Limelight camera
 * Make sure we are rejecting the april tags we don't care about. Check out alignment tags in Constants.java
 * Check out megatag2 stuff from Limelight https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-robot-localization-megatag2
@@ -151,6 +156,8 @@ public class Vision extends SubsystemBase {
         if (cameraIndex < cameraStdDevFactors.length) {
           linearStdDev *= cameraStdDevFactors[cameraIndex];
           angularStdDev *= cameraStdDevFactors[cameraIndex];
+
+          System.out.println(linearStdDev);
         }
 
         // Send vision observation
