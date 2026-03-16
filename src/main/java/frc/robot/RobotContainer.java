@@ -301,7 +301,6 @@ public class RobotContainer {
     // Extends the intake
     NamedCommands.registerCommand("IntakeDown", getAutonomousCommand());
 
-
     // Set up SysId routines
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
