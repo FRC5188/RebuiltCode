@@ -147,16 +147,6 @@ public class Shooter extends SubsystemBase {
     return Math.abs(hoodAngle - _hood.getPosition().in(Degrees)) < ShooterConstants.HOOD_TOLERANCE;
   }
 
-  public Command incrementHoodAngle() {
-    Angle currentHoodAngle = _hood.getPosition().plus(Degrees.of(2.5));
-    return setHoodAngle(currentHoodAngle.in(Degrees));
-  }
-
-  public Command decrementHoodAngle() {
-    Angle currentHoodAngle = _hood.getPosition().minus(Degrees.of(0.5));
-    return setHoodAngle(currentHoodAngle.in(Degrees));
-  }
-
   public boolean isAboveCurrentLimit() {
     if (Math.abs(_hood.getSupplyCurrent().in(Amps)) > ShooterConstants.HARD_STOP_CURRENT_LIMIT) {
       return true;
@@ -171,30 +161,6 @@ public class Shooter extends SubsystemBase {
         Commands.waitUntil(homedTrigger),
         runOnce(() -> _hood.setEncoderPosition(Angle.ofBaseUnits(0, Degrees))),
         runOnce(() -> _hood.runVoltage(Voltage.ofBaseUnits(0, Volts))));
-  }
-
-  // public Command calibrateHood() {
-  //   return this.run(
-  //           () ->
-  //               _hood.runVelocity(
-  //                   ShooterConstants.HOOD_VELOCITY,
-  //                   ShooterConstants.HOOD_ACCELERATION,
-  //                   PIDSlot.SLOT_1))
-  //       .until(() -> isAboveCurrentLimit()).andThen(this.run( () ->
-  // _hood.setEncoderPosition(Angle.ofBaseUnits(0, Degrees))));
-  // }
-
-  public Command shoot(AngularVelocity velocity) {
-    // Prepare targets
-    return Commands.sequence(
-        // Set and wait in parallel for both hood and flywheel
-        Commands.parallel(
-            Commands.run(() -> setFlywheelVelocity(velocity)).until(this::flyAtVelocity),
-            Commands.run(() -> setHoodAngle(hoodAngle)).until(this::hoodAtAngle)),
-        // feed once ready
-        Commands.runOnce(() -> runFeeder(FeederConstants.FEED_SPEED)),
-        // stop flywheel when finished
-        Commands.runOnce(() -> setFlywheelVelocity(RotationsPerSecond.of(0.0))));
   }
 
   public Command runFlywheel(AngularVelocity velocity) {
