@@ -11,9 +11,11 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.flywheel.FlywheelMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
@@ -113,8 +115,9 @@ public class Intake extends SubsystemBase {
 
   public Command jostleIntake() {
     return Commands.sequence(
-        setPivotAngle(IntakePivotConstants.JOSTLE_ANGLE), Commands.waitSeconds(0.5), 
-        setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
+      setPivotAngle(IntakePivotConstants.JOSTLE_ANGLE),
+      new WaitCommand(0.5),
+      setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
   }
 
   public void tunePivotPosition() {

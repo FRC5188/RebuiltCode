@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.W8.io.motor.*;
@@ -334,7 +335,7 @@ public class RobotContainer {
             () -> controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    shooter.setDefaultCommand(shooter.runFlywheel(ShooterFlywheelConstants.IDLE_SPEED));
+    // shooter.setDefaultCommand(shooter.runFlywheel(ShooterFlywheelConstants.IDLE_SPEED));
 
     // Lock to 0° when A button is held
     // controller
@@ -350,7 +351,7 @@ public class RobotContainer {
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Shoot
-    controller.leftTrigger().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(67)));
+    controller.leftTrigger().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(55)));
     controller.leftTrigger().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
 
     // Feed
@@ -358,12 +359,12 @@ public class RobotContainer {
         .leftBumper()
         .whileTrue(
             Commands.parallel(
-                shooter.runTower(RotationsPerSecond.of(30)),
-                hopper.runSpindexer(RotationsPerSecond.of(15)),
+                shooter.runTower(RotationsPerSecond.of(40)),
+                hopper.runSpindexer(RotationsPerSecond.of(20)),
                 intake.intake()));
     controller
         .leftBumper()
-        .whileFalse(
+        .onFalse(
             Commands.parallel(
                 shooter.runTower(RotationsPerSecond.of(0)),
                 hopper.runSpindexer(RotationsPerSecond.of(0)),
@@ -371,7 +372,7 @@ public class RobotContainer {
 
     // Intake + Out
     controller.rightTrigger().whileTrue(intake.intake());
-    controller.rightTrigger().onFalse(Commands.run(() -> intake.stop()));
+    controller.rightTrigger().onFalse(Commands.runOnce(() -> intake.stop()));
 
     // Align
     // controller.a().onTrue(getAutonomousCommand());
@@ -381,10 +382,10 @@ public class RobotContainer {
     // controller.b().whileTrue(intake.jostleIntake().repeatedly());
     controller
         .b()
-        .whileTrue(Commands.runOnce(() -> intake.setPivotAngle(IntakePivotConstants.JOSTLE_ANGLE)));
-    controller
-        .b()
-        .onFalse(Commands.runOnce(() -> intake.setPivotAngle(IntakePivotConstants.PICKUP_ANGLE)));
+        .onTrue(intake.jostleIntake());
+    // controller
+    //     .b()
+    //     .onFalse(Commands.runOnce(() -> intake.setPivotAngle(IntakePivotConstants.PICKUP_ANGLE)));
 
     // Calibrate Hood
     controller.y().onTrue(shooter.calibrateHood());
