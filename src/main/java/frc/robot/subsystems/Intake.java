@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -20,9 +19,6 @@ import frc.lib.W8.mechanisms.flywheel.FlywheelMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
 import frc.robot.Constants.IntakeFlywheelConstants;
 import frc.robot.Constants.IntakePivotConstants;
-import frc.robot.Robot;
-import frc.robot.RobotContainer;
-
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
@@ -117,25 +113,9 @@ public class Intake extends SubsystemBase {
 
   public Command jostleIntake() {
     return Commands.sequence(
-      this.run(
-        () -> 
-          _pivotIO.runPosition(
-            IntakePivotConstants.JOSTLE_ANGLE,
-            IntakePivotConstants.CRUISE_VELOCITY.times(3),
-            IntakePivotConstants.ACCELERATION.times(2),
-            IntakePivotConstants.JERK.times(2),
-            PIDSlot.SLOT_0)).until(this::isIntendedAngle).withTimeout(0.25),
-      this.run(
-        () ->
-          _pivotIO.runPosition(
-            IntakePivotConstants.PICKUP_ANGLE, 
-            IntakePivotConstants.CRUISE_VELOCITY,
-            IntakePivotConstants.ACCELERATION,
-            IntakePivotConstants.JERK,
-            PIDSlot.SLOT_0)).until(this::isIntendedAngle)
-            );
+        setPivotAngle(IntakePivotConstants.JOSTLE_ANGLE), Commands.waitSeconds(0.5), 
+        setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
   }
-
 
   public void tunePivotPosition() {
     System.out.println(IntakePivotConstants.ENCODER1.get());

@@ -333,10 +333,8 @@ public class RobotContainer {
             () -> controller.getLeftY(),
             () -> controller.getLeftX(),
             () -> -controller.getRightX()));
-    
-    shooter.setDefaultCommand(
-        shooter.runFlywheel(ShooterFlywheelConstants.IDLE_SPEED)
-    );
+
+    shooter.setDefaultCommand(shooter.runFlywheel(ShooterFlywheelConstants.IDLE_SPEED));
 
     // Lock to 0° when A button is held
     // controller
@@ -380,9 +378,13 @@ public class RobotContainer {
     // controller.a().onFalse(getAutonomousCommand());
 
     // Jostle
-    //controller.b().whileTrue(intake.jostleIntake().repeatedly());
-    controller.b().whileTrue(Commands.runOnce(() -> intake.setPivotAngle(IntakePivotConstants.JOSTLE_ANGLE)));
-    controller.b().onFalse(Commands.runOnce(() -> intake.setPivotAngle(IntakePivotConstants.PICKUP_ANGLE)));
+    // controller.b().whileTrue(intake.jostleIntake().repeatedly());
+    controller
+        .b()
+        .whileTrue(Commands.runOnce(() -> intake.setPivotAngle(IntakePivotConstants.JOSTLE_ANGLE)));
+    controller
+        .b()
+        .onFalse(Commands.runOnce(() -> intake.setPivotAngle(IntakePivotConstants.PICKUP_ANGLE)));
 
     // Calibrate Hood
     controller.y().onTrue(shooter.calibrateHood());
