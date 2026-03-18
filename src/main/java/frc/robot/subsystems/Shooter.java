@@ -45,6 +45,8 @@ public class Shooter extends SubsystemBase {
   private double hoodAngle;
   private double desiredHoodAngle;
 
+   private static boolean autoShootEnabled = true;
+
   public AngularVelocity targetVelocity = RotationsPerSecond.of(0.0);
   public AngularVelocity feederTargetVelocity = RotationsPerSecond.of(0.0);
 
@@ -269,6 +271,46 @@ public class Shooter extends SubsystemBase {
     double distanceMeters = distance.in(Meters);
     double angle = hoodAngleMap.get(distanceMeters);
     return Commands.runOnce(() -> setHoodAngle(angle));
+  }
+
+  public boolean isAutoShootEnabled() {
+    return autoShootEnabled;
+  }
+
+  public void setAutoShootEnabled(boolean enabled) {
+    autoShootEnabled = enabled;
+  }
+
+  private void setFlywheelSpeedWithRadius(double radius) {
+    setFlywheelVelocity(
+        AngularVelocity.ofBaseUnits(ShooterConstants.DEFAULT_SPEED_RPM
+            / 60, RotationsPerSecond)); // TODO: Update this value from default speed later.
+  }
+
+  public void runShooterForRadius(double radius) {
+    double desiredAngle = getHoodAngleDegrees(radius);
+
+    setHoodAngle(desiredAngle);
+    setFlywheelSpeedWithRadius(radius);
+  }
+
+  public double getHoodAngleDegrees(double radius) {
+
+    double check =
+        Math.pow(ShooterConstants.EXIT_VELOCITY, 4)
+            - ShooterConstants.GRAVITY
+                * (ShooterConstants.GRAVITY * Math.pow(radius, 2)
+                    + 2
+                        * ShooterConstants.HEIGHT_DIFFERENCE
+                        * Math.pow(ShooterConstants.EXIT_VELOCITY, 2));
+
+    if (check < 0) {
+      return ShooterConstants.IDLE_HOOD_ANGLE; // Default angle if the shot is not possible
+    }
+    return Math.toDegrees(
+        Math.atan(
+            (ShooterConstants.EXIT_VELOCITY * ShooterConstants.EXIT_VELOCITY + Math.sqrt(check))
+                / (ShooterConstants.GRAVITY * radius)));
   }
 
   public void periodic() {

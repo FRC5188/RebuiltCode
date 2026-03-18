@@ -73,9 +73,7 @@ import frc.lib.W8.mechanisms.rotary.RotaryMechanism.RotaryMechCharacteristics;
 import frc.lib.W8.util.Device;
 import frc.lib.W8.util.Device.CAN;
 import frc.lib.W8.util.MechanismUtil.DistanceAngleConverter;
-import java.util.Arrays;
-import java.util.List;
-import org.photonvision.simulation.VisionSystemSim;
+import frc.robot.commands.multisubsystem_commands.CmdShootOnTheMove;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -153,6 +151,19 @@ public final class Constants {
     public static final double RBUMPEND = RBUMPSTART + BUMPWIDTH;
     public static final double LBUMPSTART = hubCenter - (HUBWIDTH / 2.0);
     public static final double LBUMPEND = RBUMPSTART - BUMPWIDTH;
+  
+    public static final Double hubCenterX =
+        (aprilTagLayout.getTagPose(26).get().getX() + (HUBWIDTH / 2.0));
+    public static final Double oppHubCenterX =
+        aprilTagLayout.getTagPose(4).get().getX() + (HUBWIDTH / 2.0);
+
+    public static final Double hubCenterY = aprilTagLayout.getFieldWidth() / 2;
+
+    public static final Translation2d HUBCENTER = new Translation2d(hubCenterX, hubCenterY);
+
+    public static final Translation2d OPPHUBCENTER = new Translation2d(oppHubCenterX, hubCenterY);
+  
+  
   }
 
   public class Ports {
@@ -280,7 +291,10 @@ public final class Constants {
     public static final double DEFAULT_SPEED_RPM = (1.0);
     public static final double FLYWHEEL_VELOCITY_TOLERANCE = 1.0;
 
-    // Hood Constants
+    public static final double TIME_TO_SHOOT =
+        0.2; // In seconds, how long it takes for a ball to leave once "shoot" is pressed
+    
+        // Hood Constants
     public static final double HEIGHT_DIFFERENCE =
         1.295; // Meters between flywheel center and top of hub opening
     public static final double EXIT_VELOCITY = 7.4; // m/s from ReCalc Flywheel Calculator
