@@ -13,7 +13,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -335,6 +334,8 @@ public class RobotContainer {
             () -> controller.getLeftX(),
             () -> -controller.getRightX()));
 
+    // shooter.setDefaultCommand(shooter.runFlywheel(ShooterFlywheelConstants.IDLE_SPEED));
+
     // Lock to 0° when A button is held
     // controller
     //     .a()
@@ -349,7 +350,7 @@ public class RobotContainer {
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Shoot
-    controller.leftTrigger().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(67)));
+    controller.leftTrigger().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(55)));
     controller.leftTrigger().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
 
     // Feed
@@ -357,12 +358,12 @@ public class RobotContainer {
         .leftBumper()
         .whileTrue(
             Commands.parallel(
-                shooter.runTower(RotationsPerSecond.of(30)),
-                hopper.runSpindexer(RotationsPerSecond.of(15)),
+                shooter.runTower(RotationsPerSecond.of(40)),
+                hopper.runSpindexer(RotationsPerSecond.of(20)),
                 intake.intake()));
     controller
         .leftBumper()
-        .whileFalse(
+        .onFalse(
             Commands.parallel(
                 shooter.runTower(RotationsPerSecond.of(0)),
                 hopper.runSpindexer(RotationsPerSecond.of(0)),
@@ -370,21 +371,25 @@ public class RobotContainer {
 
     // Intake + Out
     controller.rightTrigger().whileTrue(intake.intake());
-    controller.rightTrigger().onFalse(Commands.run(() -> intake.stop()));
+    controller.rightTrigger().onFalse(Commands.runOnce(() -> intake.stop()));
 
     // Align
-    controller.a().onTrue(getAutonomousCommand());
-    controller.a().onFalse(getAutonomousCommand());
+    // controller.a().onTrue(getAutonomousCommand());
+    // controller.a().onFalse(getAutonomousCommand());
 
     // Jostle
-    controller.b().onTrue(getAutonomousCommand());
-    controller.b().onFalse(getAutonomousCommand());
+    // controller.b().whileTrue(intake.jostleIntake().repeatedly());
+    controller.b().onTrue(intake.jostleIntake());
+    // controller
+    //     .b()
+    //     .onFalse(Commands.runOnce(() ->
+    // intake.setPivotAngle(IntakePivotConstants.PICKUP_ANGLE)));
 
     // Calibrate Hood
     controller.y().onTrue(shooter.calibrateHood());
 
     // Stow Intake
-    controller.y().whileTrue(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
+    controller.x().whileTrue(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
 
     // Climber Raise/Lower
     controller.povUp().whileTrue(climber.raiseClimber());
@@ -392,36 +397,12 @@ public class RobotContainer {
     controller.povDown().whileTrue(climber.lowerClimber());
     controller.povDown().onFalse(climber.stopClimber());
 
+    controller.povLeft().onTrue(intake.zeroEncoder());
+
     // Testing Commands
-    controller.povLeft().onTrue(shooter.calibrateHood());
-    controller.povLeft().onTrue(shooter.setHoodAngle(6.8));
-    controller.povDown().onTrue(shooter.setHoodAngle(12.1));
-    controller.povRight().onTrue(shooter.setHoodAngle(18.6));
-    controller.b().whileTrue(intake.zeroEncoder());
-
-    // controller.povRight().onTrue(shooter.calibrateHood());
-
-    // controller
-    //     .povLeft()
-    //     .whileTrue(
-    //         new RunCommand(
-    //             () ->
-    //                 climber._io.runPosition(
-    //                     Rotations.of(0.25),
-    //                     ClimberConstants.CRUISE_VELOCITY,
-    //                     ClimberConstants.ACCELERATION,
-    //                     ClimberConstants.JERK,
-    //                     PIDSlot.SLOT_1),
-    //             climber));
-    // controller.povLeft().onFalse(climber.stopClimber());
-    // controller.povUp().whileTrue(climber.raiseClimber());
-    // controller.povUp().onFalse(climber.stopClimber());
-    // controller.povDown().whileTrue(climber.lowerClimber());
-    // controller.povDown().onFalse(climber.stopClimber());
-    controller.povUp().onTrue(shooter.setAngleForDistance(Meters.of(1.0)));
-    controller.povDown().onTrue(shooter.setAngleForDistance(Meters.of(2.0)));
-    // controller.povLeft().onTrue(shooter.setAngleForDistance(Meters.of(2.5)));
-    controller.povRight().onTrue(shooter.setAngleForDistance(Meters.of(3.0)));
+    // controller.povLeft().onTrue(shooter.setHoodAngle(6.8));
+    // controller.povDown().onTrue(shooter.setHoodAngle(12.1));
+    // controller.povRight().onTrue(shooter.setHoodAngle(18.6));
   }
 
   /**

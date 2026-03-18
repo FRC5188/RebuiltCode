@@ -4,16 +4,22 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 
+import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.linear.LinearMechanism;
 import frc.robot.Constants.ClimberConstants;
 
 public class Climber extends SubsystemBase {
   public LinearMechanism _io;
+  public Trigger homedTrigger;
+
   Distance goalDistance;
+  SwerveSetpoint STOW;
+  SwerveSetpoint setpoint;
 
   public Climber(LinearMechanism io) {
     _io = io;
