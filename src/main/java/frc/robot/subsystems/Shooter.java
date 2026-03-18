@@ -210,26 +210,25 @@ public class Shooter extends SubsystemBase {
     Robot.robotContainer.intake.simBalls--;
   }
 
-  
   private static final InterpolatingDoubleTreeMap hoodAngleMap = new InterpolatingDoubleTreeMap();
 
-    static {
-        hoodAngleMap.put(2.44, 6.8);
-        hoodAngleMap.put(3.86, 12.1);
-        hoodAngleMap.put(5.0, 18.6);
-        
-    }
-/** Distance from feed pose in meters -> flywheel speed in rotations per second */
-    private static final InterpolatingDoubleTreeMap feedFlywheelMap =
-            new InterpolatingDoubleTreeMap();
+  static {
+    hoodAngleMap.put(2.44, 6.8);
+    hoodAngleMap.put(3.86, 12.1);
+    hoodAngleMap.put(5.0, 18.6);
+  }
 
-    static {
-        feedFlywheelMap.put(0.0, 50.0);
-        feedFlywheelMap.put(6.0, 50.0);
-        feedFlywheelMap.put(7.0, 55.0);
-        feedFlywheelMap.put(8.0, 60.0);
-        feedFlywheelMap.put(20.0, 60.0);
-    }
+  /** Distance from feed pose in meters -> flywheel speed in rotations per second */
+  private static final InterpolatingDoubleTreeMap feedFlywheelMap =
+      new InterpolatingDoubleTreeMap();
+
+  static {
+    feedFlywheelMap.put(0.0, 50.0);
+    feedFlywheelMap.put(6.0, 50.0);
+    feedFlywheelMap.put(7.0, 55.0);
+    feedFlywheelMap.put(8.0, 60.0);
+    feedFlywheelMap.put(20.0, 60.0);
+  }
 
   public Command setAngleForDistance(Distance distance) {
     double distanceMeters = distance.in(Meters);
@@ -260,6 +259,5 @@ public class Shooter extends SubsystemBase {
     //     new Pose3d(new Translation3d(-0.0075, 0.0, 0.523), new Rotation3d(0, pitch, 0)));
 
     // _hood.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp()) * 0.25));
-  } 
-
+  }
 }
