@@ -8,13 +8,15 @@
     "Depot✔",
     "Gather✔️",
     "Initial✔️",
+    "New Folder",
     "Shoot✔️ ",
     "Sweep Paths ✔"
   ],
   "autoFolders": [
-    "Sweep First",
+    "New Folder",
     "Only Climb",
-    "Shoot First"
+    "Shoot First",
+    "Sweep First"
   ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
