@@ -14,7 +14,6 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -29,7 +28,6 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.W8.io.motor.*;
-import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.io.vision.VisionIOPhotonVision;
 import frc.lib.W8.io.vision.VisionIOPhotonVisionSim;
 import frc.lib.W8.mechanisms.flywheel.*;
@@ -303,7 +301,6 @@ public class RobotContainer {
     // Extends the intake
     NamedCommands.registerCommand("IntakeDown", getAutonomousCommand());
 
-
     // Set up SysId routines
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
@@ -383,7 +380,7 @@ public class RobotContainer {
     // controller.x().onTrue(intake.stowAndStopRollers());
 
     // Flywheel
-    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(100)));
+    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(67)));
     controller.leftBumper().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
 
     // Intake + Spindexer + Tower
@@ -449,11 +446,12 @@ public class RobotContainer {
     // controller.povUp().onFalse(climber.stopClimber());
     // controller.povDown().whileTrue(climber.lowerClimber());
     // controller.povDown().onFalse(climber.stopClimber());
-    controller.povUp().onTrue(shooter.setAngleForDistance(Meters.of(1.0))); 
-    controller.povDown().onTrue(shooter.setAngleForDistance(Meters.of(2.0))); 
-    // controller.povLeft().onTrue(shooter.setAngleForDistance(Meters.of(2.5))); 
-    controller.povRight().onTrue(shooter.setAngleForDistance(Meters.of(3.0))); 
+    controller.povUp().onTrue(shooter.setAngleForDistance(Meters.of(4.0)));
+    controller.povDown().onTrue(shooter.setAngleForDistance(Meters.of(3.8)));
+    // controller.povLeft().onTrue(shooter.setAngleForDistance(Meters.of(2.5)));
 
+    // controller.povRight().onTrue(shooter.setAngleForDistance(Meters.of(3.0)));
+    controller.povRight().onTrue(shooter.setHoodAngle(20));
   }
 
   /**
