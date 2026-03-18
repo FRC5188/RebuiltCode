@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -396,6 +397,31 @@ public class RobotContainer {
     controller.povLeft().onTrue(shooter.setHoodAngle(6.8));
     controller.povDown().onTrue(shooter.setHoodAngle(12.1));
     controller.povRight().onTrue(shooter.setHoodAngle(18.6));
+    controller.b().whileTrue(intake.zeroEncoder());
+
+    // controller.povRight().onTrue(shooter.calibrateHood());
+
+    // controller
+    //     .povLeft()
+    //     .whileTrue(
+    //         new RunCommand(
+    //             () ->
+    //                 climber._io.runPosition(
+    //                     Rotations.of(0.25),
+    //                     ClimberConstants.CRUISE_VELOCITY,
+    //                     ClimberConstants.ACCELERATION,
+    //                     ClimberConstants.JERK,
+    //                     PIDSlot.SLOT_1),
+    //             climber));
+    // controller.povLeft().onFalse(climber.stopClimber());
+    // controller.povUp().whileTrue(climber.raiseClimber());
+    // controller.povUp().onFalse(climber.stopClimber());
+    // controller.povDown().whileTrue(climber.lowerClimber());
+    // controller.povDown().onFalse(climber.stopClimber());
+    controller.povUp().onTrue(shooter.setAngleForDistance(Meters.of(1.0)));
+    controller.povDown().onTrue(shooter.setAngleForDistance(Meters.of(2.0)));
+    // controller.povLeft().onTrue(shooter.setAngleForDistance(Meters.of(2.5)));
+    controller.povRight().onTrue(shooter.setAngleForDistance(Meters.of(3.0)));
   }
 
   /**
