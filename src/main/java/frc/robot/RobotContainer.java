@@ -350,7 +350,7 @@ public class RobotContainer {
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Shoot
-    controller.leftTrigger().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(55)));
+    controller.leftTrigger().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(67)));
     controller.leftTrigger().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
 
     // Feed
@@ -378,12 +378,7 @@ public class RobotContainer {
     // controller.a().onFalse(getAutonomousCommand());
 
     // Jostle
-    // controller.b().whileTrue(intake.jostleIntake().repeatedly());
     controller.b().onTrue(intake.jostleIntake());
-    // controller
-    //     .b()
-    //     .onFalse(Commands.runOnce(() ->
-    // intake.setPivotAngle(IntakePivotConstants.PICKUP_ANGLE)));
 
     // Calibrate Hood
     controller.y().onTrue(shooter.calibrateHood());
