@@ -393,7 +393,7 @@ public final class Constants {
 
     // Positional PID
     private static Slot0Configs SLOT0CONFIG =
-        new Slot0Configs().withKP(600.0).withKI(0.0).withKD(0.0).withKS(10.0).withKV(0.0);
+        new Slot0Configs().withKP(500.0).withKI(0.0).withKD(0.05).withKS(10.0).withKV(0.0);
     // Velocity PID
     private static Slot1Configs SLOT1CONFIG =
         new Slot1Configs().withKP(30.0).withKI(0.0).withKD(0.0).withKS(40.0).withKV(0.0);
@@ -479,7 +479,7 @@ public final class Constants {
     public static final Angle MIN_ANGLE = Rotations.of(0.0);
     public static final Angle MAX_ANGLE = Rotations.of(1);
     public static final Angle STARTING_ANGLE = Rotations.of(0.0);
-    public static final double PICKUP_SPEED = 0.0;
+    public static final double PICKUP_SPEED = 30.0;
     public static final Distance WHEEL_RADIUS = Meters.of(0.05);
     public static final Translation3d OFFSET = Translation3d.kZero;
     public static final MomentOfInertia MOI = KilogramSquareMeters.of(0.0028125);
@@ -615,7 +615,7 @@ public final class Constants {
   public class IntakePivotConstants {
     public static final String NAME = "Intake";
 
-    public static final Angle PICKUP_ANGLE = Degrees.of(130.0);
+    public static final Angle PICKUP_ANGLE = Degrees.of(130.0); // 123.0
     public static final Angle STOW_ANGLE = Degrees.of(0.0);
 
     public static final Angle TOLERANCE = Degrees.of(1.0);
@@ -628,7 +628,7 @@ public final class Constants {
     private static final double SENSOR_TO_MECHANISM = 17.35;
 
     public static final Angle MIN_ANGLE = Degrees.of(0.0);
-    public static final Angle MAX_ANGLE = Degrees.of(130.0);
+    public static final Angle MAX_ANGLE = Degrees.of(126.0);
     public static final Angle STARTING_ANGLE = Degrees.of(0.0);
     public static final Distance ARM_LENGTH = Foot.one();
 
