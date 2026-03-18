@@ -242,6 +242,7 @@ public class Shooter extends SubsystemBase {
     feedFlywheelMap.put(8.0, 60.0);
     feedFlywheelMap.put(20.0, 60.0);
   }
+
   static {
     feedFlywheelMap.put(0.0, 50.0);
     feedFlywheelMap.put(6.0, 50.0);
