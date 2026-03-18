@@ -42,6 +42,7 @@ import frc.robot.Constants.ShooterFlywheelConstants;
 import frc.robot.Constants.ShooterRotaryConstants;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.multisubsystem_commands.CmdShootOnTheMove;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Hopper;
@@ -380,6 +381,21 @@ public class RobotContainer {
                 shooter.stopDeezNutz(),
                 hopper.runSpindexer(RotationsPerSecond.of(0)),
                 Commands.run(() -> intake.stop())));
+
+    // Intake Rollers 11 Motor: 9 Intake
+
+    // controller.a().whileTrue((intake.runRollers(RotationsPerSecond.of(22.5))));
+    // controller
+    //     .a()
+    //     .onFalse(new RunCommand(() -> intake._rollerIO.runVoltage(Volts.of(0.0)), intake));
+
+    controller
+        .a()
+        .whileTrue(new CmdShootOnTheMove(
+            drive, 
+            shooter, 
+            () -> controller.getLeftY(),
+            () -> controller.getLeftX()));
 
     // Intake + Out
     controller.rightTrigger().whileTrue(intake.intake());
