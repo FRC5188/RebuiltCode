@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.W8.io.motor.*;
@@ -380,12 +379,11 @@ public class RobotContainer {
 
     // Jostle
     // controller.b().whileTrue(intake.jostleIntake().repeatedly());
-    controller
-        .b()
-        .onTrue(intake.jostleIntake());
+    controller.b().onTrue(intake.jostleIntake());
     // controller
     //     .b()
-    //     .onFalse(Commands.runOnce(() -> intake.setPivotAngle(IntakePivotConstants.PICKUP_ANGLE)));
+    //     .onFalse(Commands.runOnce(() ->
+    // intake.setPivotAngle(IntakePivotConstants.PICKUP_ANGLE)));
 
     // Calibrate Hood
     controller.y().onTrue(shooter.calibrateHood());
