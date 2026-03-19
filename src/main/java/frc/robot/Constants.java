@@ -401,7 +401,7 @@ public final class Constants {
 
     // // Positional PID
     // private static Slot0Configs SLOT0CONFIG =
-    //     new Slot0Configs().withKP(600.0).withKI(0.0).withKD(0.0).withKS(10.0).withKV(0.0);
+    //     new Slot0Configs().withKP(500.0).withKI(0.0).withKD(0.0).withKS(10.0).withKV(0.0);
     // // Velocity PID
     // private static Slot1Configs SLOT1CONFIG =
     //     new Slot1Configs().withKP(30.0).withKI(0.0).withKD(0.0).withKS(40.0).withKV(0.0);
@@ -685,7 +685,7 @@ public final class Constants {
   public class IntakePivotConstants {
     public static final String NAME = "Intake";
 
-    public static final Angle PICKUP_ANGLE = Degrees.of(123.0);
+    public static final Angle PICKUP_ANGLE = Degrees.of(123.0); // 123.0
     public static final Angle STOW_ANGLE = Degrees.of(0.0);
     public static final Angle JOSTLE_ANGLE = Degrees.of(40.0);
 

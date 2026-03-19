@@ -2,8 +2,22 @@
   "robotWidth": 0.9,
   "robotLength": 0.9,
   "holonomicMode": true,
-  "pathFolders": [],
-  "autoFolders": [],
+  "pathFolders": [
+    "Climb Paths ✔",
+    "Compound Paths",
+    "Depot✔",
+    "Gather✔️",
+    "Initial✔️",
+    "New Folder",
+    "Shoot✔️ ",
+    "Sweep Paths ✔"
+  ],
+  "autoFolders": [
+    "New Folder",
+    "Only Climb",
+    "Shoot First",
+    "Sweep First"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,
