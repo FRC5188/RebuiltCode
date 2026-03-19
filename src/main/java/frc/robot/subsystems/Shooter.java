@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
@@ -13,9 +14,12 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -33,8 +37,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
 
-  private final FlywheelMechanism _rflywheel;
-  private final FlywheelMechanism _lflywheel;
+  private final FlywheelMechanism _flywheel;
   private final FlywheelMechanism _feeder;
   private final RotaryMechanism _hood;
 
@@ -49,13 +52,8 @@ public class Shooter extends SubsystemBase {
   private Debouncer homeDebouncer = new Debouncer(0.1, DebounceType.kRising);
   private Trigger homedTrigger;
 
-  public Shooter(
-      FlywheelMechanism lflywheel,
-      FlywheelMechanism rflywheel,
-      FlywheelMechanism feeder,
-      RotaryMechanism hood) {
-    _lflywheel = lflywheel;
-    _rflywheel = rflywheel;
+  public Shooter(FlywheelMechanism rflywheel, FlywheelMechanism feeder, RotaryMechanism hood) {
+    _flywheel = rflywheel;
     _feeder = feeder;
     _hood = hood;
     homedTrigger =
@@ -79,8 +77,7 @@ public class Shooter extends SubsystemBase {
     // this.desiredVelo = velocity;
     // AngularVelocity angVelo = RotationsPerSecond.of(velocity);
     // AngularVelocity negangVelo = RotationsPerSecond.of(velocity);
-    _lflywheel.runVelocity(velocity, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
-    _rflywheel.runVelocity(velocity, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
+    _flywheel.runVelocity(velocity, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
     targetVelocity = velocity;
   }
 
@@ -101,9 +98,7 @@ public class Shooter extends SubsystemBase {
 
   // Checks if the flywheel is at speed and returns a boolean
   public boolean flyAtVelocity() {
-    return ((Math.abs(desiredVelo - _lflywheel.getVelocity().in(RotationsPerSecond))
-                + Math.abs(desiredVelo - _rflywheel.getVelocity().in(RotationsPerSecond)))
-            / 2)
+    return (Math.abs(desiredVelo - _flywheel.getVelocity().in(RotationsPerSecond)))
         <= ShooterConstants.FLYWHEEL_VELOCITY_TOLERANCE;
   }
 
@@ -153,6 +148,17 @@ public class Shooter extends SubsystemBase {
     return Math.abs(hoodAngle - _hood.getPosition().in(Degrees)) < ShooterConstants.HOOD_TOLERANCE;
   }
 
+  // Increases Hood Angle
+  public Command incrementHoodAngle() {
+    Angle currentHoodAngle = _hood.getPosition().plus(Degrees.of(2.5));
+    return setHoodAngle(currentHoodAngle.in(Degrees));
+  }
+
+  public Command decrementHoodAngle() {
+    Angle currentHoodAngle = _hood.getPosition().minus(Degrees.of(2.5));
+    return setHoodAngle(currentHoodAngle.in(Degrees));
+  }
+
   public boolean isAboveCurrentLimit() {
     if (Math.abs(_hood.getSupplyCurrent().in(Amps)) > ShooterConstants.HARD_STOP_CURRENT_LIMIT) {
       return true;
@@ -169,30 +175,6 @@ public class Shooter extends SubsystemBase {
         runOnce(() -> _hood.runVoltage(Voltage.ofBaseUnits(0, Volts))));
   }
 
-  // public Command calibrateHood() {
-  //   return this.run(
-  //           () ->
-  //               _hood.runVelocity(
-  //                   ShooterConstants.HOOD_VELOCITY,
-  //                   ShooterConstants.HOOD_ACCELERATION,
-  //                   PIDSlot.SLOT_1))
-  //       .until(() -> isAboveCurrentLimit()).andThen(this.run( () ->
-  // _hood.setEncoderPosition(Angle.ofBaseUnits(0, Degrees))));
-  // }
-
-  public Command shoot(AngularVelocity velocity) {
-    // Prepare targets
-    return Commands.sequence(
-        // Set and wait in parallel for both hood and flywheel
-        Commands.parallel(
-            Commands.run(() -> setFlywheelVelocity(velocity)).until(this::flyAtVelocity),
-            Commands.run(() -> setHoodAngle(hoodAngle)).until(this::hoodAtAngle)),
-        // feed once ready
-        Commands.runOnce(() -> runFeeder(FeederConstants.FEED_SPEED)),
-        // stop flywheel when finished
-        Commands.runOnce(() -> setFlywheelVelocity(RotationsPerSecond.of(0.0))));
-  }
-
   public Command runFlywheel(AngularVelocity velocity) {
     System.out.println("Flywheel");
 
@@ -207,9 +189,7 @@ public class Shooter extends SubsystemBase {
   public void simShoot() {
     if (Robot.robotContainer.intake.simBalls <= 0) return;
 
-    double flywheelSpeed = 6;
     Translation2d robotPose2d = Robot.robotContainer.drive.getPose().getTranslation();
-    double Yaw = Robot.robotContainer.drive.getPose().getRotation().getRadians();
     Pose3d robotPose3d =
         new Pose3d(
             new Translation3d(robotPose2d.getX(), robotPose2d.getY(), 0),
@@ -219,9 +199,15 @@ public class Shooter extends SubsystemBase {
             new Translation3d(-0.0075, 0.0, 0.523),
             new Rotation3d(0, _hood.getPosition().in(Radians), 0));
 
+    double flywheelSpeed = _flywheel.getVelocity().magnitude();
+
+    double Yaw = Robot.robotContainer.drive.getPose().getRotation().getRadians();
     double V_xy =
         Math.sin(Math.PI / 2 - (_hood.getPosition().in(Radians) + Degrees.of(12).in(Radians)))
             * flywheelSpeed;
+
+    ChassisSpeeds driveChassisSpeeds = Robot.robotContainer.drive.getChassisSpeeds();
+    Translation3d driveSpeed3d = new Translation3d(0.0, 0.0, 0.0);
 
     Robot.fuelSim.spawnFuel(
         robotPose3d
@@ -233,17 +219,69 @@ public class Shooter extends SubsystemBase {
                     new Rotation3d(0, 0, 0)))
             .getTranslation(),
         new Translation3d(
-            V_xy * Math.cos(Yaw),
-            V_xy * Math.sin(Yaw),
-            Math.sin(Math.PI / 2 - (_hood.getPosition().in(Radians) + Degrees.of(12).in(Radians)))
-                * flywheelSpeed));
+                V_xy * Math.cos(Yaw),
+                V_xy * Math.sin(Yaw),
+                Math.sin(
+                        Math.PI / 2
+                            - (_hood.getPosition().in(Radians) + Degrees.of(12).in(Radians)))
+                    * flywheelSpeed)
+            .plus(driveSpeed3d));
+
     Robot.robotContainer.intake.simBalls--;
+  }
+
+  private static final InterpolatingDoubleTreeMap hoodAngleMap = new InterpolatingDoubleTreeMap();
+
+  static {
+    hoodAngleMap.put(1.28, 2.3);
+    hoodAngleMap.put(2.44, 6.8);
+    hoodAngleMap.put(3.1, 8.9);
+    hoodAngleMap.put(3.86, 12.1);
+    hoodAngleMap.put(5.0, 18.6);
+  }
+
+  /** Distance from feed pose in meters -> flywheel speed in rotations per second */
+  private static final InterpolatingDoubleTreeMap feedFlywheelMap =
+      new InterpolatingDoubleTreeMap();
+
+  static {
+    feedFlywheelMap.put(0.0, 50.0);
+    feedFlywheelMap.put(6.0, 50.0);
+    feedFlywheelMap.put(7.0, 55.0);
+    feedFlywheelMap.put(8.0, 60.0);
+    feedFlywheelMap.put(20.0, 60.0);
+  }
+
+  static {
+    feedFlywheelMap.put(0.0, 50.0);
+    feedFlywheelMap.put(6.0, 50.0);
+    feedFlywheelMap.put(7.0, 55.0);
+    feedFlywheelMap.put(8.0, 60.0);
+    feedFlywheelMap.put(20.0, 60.0);
+  }
+
+  public Command setAngleForDistance(Distance distance) {
+    double distanceMeters = distance.in(Meters);
+    double angle = hoodAngleMap.get(distanceMeters);
+    desiredHoodAngle = angle;
+    return this.runOnce(
+            () -> {
+              System.out.println("Command");
+              _hood.runPosition(
+                  Angle.ofBaseUnits(angle, Degrees),
+                  ShooterRotaryConstants.CRUISE_VELOCITY,
+                  ShooterRotaryConstants.ACCELERATION,
+                  ShooterRotaryConstants.JERK,
+                  PIDSlot.SLOT_0);
+              // _hood.runVelocity(ShooterConstants.HOOD_VELOCITY,
+              // ShooterConstants.HOOD_ACCELERATION, PIDSlot.SLOT_0);
+            })
+        .andThen(() -> System.out.println("Command ran"));
   }
 
   public void periodic() {
     _hood.periodic();
-    _lflywheel.periodic();
-    _rflywheel.periodic();
+    _flywheel.periodic();
     _feeder.periodic();
     Logger.recordOutput("Flywheel/TargetVelocity", targetVelocity);
     Logger.recordOutput("Feeder/TargetVelocity", feederTargetVelocity);
@@ -259,9 +297,11 @@ public class Shooter extends SubsystemBase {
 
     // The pitch of the Rotation3D should be '_hood.getPosition().in(Radians)', change after fixing
     // motor configs.
-    // Logger.recordOutput(
-    //     "3DField/3_Hood",
-    //     new Pose3d(new Translation3d(-0.0075, 0.0, 0.523), new Rotation3d(0, pitch, 0)));
+    Logger.recordOutput(
+        "3DField/3_Hood",
+        new Pose3d(
+            new Translation3d(-0.0075, 0.0, 0.523),
+            new Rotation3d(0, _hood.getPosition().in(Radians), 0)));
 
     // _hood.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp()) * 0.25));
   }
