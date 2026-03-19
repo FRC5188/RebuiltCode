@@ -57,7 +57,7 @@ public class TunerConstants {
   // When not Pro-licensed, Fused*/Sync* automatically fall back to Remote*
   private static final SteerFeedbackType kSteerFeedbackType = SteerFeedbackType.FusedCANcoder;
 
-  // The stator current at which the wheels start to slip;
+  // The stator current at which the wheels start to slip
   // This needs to be tuned to your individual robot
   private static final Current kSlipCurrent = Amps.of(120);
 
