@@ -85,6 +85,7 @@ public class MotorIOTalonFX implements MotorIO {
   private final CANUpdateThread updateThread = new CANUpdateThread();
 
   private final Alert[] followerOnWrongBusAlert;
+  private final double statusFrameFrequency;
 
   protected Angle goalPosition = Rotations.of(0.0);
 
@@ -102,7 +103,31 @@ public class MotorIOTalonFX implements MotorIO {
    */
   public MotorIOTalonFX(
       String name, TalonFXConfiguration config, Device.CAN main, TalonFXFollower... followerData) {
+    this(name, config, main, 50.0, followerData);
+  }
+
+  /**
+   * Constructs and initializes a TalonFX motor with custom status frame frequency.
+   *
+   * <p>This constructor allows tuning CAN bus utilization by setting custom status frame update
+   * rates. For motors that don't need high-frequency feedback (like shooter/hopper), use 50Hz. For
+   * real-time control (swerve), use higher frequencies.
+   *
+   * @param name The name of the motor(s) for logging and identification
+   * @param config Configuration to apply to the motor(s) including PID, limits, and gear ratios
+   * @param main CAN ID of the main motor
+   * @param statusFrameFrequency Update frequency in Hz for main status signals (position, velocity,
+   *     current). Default is 50Hz. Use higher values (100Hz) only for time-critical control.
+   * @param followerData Configuration data for the follower motor(s), can be empty if no followers
+   */
+  public MotorIOTalonFX(
+      String name,
+      TalonFXConfiguration config,
+      Device.CAN main,
+      double statusFrameFrequency,
+      TalonFXFollower... followerData) {
     this.name = name;
+    this.statusFrameFrequency = statusFrameFrequency;
 
     motor = new TalonFX(main.id(), main.bus());
     updateThread.CTRECheckErrorAndRetry(() -> motor.getConfigurator().apply(config));
@@ -143,12 +168,12 @@ public class MotorIOTalonFX implements MotorIO {
     updateThread.CTRECheckErrorAndRetry(
         () ->
             BaseStatusSignal.setUpdateFrequencyForAll(
-                100, position, velocity, supplyCurrent, supplyCurrent, torqueCurrent, temperature));
+                statusFrameFrequency, position, velocity, supplyCurrent, supplyCurrent, torqueCurrent, temperature));
 
     updateThread.CTRECheckErrorAndRetry(
         () ->
             BaseStatusSignal.setUpdateFrequencyForAll(
-                200, closedLoopError, closedLoopReference, closedLoopReferenceSlope));
+                statusFrameFrequency * 2.0, closedLoopError, closedLoopReference, closedLoopReferenceSlope));
 
     motor.optimizeBusUtilization(0, 1.0);
   }

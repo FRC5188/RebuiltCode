@@ -112,7 +112,8 @@ public class RobotContainer {
                     new MotorIOTalonFX(
                         HopperConstants.MOTOR_NAME,
                         HopperConstants.getFXConfig(),
-                        Ports.Spindexer)));
+                        Ports.Spindexer,
+                        50.0))); // 50Hz status frames - hopper doesn't need high freq
         shooter =
             new Shooter(
                 new FlywheelMechanismReal(
@@ -120,17 +121,20 @@ public class RobotContainer {
                         "ShooterRightFlywheel",
                         ShooterFlywheelConstants.getFXConfig(false),
                         Ports.RightFlywheel,
+                        30.0, // Reduced from 100Hz for CAN optimization
                         ShooterFlywheelConstants.FOLLOWER_1)),
                 new FlywheelMechanismReal(
                     new MotorIOTalonFX(
                         FeederConstants.NAME,
                         FeederConstants.getFXConfig(false),
-                        Ports.TowerRoller)),
+                        Ports.TowerRoller,
+                        30.0)), // Reduced from 100Hz for CAN optimization
                 new RotaryMechanismReal(
                     new MotorIOTalonFX(
                         ShooterRotaryConstants.NAME,
                         ShooterRotaryConstants.getFXConfig(),
-                        Ports.HoodMotor),
+                        Ports.HoodMotor,
+                        30.0), // Reduced from 100Hz for CAN optimization
                     Constants.ShooterRotaryConstants.CONSTANTS,
                     java.util.Optional.empty()));
 
@@ -140,12 +144,14 @@ public class RobotContainer {
                     new MotorIOTalonFX(
                         IntakeFlywheelConstants.MOTOR_NAME,
                         IntakeFlywheelConstants.getFXConfig(),
-                        Ports.IntakeRoller)),
+                        Ports.IntakeRoller,
+                        30.0)), // Reduced from 100Hz for CAN optimization
                 new RotaryMechanismReal(
                     new MotorIOTalonFX(
                         IntakePivotConstants.NAME,
                         IntakePivotConstants.getFXConfig(),
-                        Ports.IntakePivot),
+                        Ports.IntakePivot,
+                        50.0), // Medium frequency for pivot positioning
                     IntakePivotConstants.CONSTANTS,
                     Optional.empty()));
         climber =
