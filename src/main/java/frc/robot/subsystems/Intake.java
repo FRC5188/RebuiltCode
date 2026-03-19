@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degree;
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
@@ -12,43 +13,54 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.flywheel.FlywheelMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
-import frc.lib.W8.util.LoggerHelper;
 import frc.robot.Constants.IntakeFlywheelConstants;
 import frc.robot.Constants.IntakePivotConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
-  private FlywheelMechanism _rollerIO;
+  public FlywheelMechanism _rollerIO;
   private RotaryMechanism _pivotIO;
   double velocity;
   double pivotAngle;
   public double desiredAngle;
   public int simBalls;
+  public AngularVelocity targetSpeed = RotationsPerSecond.of(0);
 
   public Intake(FlywheelMechanism rollerIO, RotaryMechanism pivotIO) {
     _rollerIO = rollerIO;
     _pivotIO = pivotIO;
 
+    // if (Robot.isReal()) tunePivotPosition();
+
     simBalls = 0;
   }
 
   // Velocity of Rollers
-  public void setVelocity(double velocity) {
-    AngularVelocity angVelo = RotationsPerSecond.of(velocity);
+  public void setVelocity(AngularVelocity velocity) {
+    // AngularVelocity angVelo = RotationsPerSecond.of(velocity);
 
-    _rollerIO.runVelocity(angVelo, IntakeFlywheelConstants.ACCELERATION, PIDSlot.SLOT_0);
+    _rollerIO.runVelocity(velocity, IntakeFlywheelConstants.ACCELERATION, PIDSlot.SLOT_0);
+    targetSpeed = velocity;
   }
 
-  public void setPivotAngle(Angle pivotAngle) {
-    _pivotIO.runPosition(
-        pivotAngle,
-        IntakeFlywheelConstants.CRUISE_VELOCITY,
-        IntakeFlywheelConstants.ACCELERATION,
-        IntakeFlywheelConstants.JERK,
-        PIDSlot.SLOT_0);
+  public Command setPivotAngle(Angle pivotAngle) {
+    return this.runOnce(
+        () ->
+            _pivotIO.runPosition(
+                pivotAngle,
+                IntakePivotConstants.CRUISE_VELOCITY,
+                IntakePivotConstants.ACCELERATION,
+                IntakePivotConstants.JERK,
+                PIDSlot.SLOT_0)
+        // () ->
+        //   _pivotIO.runVelocity(IntakePivotConstants.CRUISE_VELOCITY,
+        // IntakePivotConstants.ACCELERATION, PIDSlot.SLOT_0)
+        );
+    // .withName("Go To " + setpoint.toString() + " Setpoint");
   }
 
   public AngularVelocity getVelocity() {
@@ -60,17 +72,21 @@ public class Intake extends SubsystemBase {
   }
 
   public void stop() {
-    setVelocity(0);
+    setVelocity(RotationsPerSecond.of(0));
+  }
+
+  public Command runRollers(AngularVelocity velocity) {
+    return Commands.run(() -> setVelocity(velocity));
   }
 
   public Command intake() {
-    return Commands.sequence(
-        Commands.runOnce(() -> this.setPivotAngle(IntakePivotConstants.PICKUP_ANGLE)),
-        Commands.runOnce(() -> this.setVelocity(IntakeFlywheelConstants.PICKUP_SPEED)));
+    return Commands.parallel(
+        runRollers(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED)),
+        setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
   }
 
   public boolean isIntendedAngle() {
-    return Math.abs(desiredAngle - _pivotIO.getVelocity().in(RotationsPerSecond))
+    return Math.abs(desiredAngle - _pivotIO.getPosition().in(Degrees))
         <= IntakePivotConstants.TOLERANCE.magnitude();
   }
 
@@ -81,29 +97,46 @@ public class Intake extends SubsystemBase {
   }
 
   public Command stowAndStopRollers() {
-    return Commands.sequence(
-        Commands.run(() -> setVelocity(IntakeFlywheelConstants.PICKUP_SPEED)),
-        setStowAngle(IntakePivotConstants.STOW_ANGLE));
+    return Commands.parallel(runRollers(RotationsPerSecond.of(0.0)), setStowAngle());
   }
 
-  private Command setStowAngle(Angle stowAngle) {
+  private Command setStowAngle() {
     return this.runOnce(
         () ->
             _pivotIO.runPosition(
-                stowAngle,
+                IntakePivotConstants.STOW_ANGLE,
                 IntakePivotConstants.CRUISE_VELOCITY,
                 IntakePivotConstants.ACCELERATION,
                 IntakePivotConstants.JERK,
                 PIDSlot.SLOT_0));
   }
 
+  public Command jostleIntake() {
+    return Commands.sequence(
+        setPivotAngle(IntakePivotConstants.JOSTLE_ANGLE),
+        new WaitCommand(0.5),
+        setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
+  }
+
+  public void tunePivotPosition() {
+    // DISABLED: Encoder was disabled in Constants to fix NT flooding in sim
+    // System.out.println(IntakePivotConstants.ENCODER1.get());
+    // _pivotIO.setEncoderPosition(Rotations.of(IntakePivotConstants.ENCODER1.get()));
+  }
+
+  public Command zeroEncoder() {
+    return Commands.runOnce(() -> _pivotIO.setEncoderPosition(Degrees.of(0)));
+  }
+
   @Override
   public void periodic() {
-    LoggerHelper.recordCurrentCommand("1_Intake", this);
+    // if (_pivotIO.getPosition().in(Degree) < IntakePivotConstants.MAX_ANGLE.in(Degree))
+    //   _pivotIO.runVoltage(Volts.of(0.25));
+    _rollerIO.periodic();
+    Logger.recordOutput("Intake/TargetSpeed", targetSpeed);
 
     _pivotIO.periodic();
-    _rollerIO.periodic();
-
+    Logger.recordOutput("Intake/TargetPivot", _pivotIO.getPosition().in(Degrees));
     Logger.recordOutput(
         "3DField/1_Intake",
         new Pose3d(
@@ -115,11 +148,6 @@ public class Intake extends SubsystemBase {
             new Translation3d(Math.sin(_pivotIO.getPosition().in(Radians) * 0.1055), 0, 0),
             new Rotation3d(0, 0, 0)));
 
-    // For testing purposes, opens hopper in sim
-    // if (_pivotIO.getPosition().in(Degrees) < IntakePivotConstants.MAX_ANGLE.in(Degrees) - 10)
-    // _pivotIO.runVoltage(Volts.of(7));
-
-    // _pivotIO.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp())*5.0)); //--- Tests the pivot
-    // _rollerIO.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp())*5.0)); //--- Tests the pivot
+    // _pivotIO.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp())*0.25)); //--- Tests the pivot
   }
 }
