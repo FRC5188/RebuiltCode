@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -188,9 +189,7 @@ public class Shooter extends SubsystemBase {
   public void simShoot() {
     if (Robot.robotContainer.intake.simBalls <= 0) return;
 
-    double flywheelSpeed = 6;
     Translation2d robotPose2d = Robot.robotContainer.drive.getPose().getTranslation();
-    double Yaw = Robot.robotContainer.drive.getPose().getRotation().getRadians();
     Pose3d robotPose3d =
         new Pose3d(
             new Translation3d(robotPose2d.getX(), robotPose2d.getY(), 0),
@@ -200,9 +199,15 @@ public class Shooter extends SubsystemBase {
             new Translation3d(-0.0075, 0.0, 0.523),
             new Rotation3d(0, _hood.getPosition().in(Radians), 0));
 
+    double flywheelSpeed = _flywheel.getVelocity().magnitude();
+
+    double Yaw = Robot.robotContainer.drive.getPose().getRotation().getRadians();
     double V_xy =
         Math.sin(Math.PI / 2 - (_hood.getPosition().in(Radians) + Degrees.of(12).in(Radians)))
             * flywheelSpeed;
+
+    ChassisSpeeds driveChassisSpeeds = Robot.robotContainer.drive.getChassisSpeeds();
+    Translation3d driveSpeed3d = new Translation3d(0.0, 0.0, 0.0);
 
     Robot.fuelSim.spawnFuel(
         robotPose3d
@@ -214,10 +219,14 @@ public class Shooter extends SubsystemBase {
                     new Rotation3d(0, 0, 0)))
             .getTranslation(),
         new Translation3d(
-            V_xy * Math.cos(Yaw),
-            V_xy * Math.sin(Yaw),
-            Math.sin(Math.PI / 2 - (_hood.getPosition().in(Radians) + Degrees.of(12).in(Radians)))
-                * flywheelSpeed));
+                V_xy * Math.cos(Yaw),
+                V_xy * Math.sin(Yaw),
+                Math.sin(
+                        Math.PI / 2
+                            - (_hood.getPosition().in(Radians) + Degrees.of(12).in(Radians)))
+                    * flywheelSpeed)
+            .plus(driveSpeed3d));
+
     Robot.robotContainer.intake.simBalls--;
   }
 
@@ -288,9 +297,11 @@ public class Shooter extends SubsystemBase {
 
     // The pitch of the Rotation3D should be '_hood.getPosition().in(Radians)', change after fixing
     // motor configs.
-    // Logger.recordOutput(
-    //     "3DField/3_Hood",
-    //     new Pose3d(new Translation3d(-0.0075, 0.0, 0.523), new Rotation3d(0, pitch, 0)));
+    Logger.recordOutput(
+        "3DField/3_Hood",
+        new Pose3d(
+            new Translation3d(-0.0075, 0.0, 0.523),
+            new Rotation3d(0, _hood.getPosition().in(Radians), 0)));
 
     // _hood.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp()) * 0.25));
   }

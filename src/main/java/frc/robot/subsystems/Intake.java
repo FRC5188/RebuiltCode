@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import edu.wpi.first.math.geometry.Pose3d;
@@ -120,8 +119,9 @@ public class Intake extends SubsystemBase {
   }
 
   public void tunePivotPosition() {
-    System.out.println(IntakePivotConstants.ENCODER1.get());
-    _pivotIO.setEncoderPosition(Rotations.of(IntakePivotConstants.ENCODER1.get()));
+    // DISABLED: Encoder was disabled in Constants to fix NT flooding in sim
+    // System.out.println(IntakePivotConstants.ENCODER1.get());
+    // _pivotIO.setEncoderPosition(Rotations.of(IntakePivotConstants.ENCODER1.get()));
   }
 
   public Command zeroEncoder() {

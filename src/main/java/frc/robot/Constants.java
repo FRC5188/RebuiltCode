@@ -34,7 +34,7 @@ import com.ctre.phoenix6.configs.LEDConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.RainbowAnimation;
+import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.signals.Enable5VRailValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -62,9 +62,9 @@ import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DutyCycle;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
+// import edu.wpi.first.wpilibj.DigitalInput;
+// import edu.wpi.first.wpilibj.DutyCycle;
+// import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.lib.W8.io.motor.MotorIOTalonFX.TalonFXFollower;
@@ -249,7 +249,13 @@ public final class Constants {
 
       config.Feedback.SensorToMechanismRatio = GEARING;
 
-      config.Slot0 = new Slot0Configs().withKP(10).withKI(0.0).withKD(0.0).withKS(2.5).withKV(0.05);
+      if (RobotBase.isReal()) {
+        config.Slot0 =
+            new Slot0Configs().withKP(10).withKI(0.0).withKD(0.0).withKS(2.5).withKV(0.05);
+
+      } else {
+        config.Slot0 = new Slot0Configs().withKP(0.75).withKI(0.0).withKD(0.0);
+      }
 
       config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY.in(RotationsPerSecond);
       config.MotionMagic.MotionMagicAcceleration = ACCELERATION.in(RotationsPerSecondPerSecond);
@@ -322,10 +328,6 @@ public final class Constants {
     public static final TalonFXFollower FOLLOWER_1 =
         new TalonFXFollower(Ports.LeftFlywheel, MotorAlignmentValue.Opposed);
 
-    // Velocity PID
-    private static Slot0Configs SLOT0CONFIG =
-        new Slot0Configs().withKP(3.5).withKI(0.15).withKD(0.0).withKV(0.1).withKS(8.5);
-
     public static TalonFXConfiguration getFXConfig(boolean invert) {
       TalonFXConfiguration config = new TalonFXConfiguration();
 
@@ -356,7 +358,13 @@ public final class Constants {
 
       config.Feedback.SensorToMechanismRatio = GEARING;
 
-      config.Slot0 = SLOT0CONFIG;
+      if (RobotBase.isReal()) {
+        // Velocity PID
+        config.Slot0 =
+            new Slot0Configs().withKP(3.5).withKI(0.15).withKD(0.0).withKV(0.1).withKS(8.5);
+      } else {
+        config.Slot0 = new Slot0Configs().withKP(0.75).withKI(0.0).withKD(0.0);
+      }
 
       return config;
     }
@@ -392,12 +400,12 @@ public final class Constants {
 
     private static final Angle ENCODER_OFFSET = Rotations.of(0.0);
 
-    // Positional PID
-    private static Slot0Configs SLOT0CONFIG =
-        new Slot0Configs().withKP(500.0).withKI(0.0).withKD(0.05).withKS(10.0).withKV(0.0);
-    // Velocity PID
-    private static Slot1Configs SLOT1CONFIG =
-        new Slot1Configs().withKP(30.0).withKI(0.0).withKD(0.0).withKS(40.0).withKV(0.0);
+    // // Positional PID
+    // private static Slot0Configs SLOT0CONFIG =
+    //     new Slot0Configs().withKP(500.0).withKI(0.0).withKD(0.0).withKS(10.0).withKV(0.0);
+    // // Velocity PID
+    // private static Slot1Configs SLOT1CONFIG =
+    //     new Slot1Configs().withKP(30.0).withKI(0.0).withKD(0.0).withKS(40.0).withKV(0.0);
 
     /**
      * Creates and returns the TalonFX motor controller configuration for the rotary mechanism.
@@ -419,7 +427,7 @@ public final class Constants {
     public static TalonFXConfiguration getFXConfig() {
       TalonFXConfiguration config = new TalonFXConfiguration();
 
-      config.CurrentLimits.SupplyCurrentLimitEnable = false;
+      config.CurrentLimits.SupplyCurrentLimitEnable = Robot.isReal();
       config.CurrentLimits.SupplyCurrentLimit = 40.0;
       config.CurrentLimits.SupplyCurrentLowerLimit = 40.0;
       config.CurrentLimits.SupplyCurrentLowerTime = 0.1;
@@ -440,12 +448,20 @@ public final class Constants {
       config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = MIN_ANGLE.in(Degrees);
 
       config.Feedback.RotorToSensorRatio = ROTOR_TO_SENSOR;
-      config.Feedback.SensorToMechanismRatio = SENSOR_TO_MECHANISM;
 
-      config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+      if (RobotBase.isReal()) {
+        config.Feedback.SensorToMechanismRatio = 1 / 50;
+        // Positional PID
+        config.Slot0 =
+            new Slot0Configs().withKP(500.0).withKI(0.0).withKD(0.0).withKS(10.0).withKV(0.0);
+        // Velocity PID
+        config.Slot1 =
+            new Slot1Configs().withKP(30.0).withKI(0.0).withKD(0.0).withKS(40.0).withKV(0.0);
 
-      config.Slot0 = SLOT0CONFIG;
-      config.Slot1 = SLOT1CONFIG;
+      } else {
+        config.Feedback.SensorToMechanismRatio = (50.0 / 1.0);
+        config.Slot0 = new Slot0Configs().withKP(30.0).withKI(0.0).withKD(5.0);
+      }
 
       config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY.in(RotationsPerSecond);
       config.MotionMagic.MotionMagicAcceleration = ACCELERATION.in(RotationsPerSecondPerSecond);
@@ -472,6 +488,55 @@ public final class Constants {
       return config;
     }
   }
+
+  // // Needs tuned
+  // public class ShooterTowerConstants {
+  //   public static String NAME = "ShooterTowerFlywheel";
+
+  //   public static final AngularVelocity MAX_VELOCITY = RadiansPerSecond.of(2 * Math.PI);
+  //   public static final AngularAcceleration MAX_ACCELERATION = MAX_VELOCITY.per(Second);
+
+  //   private static final double GEARING = (2.0 / 1.0);
+
+  //   public static final AngularVelocity TOLERANCE = MAX_VELOCITY.times(0.1);
+
+  //   public static final DCMotor DCMOTOR = DCMotor.getKrakenX60(1);
+  //   public static final MomentOfInertia MOI = KilogramSquareMeters.of(1.0);
+
+  //   // Velocity PID
+  //   private static Slot0Configs SLOT0CONFIG =
+  //       new Slot0Configs().withKP(0.0).withKI(0.0).withKD(0.0);
+
+  //   public static TalonFXConfiguration getFXConfig() {
+  //     TalonFXConfiguration config = new TalonFXConfiguration();
+
+  //     config.CurrentLimits.SupplyCurrentLimitEnable = Robot.isReal();
+  //     config.CurrentLimits.SupplyCurrentLimit = 40.0;
+  //     config.CurrentLimits.SupplyCurrentLowerLimit = 40.0;
+  //     config.CurrentLimits.SupplyCurrentLowerTime = 0.1;
+
+  //     config.CurrentLimits.StatorCurrentLimitEnable = Robot.isReal();
+  //     config.CurrentLimits.StatorCurrentLimit = 80.0;
+
+  //     config.Voltage.PeakForwardVoltage = 12.0;
+  //     config.Voltage.PeakReverseVoltage = -12.0;
+
+  //     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+  //     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+  //     config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+
+  //     config.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
+
+  //     config.Feedback.RotorToSensorRatio = 1.0;
+
+  //     config.Feedback.SensorToMechanismRatio = GEARING;
+
+  //     config.Slot0 = SLOT0CONFIG;
+
+  //     return config;
+  //   }
+  // }
 
   public static final int CANDLE_ID = 50;
 
@@ -527,8 +592,8 @@ public final class Constants {
     }
 
     // config.Slot0 = new Slot0Configs().withKP(0.75).withKI(0.0).withKD(0.0);
-    private static Slot0Configs SLOT0CONFIG =
-        new Slot0Configs().withKP(10).withKI(0.0).withKD(0.0).withKV(0.05).withKS(8.0);
+    // private static Slot0Configs SLOT0CONFIG =
+    //     new Slot0Configs().withKP(10).withKI(0.0).withKD(0.0).withKV(0.05).withKS(8.0);
 
     public static TalonFXConfiguration getFXConfig() {
       TalonFXConfiguration config = new TalonFXConfiguration();
@@ -559,7 +624,12 @@ public final class Constants {
 
       config.Feedback.SensorToMechanismRatio = GEARING;
 
-      config.Slot0 = SLOT0CONFIG;
+      if (RobotBase.isReal()) {
+        config.Slot0 =
+            new Slot0Configs().withKP(10).withKI(0.0).withKD(0.0).withKV(0.05).withKS(8.0);
+      } else {
+        config.Slot0 = new Slot0Configs().withKP(0.75).withKI(0.0).withKD(0.0);
+      }
 
       config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY.in(RotationsPerSecond);
       config.MotionMagic.MotionMagicAcceleration = ACCELERATION.in(RotationsPerSecondPerSecond);
@@ -641,14 +711,13 @@ public final class Constants {
     public static final DCMotor DCMOTOR = DCMotor.getKrakenX60(1);
     public static final MomentOfInertia MOI = KilogramSquareMeters.of(0.25);
 
-    public static final int ENCODER_CHANNEL = 9;
-    public static final DutyCycleEncoder ENCODER1 =
-        new DutyCycleEncoder(new DutyCycle(new DigitalInput(ENCODER_CHANNEL)));
+    // public static final int ENCODER_CHANNEL = 9;
+    // public static final DutyCycleEncoder ENCODER1 =
+    //     new DutyCycleEncoder(new DutyCycle(new DigitalInput(ENCODER_CHANNEL)));
+
     // public static final Encoder ENCODER = new Encoder(ENCODER_CHANNEL, ENCODER_CHANNEL);
 
     // Positional PID
-    public static final Slot0Configs SLOT_0_CONFIG =
-        new Slot0Configs().withKP(300.0).withKI(1000).withKD(80).withKS(8.0).withKV(0.0);
 
     // .withKG(15)
     // .withGravityType(GravityTypeValue.Arm_Cosine);
@@ -681,7 +750,14 @@ public final class Constants {
 
       config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
 
-      config.Slot0 = SLOT_0_CONFIG;
+      if (RobotBase.isReal()) {
+        config.Slot0 =
+            new Slot0Configs().withKP(300.0).withKI(1000).withKD(80).withKS(8.0).withKV(0.0);
+
+      } else {
+        config.Slot0 =
+            new Slot0Configs().withKP(100.0).withKI(0.0).withKD(0).withKS(0.07).withKV(0.1);
+      }
       config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY.in(RotationsPerSecond);
       config.MotionMagic.MotionMagicAcceleration = ACCELERATION.in(RotationsPerSecondPerSecond);
       config.MotionMagic.MotionMagicJerk = JERK.in(RotationsPerSecondPerSecond.per(Second));
@@ -707,8 +783,8 @@ public final class Constants {
     public static final MomentOfInertia MOI = KilogramSquareMeters.of(1.0);
 
     // Velocity PID
-    private static Slot0Configs SLOT0CONFIG =
-        new Slot0Configs().withKP(5.0).withKI(0.0).withKD(0.0).withKV(0.05).withKS(12.0);
+    // private static Slot0Configs SLOT0CONFIG =
+    //     new Slot0Configs().withKP(5.0).withKI(0.0).withKD(0.0).withKV(0.05).withKS(12.0);
 
     public static TalonFXConfiguration getFXConfig(boolean invert) {
       TalonFXConfiguration config = new TalonFXConfiguration();
@@ -740,7 +816,14 @@ public final class Constants {
 
       config.Feedback.SensorToMechanismRatio = GEARING;
 
-      config.Slot0 = SLOT0CONFIG;
+      // config.Slot0 = SLOT0CONFIG;
+      if (RobotBase.isReal()) {
+        config.Slot0 =
+            new Slot0Configs().withKP(5.0).withKI(0.0).withKD(0.0).withKV(0.05).withKS(12.0);
+
+      } else {
+        config.Slot0 = new Slot0Configs().withKP(0.0).withKI(0.0).withKD(0.0).withKS(10.0);
+      }
 
       return config;
     }
@@ -813,8 +896,12 @@ public final class Constants {
 
       config.Feedback.SensorToMechanismRatio = GEARING;
 
-      config.Slot0 = new Slot0Configs().withKP(10).withKI(0.0).withKD(0.0);
-      config.Slot1 = new Slot1Configs().withKP(1).withKI(0.0).withKD(0.0);
+      if (Robot.isReal()) {
+        config.Slot0 = new Slot0Configs().withKP(10).withKI(0.0).withKD(0.0);
+        config.Slot1 = new Slot1Configs().withKP(1).withKI(0.0).withKD(0.0);
+      } else {
+        config.Slot0 = new Slot0Configs().withKP(0.75).withKI(0.0).withKD(0.0);
+      }
 
       config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY.in(RotationsPerSecond);
       config.MotionMagic.MotionMagicAcceleration = ACCELERATION.in(RotationsPerSecondPerSecond);
