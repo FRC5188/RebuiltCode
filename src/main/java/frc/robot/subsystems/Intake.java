@@ -14,6 +14,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.flywheel.FlywheelMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
@@ -76,18 +77,17 @@ public class Intake extends SubsystemBase {
   }
 
   public Command runRollers(AngularVelocity velocity) {
-    return Commands.run(() -> setVelocity(velocity), this);
+    return Commands.run(() -> setVelocity(velocity));
   }
 
   public Command intake() {
-    return Commands.sequence(
-        Commands.run(
-            () -> setVelocity(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))),
+    return Commands.parallel(
+        runRollers(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED)),
         setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
   }
 
   public boolean isIntendedAngle() {
-    return Math.abs(desiredAngle - _pivotIO.getVelocity().in(RotationsPerSecond))
+    return Math.abs(desiredAngle - _pivotIO.getPosition().in(Degrees))
         <= IntakePivotConstants.TOLERANCE.magnitude();
   }
 
@@ -98,21 +98,25 @@ public class Intake extends SubsystemBase {
   }
 
   public Command stowAndStopRollers() {
-    return Commands.sequence(
-        Commands.run(
-            () -> setVelocity(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))),
-        setStowAngle(IntakePivotConstants.STOW_ANGLE));
+    return Commands.parallel(runRollers(RotationsPerSecond.of(0.0)), setStowAngle());
   }
 
-  private Command setStowAngle(Angle stowAngle) {
+  private Command setStowAngle() {
     return this.runOnce(
         () ->
             _pivotIO.runPosition(
-                stowAngle,
+                IntakePivotConstants.STOW_ANGLE,
                 IntakePivotConstants.CRUISE_VELOCITY,
                 IntakePivotConstants.ACCELERATION,
                 IntakePivotConstants.JERK,
                 PIDSlot.SLOT_0));
+  }
+
+  public Command jostleIntake() {
+    return Commands.sequence(
+        setPivotAngle(IntakePivotConstants.JOSTLE_ANGLE),
+        new WaitCommand(0.5),
+        setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
   }
 
   public void tunePivotPosition() {
@@ -132,7 +136,7 @@ public class Intake extends SubsystemBase {
     Logger.recordOutput("Intake/TargetSpeed", targetSpeed);
 
     _pivotIO.periodic();
-    // Logger.recordOutput("Intake/TargetPivot", null);
+    Logger.recordOutput("Intake/TargetPivot", _pivotIO.getPosition().in(Degrees));
     Logger.recordOutput(
         "3DField/1_Intake",
         new Pose3d(
