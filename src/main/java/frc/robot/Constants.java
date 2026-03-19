@@ -163,7 +163,6 @@ public final class Constants {
 
     public static final Translation2d OPPHUBCENTER = new Translation2d(oppHubCenterX, hubCenterY);
   
-  
   }
 
   public class Ports {
