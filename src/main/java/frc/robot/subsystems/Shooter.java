@@ -149,13 +149,14 @@ public class Shooter extends SubsystemBase {
     return Math.abs(hoodAngle - _hood.getPosition().in(Degrees)) < ShooterConstants.HOOD_TOLERANCE;
   }
 
+  // Increases Hood Angle
   public Command incrementHoodAngle() {
     Angle currentHoodAngle = _hood.getPosition().plus(Degrees.of(2.5));
     return setHoodAngle(currentHoodAngle.in(Degrees));
   }
 
   public Command decrementHoodAngle() {
-    Angle currentHoodAngle = _hood.getPosition().minus(Degrees.of(0.5));
+    Angle currentHoodAngle = _hood.getPosition().minus(Degrees.of(2.5));
     return setHoodAngle(currentHoodAngle.in(Degrees));
   }
 
@@ -173,30 +174,6 @@ public class Shooter extends SubsystemBase {
         Commands.waitUntil(homedTrigger),
         runOnce(() -> _hood.setEncoderPosition(Angle.ofBaseUnits(0, Degrees))),
         runOnce(() -> _hood.runVoltage(Voltage.ofBaseUnits(0, Volts))));
-  }
-
-  // public Command calibrateHood() {
-  //   return this.run(
-  //           () ->
-  //               _hood.runVelocity(
-  //                   ShooterConstants.HOOD_VELOCITY,
-  //                   ShooterConstants.HOOD_ACCELERATION,
-  //                   PIDSlot.SLOT_1))
-  //       .until(() -> isAboveCurrentLimit()).andThen(this.run( () ->
-  // _hood.setEncoderPosition(Angle.ofBaseUnits(0, Degrees))));
-  // }
-
-  public Command shoot(AngularVelocity velocity) {
-    // Prepare targets
-    return Commands.sequence(
-        // Set and wait in parallel for both hood and flywheel
-        Commands.parallel(
-            Commands.run(() -> setFlywheelVelocity(velocity)).until(this::flyAtVelocity),
-            Commands.run(() -> setHoodAngle(hoodAngle)).until(this::hoodAtAngle)),
-        // feed once ready
-        Commands.runOnce(() -> runFeeder(FeederConstants.FEED_SPEED)),
-        // stop flywheel when finished
-        Commands.runOnce(() -> setFlywheelVelocity(RotationsPerSecond.of(0.0))));
   }
 
   public Command runFlywheel(AngularVelocity velocity) {
@@ -246,31 +223,53 @@ public class Shooter extends SubsystemBase {
     Robot.robotContainer.intake.simBalls--;
   }
 
-  
   private static final InterpolatingDoubleTreeMap hoodAngleMap = new InterpolatingDoubleTreeMap();
 
-    static {
-        hoodAngleMap.put(2.44, 6.8);
-        hoodAngleMap.put(3.86, 12.1);
-        hoodAngleMap.put(5.0, 18.6);
-        
-    }
-/** Distance from feed pose in meters -> flywheel speed in rotations per second */
-    private static final InterpolatingDoubleTreeMap feedFlywheelMap =
-            new InterpolatingDoubleTreeMap();
+  static {
+    hoodAngleMap.put(1.28, 2.3);
+    hoodAngleMap.put(2.44, 6.8);
+    hoodAngleMap.put(3.1, 8.9);
+    hoodAngleMap.put(3.86, 12.1);
+    hoodAngleMap.put(5.0, 18.6);
+  }
 
-    static {
-        feedFlywheelMap.put(0.0, 50.0);
-        feedFlywheelMap.put(6.0, 50.0);
-        feedFlywheelMap.put(7.0, 55.0);
-        feedFlywheelMap.put(8.0, 60.0);
-        feedFlywheelMap.put(20.0, 60.0);
-    }
+  /** Distance from feed pose in meters -> flywheel speed in rotations per second */
+  private static final InterpolatingDoubleTreeMap feedFlywheelMap =
+      new InterpolatingDoubleTreeMap();
+
+  static {
+    feedFlywheelMap.put(0.0, 50.0);
+    feedFlywheelMap.put(6.0, 50.0);
+    feedFlywheelMap.put(7.0, 55.0);
+    feedFlywheelMap.put(8.0, 60.0);
+    feedFlywheelMap.put(20.0, 60.0);
+  }
+
+  static {
+    feedFlywheelMap.put(0.0, 50.0);
+    feedFlywheelMap.put(6.0, 50.0);
+    feedFlywheelMap.put(7.0, 55.0);
+    feedFlywheelMap.put(8.0, 60.0);
+    feedFlywheelMap.put(20.0, 60.0);
+  }
 
   public Command setAngleForDistance(Distance distance) {
     double distanceMeters = distance.in(Meters);
     double angle = hoodAngleMap.get(distanceMeters);
-    return Commands.runOnce(() -> setHoodAngle(angle));
+    desiredHoodAngle = angle;
+    return this.runOnce(
+            () -> {
+              System.out.println("Command");
+              _hood.runPosition(
+                  Angle.ofBaseUnits(angle, Degrees),
+                  ShooterRotaryConstants.CRUISE_VELOCITY,
+                  ShooterRotaryConstants.ACCELERATION,
+                  ShooterRotaryConstants.JERK,
+                  PIDSlot.SLOT_0);
+              // _hood.runVelocity(ShooterConstants.HOOD_VELOCITY,
+              // ShooterConstants.HOOD_ACCELERATION, PIDSlot.SLOT_0);
+            })
+        .andThen(() -> System.out.println("Command ran"));
   }
 
   public boolean isAutoShootEnabled() {
@@ -336,6 +335,5 @@ public class Shooter extends SubsystemBase {
     //     new Pose3d(new Translation3d(-0.0075, 0.0, 0.523), new Rotation3d(0, pitch, 0)));
 
     // _hood.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp()) * 0.25));
-  } 
-
+  }
 }
