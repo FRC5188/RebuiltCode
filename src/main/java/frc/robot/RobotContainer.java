@@ -113,7 +113,7 @@ public class RobotContainer {
                         HopperConstants.MOTOR_NAME,
                         HopperConstants.getFXConfig(),
                         Ports.Spindexer,
-                        50.0))); // 50Hz status frames - hopper doesn't need high freq
+                        20.0))); // 50Hz status frames - hopper doesn't need high freq
         shooter =
             new Shooter(
                 new FlywheelMechanismReal(
@@ -145,13 +145,13 @@ public class RobotContainer {
                         IntakeFlywheelConstants.MOTOR_NAME,
                         IntakeFlywheelConstants.getFXConfig(),
                         Ports.IntakeRoller,
-                        30.0)), // Reduced from 100Hz for CAN optimization
+                        20.0)), // Reduced from 100Hz for CAN optimization
                 new RotaryMechanismReal(
                     new MotorIOTalonFX(
                         IntakePivotConstants.NAME,
                         IntakePivotConstants.getFXConfig(),
                         Ports.IntakePivot,
-                        50.0), // Medium frequency for pivot positioning
+                        30.0), //50 Medium frequency for pivot positioning
                     IntakePivotConstants.CONSTANTS,
                     Optional.empty()));
         climber =
@@ -160,7 +160,8 @@ public class RobotContainer {
                     new MotorIOTalonFX(
                         ClimberConstants.MOTOR_NAME,
                         ClimberConstants.getFXConfig(),
-                        Ports.ClimberMotor),
+                        Ports.ClimberMotor,
+                        20.0),
                     ClimberConstants.CHARACTERISTICS));
         vision =
             new Vision(
