@@ -21,10 +21,13 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.lib.Rebuilt2026.HubShiftUtil;
 import frc.lib.W8.io.motor.*;
 import frc.lib.W8.io.vision.VisionIOPhotonVision;
 import frc.lib.W8.io.vision.VisionIOPhotonVisionSim;
@@ -58,6 +61,8 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import java.util.Optional;
+import java.util.function.Supplier;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
@@ -349,7 +354,7 @@ public class RobotContainer {
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Shoot
-    controller.leftTrigger().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(67)));
+    controller.leftTrigger().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(55)));
     controller.leftTrigger().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
 
     // Feed
@@ -357,8 +362,8 @@ public class RobotContainer {
         .leftBumper()
         .whileTrue(
             Commands.parallel(
-                shooter.runTower(RotationsPerSecond.of(30)),
-                hopper.runSpindexer(RotationsPerSecond.of(15)),
+                shooter.runTower(RotationsPerSecond.of(40)),
+                hopper.runSpindexer(RotationsPerSecond.of(20)),
                 intake.intake()));
     controller
         .leftBumper()
@@ -373,12 +378,11 @@ public class RobotContainer {
     controller.rightTrigger().onFalse(Commands.run(() -> intake.stop()));
 
     // Align
-    controller.a().onTrue(getAutonomousCommand());
-    controller.a().onFalse(getAutonomousCommand());
+    // controller.a().onTrue(getAutonomousCommand());
+    // controller.a().onFalse(getAutonomousCommand());
 
-    // Jostle
-    controller.b().onTrue(getAutonomousCommand());
-    controller.b().onFalse(getAutonomousCommand());
+    // // Jostle
+   //  controller.b().onTrue(intake.Jostle());
 
     // Calibrate Hood
     controller.y().onTrue(shooter.calibrateHood());
@@ -397,7 +401,7 @@ public class RobotContainer {
     controller.povLeft().onTrue(shooter.setHoodAngle(6.8));
     controller.povDown().onTrue(shooter.setHoodAngle(12.1));
     controller.povRight().onTrue(shooter.setHoodAngle(18.6));
-    controller.b().whileTrue(intake.zeroEncoder());
+    //controller.b().whileTrue(intake.zeroEncoder());
 
     // controller.povRight().onTrue(shooter.calibrateHood());
 
@@ -422,8 +426,19 @@ public class RobotContainer {
     controller.povDown().onTrue(shooter.setAngleForDistance(Meters.of(2.0)));
     // controller.povLeft().onTrue(shooter.setAngleForDistance(Meters.of(2.5)));
     controller.povRight().onTrue(shooter.setAngleForDistance(Meters.of(3.0)));
+
+
+    HubShiftUtil.setAllianceWinOverride(
+        () -> {
+            if (loseauto.get()) {return Optional.of(false); }
+            if (winauto.get()) {return Optional.of(true); }
+            return Optional.empty();
+        }
+    );
   }
 
+     Supplier<Boolean> loseauto = ()-> SmartDashboard.getBoolean("Auto Lost", false);
+     Supplier<Boolean> winauto = ()-> SmartDashboard.getBoolean("Auto Won", false);
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

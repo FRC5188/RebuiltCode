@@ -23,11 +23,14 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.Rebuilt2026.FuelSim;
+import frc.lib.Rebuilt2026.HubShiftUtil;
 import frc.robot.generated.TunerConstants;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -107,6 +110,7 @@ public class Robot extends LoggedRobot {
         throw new RuntimeException(
             "You are using an unsupported swerve configuration, which this template does not support without manual customization. The 2025 release of Phoenix supports some swerve configurations which were not available during 2025 beta testing, preventing any development and support from the AdvantageKit developers.");
       }
+      HubShiftUtil.initialize();
     }
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
@@ -117,6 +121,19 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during all modes. */
   @Override
   public void robotPeriodic() {
+     // Publish match time
+    SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
+
+    // Update from HubShiftUtil
+    SmartDashboard.putString(
+        "Shifts/Remaining Shift Time",
+        String.format("%.1f", Math.max(HubShiftUtil.getShiftedShiftInfo().remainingTime(), 0.0)));
+    SmartDashboard.putBoolean("Shifts/Shift Active", HubShiftUtil.getShiftedShiftInfo().active());
+    SmartDashboard.putString(
+        "Shifts/Game State", HubShiftUtil.getShiftedShiftInfo().currentShift().toString());
+    SmartDashboard.putBoolean(
+        "Shifts/Active First?",
+        DriverStation.getAlliance().orElse(Alliance.Blue) == HubShiftUtil.getFirstActiveAlliance());
     // Optionally switch the thread to high priority to improve loop
     // timing (see the template project documentation for details)
     // Threads.setCurrentThreadPriority(true, 99);
@@ -152,6 +169,7 @@ public class Robot extends LoggedRobot {
     // if (autonomousCommand != null) {
     //   autonomousCommand.schedule();
     // }
+    HubShiftUtil.initialize();
   }
 
   /** This function is called periodically during autonomous. */
@@ -168,6 +186,7 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+    HubShiftUtil.initialize();
   }
 
   /** This function is called periodically during operator control. */
@@ -179,6 +198,7 @@ public class Robot extends LoggedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+    HubShiftUtil.initialize();
   }
 
   /** This function is called periodically during test mode. */
@@ -213,6 +233,7 @@ public class Robot extends LoggedRobot {
 
     fuelSim.enableAirResistance(); // an additional drag force will be applied to fuel in physics
     // update step
+    HubShiftUtil.initialize();
   }
 
   /** This function is called periodically whilst in simulation. */
