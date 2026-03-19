@@ -421,8 +421,8 @@ public class RobotContainer {
     // controller.povLeft().onTrue(shooter.setHoodAngle(6.8));
     // controller.povDown().onTrue(shooter.setHoodAngle(12.1));
     // controller.povRight().onTrue(shooter.setHoodAngle(18.6));
-    
-    //controller.povLeft().onTrue(shooter.setAngleForDistance(2.0));
+
+    // controller.povLeft().onTrue(shooter.setAngleForDistance(2.0));
   }
 
   /**
