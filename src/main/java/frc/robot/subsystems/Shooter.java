@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -184,6 +185,14 @@ public class Shooter extends SubsystemBase {
   public Command runTower(AngularVelocity velocity) {
     System.out.println("Tower");
     return Commands.run(() -> runFeeder(velocity), this);
+  }
+
+  public Command fireDeezNutz() {
+    return Commands.run(() -> {runFeeder(RotationsPerSecond.of(30)); setFlywheelVelocity(RotationsPerSecond.of(67));});
+  }
+
+  public Command stopDeezNutz() {
+    return Commands.run(() -> {runFeeder(RotationsPerSecond.of(0)); setFlywheelVelocity(RotationsPerSecond.of(0));});
   }
 
   public void simShoot() {
