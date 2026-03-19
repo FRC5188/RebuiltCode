@@ -89,7 +89,12 @@ public class RobotContainer {
     // if (Robot.isReal()) ballCounter = new BallCounter(new LaserCan(1));
     // else ballCounter = null;
 
-    BaseStatusSignal.setUpdateFrequencyForAll(50.0);
+    // DISABLED IN SIM: BaseStatusSignal.setUpdateFrequencyForAll(50.0) was causing NT flooding
+    // because it sets ALL status signals to 50Hz before the module IO can set specific frequencies
+    // Let subsystem-specific configs handle signal frequencies instead
+    if (Constants.currentMode == Constants.Mode.REAL) {
+      BaseStatusSignal.setUpdateFrequencyForAll(50.0);
+    }
 
     switch (Constants.currentMode) {
       case REAL:
@@ -118,7 +123,9 @@ public class RobotContainer {
                         ShooterFlywheelConstants.FOLLOWER_1)),
                 new FlywheelMechanismReal(
                     new MotorIOTalonFX(
-                        "ShooterTower", FeederConstants.getFXConfig(false), Ports.TowerRoller)),
+                        FeederConstants.NAME,
+                        FeederConstants.getFXConfig(false),
+                        Ports.TowerRoller)),
                 new RotaryMechanismReal(
                     new MotorIOTalonFX(
                         ShooterRotaryConstants.NAME,
@@ -182,19 +189,18 @@ public class RobotContainer {
                     new MotorIOTalonFXSim(
                         ShooterFlywheelConstants.NAME,
                         ShooterFlywheelConstants.getFXConfig(true),
-                        Ports.RightFlywheel,
-                        ShooterFlywheelConstants.FOLLOWER_1),
+                        Ports.RightFlywheel),
                     ShooterFlywheelConstants.DCMOTOR,
                     ShooterFlywheelConstants.MOI,
                     ShooterFlywheelConstants.TOLERANCE),
                 new FlywheelMechanismSim(
                     new MotorIOTalonFXSim(
-                        ShooterFlywheelConstants.NAME,
-                        ShooterFlywheelConstants.getFXConfig(false),
+                        FeederConstants.NAME,
+                        FeederConstants.getFXConfig(false),
                         Ports.TowerRoller),
-                    ShooterFlywheelConstants.DCMOTOR,
-                    ShooterFlywheelConstants.MOI,
-                    ShooterFlywheelConstants.TOLERANCE),
+                    FeederConstants.DCMOTOR,
+                    FeederConstants.MOI,
+                    FeederConstants.TOLERANCE),
                 new RotaryMechanismSim(
                     new MotorIOTalonFXSim(
                         ShooterRotaryConstants.NAME,
@@ -202,7 +208,7 @@ public class RobotContainer {
                         Ports.HoodMotor),
                     ShooterRotaryConstants.DCMOTOR,
                     ShooterRotaryConstants.MOI,
-                    true,
+                    false,
                     ShooterRotaryConstants.CONSTANTS,
                     java.util.Optional.empty()));
 
@@ -220,7 +226,7 @@ public class RobotContainer {
                     new MotorIOTalonFXSim(
                         IntakePivotConstants.NAME,
                         IntakePivotConstants.getFXConfig(),
-                        Ports.IntakeRoller),
+                        Ports.IntakePivot),
                     IntakePivotConstants.DCMOTOR,
                     IntakePivotConstants.MOI,
                     false,
@@ -349,6 +355,23 @@ public class RobotContainer {
     // // Switch to X pattern when X button is pressed
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
+    // controller
+    //     .x()
+    //     .onTrue(Commands.runOnce(() -> hopper.setGoal(HopperConstants.HOPPER_POSITION), hopper));
+
+    // // Commands for sim testing!
+    // controller.rightTrigger().onTrue(Commands.runOnce(() -> shooter.simShoot()));
+
+    // controller
+    //     .leftTrigger()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //             () -> {
+    //               Robot.fuelSim.clearFuel();
+    //               Robot.fuelSim.spawnStartingFuel();
+    //               intake.simBalls = 0;
+    //             }));
+
     // Shoot
     controller.leftTrigger().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(67)));
     controller.leftTrigger().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
@@ -398,6 +421,8 @@ public class RobotContainer {
     // controller.povLeft().onTrue(shooter.setHoodAngle(6.8));
     // controller.povDown().onTrue(shooter.setHoodAngle(12.1));
     // controller.povRight().onTrue(shooter.setHoodAngle(18.6));
+
+    // controller.povLeft().onTrue(shooter.setAngleForDistance(2.0));
   }
 
   /**

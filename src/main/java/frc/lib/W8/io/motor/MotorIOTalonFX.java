@@ -75,9 +75,9 @@ public class MotorIOTalonFX implements MotorIO {
   // Preconfigured control objects reused for efficiency
   protected final CoastOut coastControl = new CoastOut();
   protected final StaticBrake brakeControl = new StaticBrake();
-  protected final VoltageOut voltageControl = new VoltageOut(0).withEnableFOC(true);
+  protected final VoltageOut voltageControl = new VoltageOut(0);
   protected final TorqueCurrentFOC currentControl = new TorqueCurrentFOC(0);
-  protected final DutyCycleOut dutyCycleControl = new DutyCycleOut(0).withEnableFOC(true);
+  protected final DutyCycleOut dutyCycleControl = new DutyCycleOut(0);
   protected final DynamicMotionMagicTorqueCurrentFOC positionControl =
       new DynamicMotionMagicTorqueCurrentFOC(0, 0, 0);
   protected final VelocityTorqueCurrentFOC velocityControl = new VelocityTorqueCurrentFOC(0);
@@ -105,7 +105,6 @@ public class MotorIOTalonFX implements MotorIO {
     this.name = name;
 
     motor = new TalonFX(main.id(), main.bus());
-    motor.optimizeBusUtilization();
     updateThread.CTRECheckErrorAndRetry(() -> motor.getConfigurator().apply(config));
 
     // Initialize lists
@@ -141,38 +140,17 @@ public class MotorIOTalonFX implements MotorIO {
     closedLoopReference = motor.getClosedLoopReference();
     closedLoopReferenceSlope = motor.getClosedLoopReferenceSlope();
 
-    // Set different update frequencies based on signal importance
-    // Critical signals for control (reduced frequency)
     updateThread.CTRECheckErrorAndRetry(
         () ->
             BaseStatusSignal.setUpdateFrequencyForAll(
-                50.0, position, velocity)); // Critical for control loops
+                100, position, velocity, supplyCurrent, supplyCurrent, torqueCurrent, temperature));
 
-    // Important telemetry (lower frequency)
     updateThread.CTRECheckErrorAndRetry(
         () ->
             BaseStatusSignal.setUpdateFrequencyForAll(
-                20.0, supplyCurrent, torqueCurrent)); // Important for monitoring
+                200, closedLoopError, closedLoopReference, closedLoopReferenceSlope));
 
-    // Non-critical telemetry (very low frequency)
-    updateThread.CTRECheckErrorAndRetry(
-        () ->
-            BaseStatusSignal.setUpdateFrequencyForAll(
-                10.0, temperature, supplyVoltage)); // Less critical
-
-    // Control loop feedback (reduced frequency when in closed-loop)
-    updateThread.CTRECheckErrorAndRetry(
-        () ->
-            BaseStatusSignal.setUpdateFrequencyForAll(
-                100.0, closedLoopError, closedLoopReference, closedLoopReferenceSlope));
-
-    // Optimize bus utilization with longer timeout for better optimization
-    motor.optimizeBusUtilization(1.0, 1.0); // Increased timeout for better optimization
-
-    // Optimize follower bus utilization
-    for (TalonFX follower : followers) {
-      follower.optimizeBusUtilization(1.0, 1.0);
-    }
+    motor.optimizeBusUtilization(0, 1.0);
   }
 
   /**
@@ -188,7 +166,7 @@ public class MotorIOTalonFX implements MotorIO {
     return (control instanceof PositionTorqueCurrentFOC)
         || (control instanceof PositionVoltage)
         || (control instanceof MotionMagicTorqueCurrentFOC)
-        || (control instanceof DynamicMotionMagicTorqueCurrentFOC)
+        || (control instanceof MotionMagicDutyCycle)
         || (control instanceof MotionMagicVoltage);
   }
 
@@ -203,7 +181,7 @@ public class MotorIOTalonFX implements MotorIO {
     var control = motor.getAppliedControl();
     return (control instanceof VelocityTorqueCurrentFOC)
         || (control instanceof VelocityVoltage)
-        || (control instanceof MotionMagicVelocityTorqueCurrentFOC)
+        || (control instanceof MotionMagicVelocityDutyCycle)
         || (control instanceof MotionMagicVelocityVoltage);
   }
 
@@ -218,8 +196,8 @@ public class MotorIOTalonFX implements MotorIO {
   protected boolean isRunningMotionMagic() {
     var control = motor.getAppliedControl();
     return (control instanceof MotionMagicTorqueCurrentFOC)
-        || (control instanceof DynamicMotionMagicTorqueCurrentFOC)
-        || (control instanceof MotionMagicVelocityTorqueCurrentFOC)
+        || (control instanceof MotionMagicDutyCycle)
+        || (control instanceof MotionMagicVelocityDutyCycle)
         || (control instanceof MotionMagicVoltage)
         || (control instanceof MotionMagicVelocityVoltage);
   }
@@ -263,16 +241,18 @@ public class MotorIOTalonFX implements MotorIO {
    */
   @Override
   public void updateInputs(MotorInputs inputs) {
-    // Refresh signals in groups based on priority
-    // Refresh critical signals first
-    boolean criticalSignalsOk = BaseStatusSignal.refreshAll(position, velocity).isOK();
-
-    // Refresh telemetry signals
-    boolean telemetrySignalsOk =
-        BaseStatusSignal.refreshAll(supplyCurrent, torqueCurrent, temperature, supplyVoltage)
+    inputs.connected =
+        BaseStatusSignal.refreshAll(
+                position,
+                velocity,
+                supplyVoltage,
+                supplyCurrent,
+                torqueCurrent,
+                temperature,
+                closedLoopError,
+                closedLoopReference,
+                closedLoopReferenceSlope)
             .isOK();
-
-    inputs.connected = criticalSignalsOk && telemetrySignalsOk;
 
     inputs.position = position.getValue();
     inputs.velocity = velocity.getValue();
@@ -281,47 +261,34 @@ public class MotorIOTalonFX implements MotorIO {
     inputs.torqueCurrent = torqueCurrent.getValue();
     inputs.temperature = temperature.getValue();
 
-    // Check current control modes
+    // Interpret control-loop status signals conditionally based on current mode
+    Double closedLoopErrorValue = closedLoopError.getValue();
+    Double closedLoopTargetValue = closedLoopReference.getValue();
+
     boolean isRunningPositionControl = isRunningPositionControl();
     boolean isRunningMotionMagic = isRunningMotionMagic();
     boolean isRunningVelocityControl = isRunningVelocityControl();
 
-    // Only update closed-loop signals when in closed-loop modes
-    if (isRunningPositionControl || isRunningVelocityControl) {
-      BaseStatusSignal.refreshAll(closedLoopError, closedLoopReference, closedLoopReferenceSlope);
+    inputs.positionError = isRunningPositionControl ? Rotations.of(closedLoopErrorValue) : null;
 
-      // Interpret control-loop status signals conditionally based on current mode
-      Double closedLoopErrorValue = closedLoopError.getValue();
-      Double closedLoopTargetValue = closedLoopReference.getValue();
+    inputs.activeTrajectoryPosition =
+        isRunningPositionControl && isRunningMotionMagic
+            ? Rotations.of(closedLoopTargetValue)
+            : null;
 
-      inputs.positionError = isRunningPositionControl ? Rotations.of(closedLoopErrorValue) : null;
+    inputs.goalPosition = isRunningPositionControl ? goalPosition : null;
 
-      inputs.activeTrajectoryPosition =
-          isRunningPositionControl && isRunningMotionMagic
-              ? Rotations.of(closedLoopTargetValue)
-              : null;
-
-      inputs.goalPosition = isRunningPositionControl ? goalPosition : null;
-
-      if (isRunningVelocityControl) {
-        inputs.velocityError = RotationsPerSecond.of(closedLoopErrorValue);
-        inputs.activeTrajectoryVelocity = RotationsPerSecond.of(closedLoopTargetValue);
-      } else if (isRunningPositionControl && isRunningMotionMagic) {
-        var targetVelocity = closedLoopReferenceSlope.getValue();
-        inputs.velocityError =
-            RotationsPerSecond.of(targetVelocity - inputs.velocity.in(RotationsPerSecond));
-        inputs.activeTrajectoryVelocity = RotationsPerSecond.of(targetVelocity);
-      } else {
-        inputs.velocityError = null;
-        inputs.activeTrajectoryVelocity = null;
-      }
+    if (isRunningVelocityControl) {
+      inputs.velocityError = RotationsPerSecond.of(closedLoopErrorValue);
+      inputs.activeTrajectoryVelocity = RotationsPerSecond.of(closedLoopTargetValue);
+    } else if (isRunningPositionControl && isRunningMotionMagic) {
+      var targetVelocity = closedLoopReferenceSlope.getValue();
+      inputs.velocityError =
+          RotationsPerSecond.of(targetVelocity - inputs.velocity.in(RotationsPerSecond));
+      inputs.activeTrajectoryVelocity = RotationsPerSecond.of(targetVelocity);
     } else {
-      // Not in closed-loop mode, set control loop values to null
-      inputs.positionError = null;
       inputs.velocityError = null;
       inputs.activeTrajectoryVelocity = null;
-      inputs.activeTrajectoryPosition = null;
-      inputs.goalPosition = null;
     }
 
     inputs.controlType = getCurrentControlType();
@@ -428,13 +395,7 @@ public class MotorIOTalonFX implements MotorIO {
       Velocity<AngularAccelerationUnit> maxJerk,
       PIDSlot slot) {
     this.goalPosition = position;
-    motor.setControl(
-        positionControl
-            .withPosition(position)
-            .withVelocity(cruiseVelocity)
-            .withAcceleration(acceleration)
-            .withJerk(maxJerk)
-            .withSlot(slot.getNum()));
+    motor.setControl(positionControl.withPosition(position).withSlot(slot.getNum()));
   }
 
   /**
