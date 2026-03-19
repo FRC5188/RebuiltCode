@@ -132,7 +132,7 @@ public class Shooter extends SubsystemBase {
             () -> {
               System.out.println("Command");
               _hood.runPosition(
-                  Angle.ofBaseUnits(angleDegrees, Degrees),
+                  Angle.ofBaseUnits(angleDegrees * ShooterConstants.SIM_MULTIPLIER, Degrees),
                   ShooterRotaryConstants.CRUISE_VELOCITY,
                   ShooterRotaryConstants.ACCELERATION,
                   ShooterRotaryConstants.JERK,
@@ -268,7 +268,7 @@ public class Shooter extends SubsystemBase {
             () -> {
               System.out.println("Command");
               _hood.runPosition(
-                  Angle.ofBaseUnits(angle, Degrees),
+                  Angle.ofBaseUnits(angle * ShooterConstants.SIM_MULTIPLIER, Degrees),
                   ShooterRotaryConstants.CRUISE_VELOCITY,
                   ShooterRotaryConstants.ACCELERATION,
                   ShooterRotaryConstants.JERK,

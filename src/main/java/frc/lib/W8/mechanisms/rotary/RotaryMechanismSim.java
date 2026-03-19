@@ -76,6 +76,7 @@ public class RotaryMechanismSim extends RotaryMechanism {
   @Override
   public void periodic() {
     super.periodic();
+    io.updateInputs(inputs);
 
     Time currentTime = Seconds.of(Timer.getTimestamp());
     double deltaTime = currentTime.minus(lastTime).in(Seconds);
@@ -103,7 +104,6 @@ public class RotaryMechanismSim extends RotaryMechanism {
           Logger.processInputs(encoderSim.getName(), absoluteEncoderInputs);
         });
 
-    io.updateInputs(inputs);
     Logger.processInputs(io.getName(), inputs);
   }
 
