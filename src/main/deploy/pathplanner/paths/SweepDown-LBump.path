@@ -3,32 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.5262075134168156,
-        "y": 5.786
+        "x": 7.735517857150679,
+        "y": 1.3139999999959786
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5262075134168156,
-        "y": 5.451165697708541
+        "x": 4.947032280227601,
+        "y": 1.8154663461498246
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "EndDownSweep"
     },
     {
       "anchor": {
-        "x": 2.5262075134168156,
-        "y": 3.786
+        "x": 3.6,
+        "y": 2.51
       },
       "prevControl": {
-        "x": 2.5262075134168156,
-        "y": 4.036
+        "x": 5.624583333333333,
+        "y": 2.4244060897435897
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Top Position "
+      "linkedName": "LB"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5818385650224271,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -45,10 +50,10 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "New Folder",
+  "folder": "Sweep Paths ✔",
   "idealStartingState": {
-    "velocity": 0.0,
-    "rotation": 0.0
+    "velocity": 0,
+    "rotation": -100.0
   },
   "useDefaultConstraints": true
 }

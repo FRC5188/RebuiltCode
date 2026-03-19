@@ -3,32 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.5262075134168156,
-        "y": 5.786
+        "x": 0.5375257072239912,
+        "y": 5.9245833333333335
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5262075134168156,
-        "y": 5.451165697708541
+        "x": 0.7576434822031876,
+        "y": 6.04310828909459
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Depot"
     },
     {
       "anchor": {
-        "x": 2.5262075134168156,
-        "y": 3.786
+        "x": 1.0716738049959909,
+        "y": 4.599583975068654
       },
       "prevControl": {
-        "x": 2.5262075134168156,
-        "y": 4.036
+        "x": 2.4268716151814416,
+        "y": 4.535752194154123
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Top Position "
+      "linkedName": "Climb1"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.643428571428569,
+      "rotationDegrees": 90.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -42,13 +47,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 90.0
   },
   "reversed": false,
-  "folder": "New Folder",
+  "folder": "Climb Paths ✔",
   "idealStartingState": {
-    "velocity": 0.0,
-    "rotation": 0.0
+    "velocity": 0,
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

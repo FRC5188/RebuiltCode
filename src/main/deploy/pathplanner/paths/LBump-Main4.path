@@ -3,35 +3,42 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.5262075134168156,
-        "y": 5.786
+        "x": 3.6,
+        "y": 2.51
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5262075134168156,
-        "y": 5.451165697708541
+        "x": 5.325279331824971,
+        "y": 2.4556189300493476
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "LB"
     },
     {
       "anchor": {
-        "x": 2.5262075134168156,
-        "y": 3.786
+        "x": 7.756784652889603,
+        "y": 2.1754616603872785
       },
       "prevControl": {
-        "x": 2.5262075134168156,
-        "y": 4.036
+        "x": 7.485616952764362,
+        "y": 2.1642888942636884
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Top Position "
+      "linkedName": "M4"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "IntakeOn",
+      "waypointRelativePos": 0.4,
+      "endWaypointRelativePos": 2.0,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 0.5,
     "maxAcceleration": 0.5,
@@ -45,9 +52,9 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "New Folder",
+  "folder": "Initial✔️",
   "idealStartingState": {
-    "velocity": 0.0,
+    "velocity": 0,
     "rotation": 0.0
   },
   "useDefaultConstraints": true

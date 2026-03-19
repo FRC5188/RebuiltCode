@@ -3,29 +3,45 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.5262075134168156,
-        "y": 5.786
+        "x": 3.495168269230769,
+        "y": 3.976858974358975
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5262075134168156,
-        "y": 5.451165697708541
+        "x": 3.562498037081225,
+        "y": 4.685423967526528
+      },
+      "isLocked": false,
+      "linkedName": "S2"
+    },
+    {
+      "anchor": {
+        "x": 3.70221686746988,
+        "y": 5.302614457831326
+      },
+      "prevControl": {
+        "x": 3.315394304995904,
+        "y": 4.9551819731083935
+      },
+      "nextControl": {
+        "x": 4.311156428667846,
+        "y": 5.8495458039244985
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.5262075134168156,
-        "y": 3.786
+        "x": 7.645743952021233,
+        "y": 5.00357851618481
       },
       "prevControl": {
-        "x": 2.5262075134168156,
-        "y": 4.036
+        "x": 6.50986388720549,
+        "y": 5.104680754437479
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Top Position "
+      "linkedName": "M2"
     }
   ],
   "rotationTargets": [],
@@ -45,10 +61,10 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "New Folder",
+  "folder": "Shoot✔️ ",
   "idealStartingState": {
-    "velocity": 0.0,
-    "rotation": 0.0
+    "velocity": 0,
+    "rotation": 1.101706115206352
   },
   "useDefaultConstraints": true
 }

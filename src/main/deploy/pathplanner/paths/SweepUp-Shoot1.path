@@ -3,32 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.5262075134168156,
-        "y": 5.786
+        "x": 7.625265060240963,
+        "y": 6.635795180722892
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5262075134168156,
-        "y": 5.451165697708541
+        "x": 5.116318990364502,
+        "y": 5.313439573860769
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "EndUpSweep"
     },
     {
       "anchor": {
-        "x": 2.5262075134168156,
-        "y": 3.786
+        "x": 2.971899038461538,
+        "y": 5.9245833333333335
       },
       "prevControl": {
-        "x": 2.5262075134168156,
-        "y": 4.036
+        "x": 3.2152851374812865,
+        "y": 5.98170781848593
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Top Position "
+      "linkedName": "S1"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.3706666666666657,
+      "rotationDegrees": -45.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -42,13 +47,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -45.0
   },
   "reversed": false,
-  "folder": "New Folder",
+  "folder": "Sweep Paths ✔",
   "idealStartingState": {
-    "velocity": 0.0,
-    "rotation": 0.0
+    "velocity": 0,
+    "rotation": 100.0
   },
   "useDefaultConstraints": true
 }
