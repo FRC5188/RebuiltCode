@@ -141,6 +141,9 @@ public class MotorIOTalonFX implements MotorIO {
     closedLoopReference = motor.getClosedLoopReference();
     closedLoopReferenceSlope = motor.getClosedLoopReferenceSlope();
 
+    // Set different update frequencies based on signal importance
+    // Critical signals for control (reduced frequency)
+
     updateThread.CTRECheckErrorAndRetry(
         () ->
             BaseStatusSignal.setUpdateFrequencyForAll(
@@ -149,8 +152,6 @@ public class MotorIOTalonFX implements MotorIO {
         () ->
             BaseStatusSignal.setUpdateFrequencyForAll(
                 20.0, supplyCurrent, torqueCurrent)); // Important for monitoring
-
-    motor.optimizeBusUtilization(0, 1.0);
 
     // Non-critical telemetry (very low frequency)
     updateThread.CTRECheckErrorAndRetry(
@@ -171,6 +172,8 @@ public class MotorIOTalonFX implements MotorIO {
     for (TalonFX follower : followers) {
       follower.optimizeBusUtilization(1.0, 1.0);
     }
+
+    motor.optimizeBusUtilization(0, 1.0);
   }
 
   /**

@@ -48,7 +48,6 @@ public class AbsoluteEncoderIOCANCoder implements AbsoluteEncoderIO {
 
     // Optimize bus utilization
     CANCoder.optimizeBusUtilization(1.0);
-    updateThread.CTRECheckErrorAndRetry(() -> angle.setUpdateFrequency(200));
   }
 
   @Override
