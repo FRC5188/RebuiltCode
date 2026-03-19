@@ -377,14 +377,14 @@ public class RobotContainer {
         .leftBumper()
         .whileTrue(
             Commands.parallel(
-                shooter.fireDeezNutz(),
+                shooter.score(),
                 hopper.runSpindexer(RotationsPerSecond.of(15)),
                 intake.intake()));
     controller
         .leftBumper()
         .onFalse(
             Commands.parallel(
-                shooter.stopDeezNutz(),
+                shooter.stopScore(),
                 hopper.runSpindexer(RotationsPerSecond.of(0)),
                 Commands.run(() -> intake.stop())));
 

@@ -187,11 +187,11 @@ public class Shooter extends SubsystemBase {
     return Commands.run(() -> runFeeder(velocity), this);
   }
 
-  public Command fireDeezNutz() {
+  public Command score() {
     return Commands.run(() -> {runFeeder(RotationsPerSecond.of(30)); setFlywheelVelocity(RotationsPerSecond.of(67));});
   }
 
-  public Command stopDeezNutz() {
+  public Command stopScore() {
     return Commands.run(() -> {runFeeder(RotationsPerSecond.of(0)); setFlywheelVelocity(RotationsPerSecond.of(0));});
   }
 
