@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
@@ -37,9 +38,7 @@ public class Climber extends SubsystemBase {
         new Trigger(
             () ->
                 homedDebounce.calculate(
-                    _io
-                        .getSupplyCurrent()
-                        .gte(Amps.of(ClimberConstants.HARD_STOP_CURRENT_LIMIT))));
+                    _io.getSupplyCurrent().gte(Amps.of(ClimberConstants.HARD_STOP_CURRENT_LIMIT))));
   }
 
   // public void Position(double position) {
@@ -80,6 +79,33 @@ public class Climber extends SubsystemBase {
         runOnce(() -> _io.runVoltage(Voltage.ofBaseUnits(0, Volts))));
   }
 
+  public Command stopClimber() {
+    return this.run(
+        () ->
+            _io.runVelocity(
+                DegreesPerSecond.of(0.0), ClimberConstants.ACCELERATION, PIDSlot.SLOT_0));
+  }
+
+  public Command raiseClimber() {
+    return this.run(
+            () ->
+                _io.runVelocity(
+                    ClimberConstants.CRUISE_VELOCITY,
+                    ClimberConstants.ACCELERATION,
+                    PIDSlot.SLOT_0))
+        .until(() -> isAboveCurrentLimit());
+  }
+
+  public Command lowerClimber() {
+    System.out.println(ClimberConstants.LOWER_VELOCITY);
+    System.out.println(ClimberConstants.ACCELERATION);
+    return this.run(
+            () ->
+                _io.runVelocity(
+                    ClimberConstants.LOWER_VELOCITY, ClimberConstants.ACCELERATION, PIDSlot.SLOT_0))
+        .until(() -> isAboveCurrentLimit());
+  }
+
   public boolean nearGoalposition() {
     if (Math.abs(
             goalDistance.in(Meters)
@@ -90,7 +116,6 @@ public class Climber extends SubsystemBase {
       return false;
     }
   }
-
 
   @Override
   public void periodic() {

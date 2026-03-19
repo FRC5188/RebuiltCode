@@ -410,10 +410,10 @@ public class RobotContainer {
     controller.x().whileTrue(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
 
     // Climber Raise/Lower
-    controller.povUp().whileTrue(climber.raiseClimber());
-    controller.povUp().onFalse(climber.stopClimber());
-    controller.povDown().whileTrue(climber.lowerClimber());
-    controller.povDown().onFalse(climber.stopClimber());
+    // controller.povUp().whileTrue(climber.raiseClimber());
+    // controller.povUp().onFalse(climber.stopClimber());
+    // controller.povDown().whileTrue(climber.lowerClimber());
+    // controller.povDown().onFalse(climber.stopClimber());
 
     controller.povLeft().onTrue(intake.zeroEncoder());
 
