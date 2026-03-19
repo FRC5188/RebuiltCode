@@ -405,6 +405,15 @@ public class RobotContainer {
     // controller.a().onTrue(getAutonomousCommand());
     // controller.a().onFalse(getAutonomousCommand());
 
+    // Auto Align
+    controller
+        .a()
+        .whileTrue(new CmdShootOnTheMove(
+            drive, 
+            shooter, 
+            () -> controller.getLeftY(),
+            () -> controller.getLeftX()));
+
     // Jostle
     controller.b().onTrue(intake.jostleIntake());
 
