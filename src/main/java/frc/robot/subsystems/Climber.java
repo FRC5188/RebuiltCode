@@ -94,33 +94,6 @@ public class Climber extends SubsystemBase {
         .until(() -> isAboveCurrentLimit());
   }
 
-  public Command stopClimber() {
-    return this.run(
-        () ->
-            _io.runVelocity(
-                DegreesPerSecond.of(0.0), ClimberConstants.ACCELERATION, PIDSlot.SLOT_0));
-  }
-
-  public Command raiseClimber() {
-    return this.run(
-            () ->
-                _io.runVelocity(
-                    ClimberConstants.CRUISE_VELOCITY,
-                    ClimberConstants.ACCELERATION,
-                    PIDSlot.SLOT_0))
-        .until(() -> isAboveCurrentLimit());
-  }
-
-  public Command lowerClimber() {
-    System.out.println(ClimberConstants.LOWER_VELOCITY);
-    System.out.println(ClimberConstants.ACCELERATION);
-    return this.run(
-            () ->
-                _io.runVelocity(
-                    ClimberConstants.LOWER_VELOCITY, ClimberConstants.ACCELERATION, PIDSlot.SLOT_0))
-        .until(() -> isAboveCurrentLimit());
-  }
-
   public boolean nearGoalposition() {
     if (Math.abs(
             goalDistance.in(Meters)
