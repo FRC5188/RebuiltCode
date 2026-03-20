@@ -7,6 +7,8 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -45,6 +47,9 @@ public class Shooter extends SubsystemBase {
   private double desiredVelo;
   private double hoodAngle;
   private double desiredHoodAngle;
+
+
+   private static boolean autoShootEnabled = true;
 
   public AngularVelocity targetVelocity = RotationsPerSecond.of(0.0);
   public AngularVelocity feederTargetVelocity = RotationsPerSecond.of(0.0);
@@ -124,23 +129,26 @@ public class Shooter extends SubsystemBase {
                 / (ShooterConstants.GRAVITY * distance)));
   }
 
+  public boolean isAutoShootEnabled() {
+    return autoShootEnabled;
+  }
+
+  public void setAutoShootEnabled(boolean enabled) {
+    autoShootEnabled = enabled;
+  }
   // Sets hood angle
   public Command setHoodAngle(double angleDegrees) {
     hoodAngle = angleDegrees;
     desiredHoodAngle = angleDegrees;
-    return this.runOnce(
+    return this.run(
             () -> {
-              System.out.println("Command");
               _hood.runPosition(
                   Angle.ofBaseUnits(angleDegrees * ShooterConstants.SIM_MULTIPLIER, Degrees),
                   ShooterRotaryConstants.CRUISE_VELOCITY,
                   ShooterRotaryConstants.ACCELERATION,
                   ShooterRotaryConstants.JERK,
                   PIDSlot.SLOT_0);
-              // _hood.runVelocity(ShooterConstants.HOOD_VELOCITY,
-              // ShooterConstants.HOOD_ACCELERATION, PIDSlot.SLOT_0);
-            })
-        .andThen(() -> System.out.println("Command ran"));
+            });
   }
 
   // Checks if hood is at angle
@@ -276,23 +284,19 @@ public class Shooter extends SubsystemBase {
     feedFlywheelMap.put(20.0, 60.0);
   }
 
-  public Command setAngleForDistance(Distance distance) {
-    double distanceMeters = distance.in(Meters);
-    double angle = hoodAngleMap.get(distanceMeters);
-    desiredHoodAngle = angle;
-    return this.runOnce(
+  public Command setAngleForDistance(DoubleSupplier distance) {
+    return this.run(
             () -> {
-              System.out.println("Command");
+              double distanceMeters = distance.getAsDouble();
+              double angle = hoodAngleMap.get(distanceMeters);
+              desiredHoodAngle = angle;
               _hood.runPosition(
                   Angle.ofBaseUnits(angle * ShooterConstants.SIM_MULTIPLIER, Degrees),
                   ShooterRotaryConstants.CRUISE_VELOCITY,
                   ShooterRotaryConstants.ACCELERATION,
                   ShooterRotaryConstants.JERK,
                   PIDSlot.SLOT_0);
-              // _hood.runVelocity(ShooterConstants.HOOD_VELOCITY,
-              // ShooterConstants.HOOD_ACCELERATION, PIDSlot.SLOT_0);
-            })
-        .andThen(() -> System.out.println("Command ran"));
+            });
   }
 
   public void periodic() {

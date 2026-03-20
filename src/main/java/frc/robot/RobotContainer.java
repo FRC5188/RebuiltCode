@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -27,8 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.Rebuilt2026.HubShiftUtil;
 import frc.lib.W8.io.motor.*;
-import frc.lib.W8.io.vision.VisionIOPhotonVision;
-import frc.lib.W8.io.vision.VisionIOPhotonVisionSim;
+import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.flywheel.*;
 import frc.lib.W8.mechanisms.linear.LinearMechanism;
 import frc.lib.W8.mechanisms.linear.LinearMechanismReal;
@@ -44,14 +44,16 @@ import frc.robot.Constants.IntakePivotConstants;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.ShooterFlywheelConstants;
 import frc.robot.Constants.ShooterRotaryConstants;
-import frc.robot.Constants.VisionConstants;
+import static frc.robot.subsystems.vision.VisionConstants.*;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.multisubsystem_commands.CmdShootOnTheMove;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -161,11 +163,9 @@ public class RobotContainer {
                     ClimberConstants.CHARACTERISTICS));
         vision =
             new Vision(
-                new VisionIOPhotonVision(
-                    VisionConstants.camera0Name,
-                    VisionConstants.robotToCamera0,
-                    VisionConstants.aprilTagLayout,
-                    PoseStrategy.CONSTRAINED_SOLVEPNP));
+                drive::addVisionMeasurement,
+                new VisionIOLimelight(camera0Name, drive::getRotation));
+
         break;
 
       case SIM:
@@ -235,15 +235,11 @@ public class RobotContainer {
                     false,
                     IntakePivotConstants.CONSTANTS,
                     Optional.empty()));
-        vision =
-            new Vision(
-                new VisionIOPhotonVisionSim(
-                    () -> drive.getPose(),
-                    VisionConstants.camera0Name,
-                    VisionConstants.robotToCamera0,
-                    VisionConstants.aprilTagLayout,
-                    PoseStrategy.CONSTRAINED_SOLVEPNP,
-                    VisionConstants.getSystemSim()));
+       vision = 
+                new Vision(
+                    drive::addVisionMeasurement,
+                    new VisionIOLimelight(camera0Name, drive::getRotation));
+
         climber =
             new Climber(
                 new LinearMechanismSim(
@@ -339,8 +335,8 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> controller.getLeftY(),
-            () -> controller.getLeftX(),
+            () -> -controller.getLeftY(),
+            () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
     // shooter.setDefaultCommand(shooter.runFlywheel(ShooterFlywheelConstants.IDLE_SPEED));
@@ -376,6 +372,21 @@ public class RobotContainer {
                 hopper.runSpindexer(RotationsPerSecond.of(0)),
                 Commands.run(() -> intake.stop())));
 
+    // Intake Rollers 11 Motor: 9 Intake
+
+    // controller.a().whileTrue((intake.runRollers(RotationsPerSecond.of(22.5))));
+    // controller
+    //     .a()
+    //     .onFalse(new RunCommand(() -> intake._rollerIO.runVoltage(Volts.of(0.0)), intake));
+
+    controller
+        .a()
+        .whileTrue(new CmdShootOnTheMove(
+            drive, 
+            shooter, 
+            () -> controller.getLeftY(),
+            () -> controller.getLeftX()));
+
     // Intake + Out
     controller.rightTrigger().whileTrue(intake.intake());
     controller.rightTrigger().onFalse(Commands.runOnce(() -> intake.stop()));
@@ -385,6 +396,15 @@ public class RobotContainer {
     // controller.a().onFalse(getAutonomousCommand());
     // controller.a().onTrue(getAutonomousCommand());
     // controller.a().onFalse(getAutonomousCommand());
+
+    // Auto Align
+    controller
+        .a()
+        .whileTrue(new CmdShootOnTheMove(
+            drive, 
+            shooter, 
+            () -> controller.getLeftY(),
+            () -> controller.getLeftX()));
 
     // Jostle
     controller.b().onTrue(intake.jostleIntake());
@@ -398,9 +418,11 @@ public class RobotContainer {
     // Climber Raise/Lower
 
     // Testing Commands
-    controller.povUp().onTrue(shooter.setHoodAngle(2.3));
-    controller.povRight().onTrue(shooter.setHoodAngle(8));
-    controller.povDown().onTrue(shooter.setHoodAngle(9.8));
+    controller.povUp().whileTrue(shooter.setHoodAngle(2.3));
+    controller.povRight().whileTrue(shooter.setHoodAngle(8));
+    controller.povDown().whileTrue(shooter.setHoodAngle(9.8));
+
+    shooter.setDefaultCommand(shooter.setAngleForDistance(() -> drive.getRadiusToHubInMeters()));
 
     // controller.povDown().onTrue(shooter.setAngleForDistance(Meters.of(1.0)));
     // controller.povRight().onTrue(shooter.setAngleForDistance(Meters.of(2.0)));
