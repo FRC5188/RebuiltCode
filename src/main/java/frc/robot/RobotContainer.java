@@ -20,10 +20,12 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.lib.Rebuilt2026.HubShiftUtil;
 import frc.lib.W8.io.motor.*;
 import frc.lib.W8.io.vision.VisionIOPhotonVision;
 import frc.lib.W8.io.vision.VisionIOPhotonVisionSim;
@@ -57,6 +59,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import java.util.Optional;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
@@ -355,31 +358,16 @@ public class RobotContainer {
     // // Switch to X pattern when X button is pressed
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // controller
-    //     .x()
-    //     .onTrue(Commands.runOnce(() -> hopper.setGoal(HopperConstants.HOPPER_POSITION), hopper));
+    // Shoot
+    controller.leftTrigger().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(55)));
+    controller.leftTrigger().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
 
-    // // Commands for sim testing!
-    // controller.rightTrigger().onTrue(Commands.runOnce(() -> shooter.simShoot()));
-
-    // controller
-    //     .leftTrigger()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //             () -> {
-    //               Robot.fuelSim.clearFuel();
-    //               Robot.fuelSim.spawnStartingFuel();
-    //               intake.simBalls = 0;
-    //             }));
-
-    // Feed and Shoot
+    // Feed
     controller
         .leftBumper()
         .whileTrue(
             Commands.parallel(
-                shooter.score(),
-                hopper.runSpindexer(RotationsPerSecond.of(15)),
-                intake.intake()));
+                shooter.score(), hopper.runSpindexer(RotationsPerSecond.of(15)), intake.intake()));
     controller
         .leftBumper()
         .onFalse(
@@ -395,6 +383,8 @@ public class RobotContainer {
     // Align
     // controller.a().onTrue(getAutonomousCommand());
     // controller.a().onFalse(getAutonomousCommand());
+    // controller.a().onTrue(getAutonomousCommand());
+    // controller.a().onFalse(getAutonomousCommand());
 
     // Jostle
     controller.b().onTrue(intake.jostleIntake());
@@ -406,20 +396,30 @@ public class RobotContainer {
     controller.x().whileTrue(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
 
     // Climber Raise/Lower
-    // controller.povUp().whileTrue(climber.raiseClimber());
-    // controller.povUp().onFalse(climber.stopClimber());
-    // controller.povDown().whileTrue(climber.lowerClimber());
-    // controller.povDown().onFalse(climber.stopClimber());
-
-    // controller.povLeft().onTrue(intake.zeroEncoder());
 
     // Testing Commands
     controller.povUp().onTrue(shooter.setHoodAngle(2.3));
     controller.povRight().onTrue(shooter.setHoodAngle(8));
     controller.povDown().onTrue(shooter.setHoodAngle(9.8));
 
-    // controller.povLeft().onTrue(shooter.setAngleForDistance(2.0));
+    // controller.povDown().onTrue(shooter.setAngleForDistance(Meters.of(1.0)));
+    // controller.povRight().onTrue(shooter.setAngleForDistance(Meters.of(2.0)));
+    // controller.povUp().onTrue(shooter.setAngleForDistance(Meters.of(5.0)));
+
+    HubShiftUtil.setAllianceWinOverride(
+        () -> {
+          if (loseauto.get()) {
+            return Optional.of(false);
+          }
+          if (winauto.get()) {
+            return Optional.of(true);
+          }
+          return Optional.empty();
+        });
   }
+
+  Supplier<Boolean> loseauto = () -> SmartDashboard.getBoolean("Auto Lost", false);
+  Supplier<Boolean> winauto = () -> SmartDashboard.getBoolean("Auto Won", false);
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

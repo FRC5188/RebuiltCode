@@ -286,6 +286,8 @@ public final class Constants {
     public static final double DEFAULT_SPEED_RPM = (1.0);
     public static final double FLYWHEEL_VELOCITY_TOLERANCE = 1.0;
 
+    public static final double SIM_MULTIPLIER = (simMode == Mode.SIM) ? 1.0 / 57.0 : 1.0;
+
     // Hood Constants
     public static final double HEIGHT_DIFFERENCE =
         1.295; // Meters between flywheel center and top of hub opening
@@ -459,7 +461,7 @@ public final class Constants {
 
       } else {
         config.Feedback.SensorToMechanismRatio = (50.0 / 1.0);
-        config.Slot0 = new Slot0Configs().withKP(30.0).withKI(0.0).withKD(5.0);
+        config.Slot0 = new Slot0Configs().withKP(30.0).withKI(0.0).withKD(2.0).withKS(8.0);
       }
 
       config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY.in(RotationsPerSecond);
@@ -755,7 +757,7 @@ public final class Constants {
 
       } else {
         config.Slot0 =
-            new Slot0Configs().withKP(100.0).withKI(0.0).withKD(0).withKS(0.07).withKV(0.1);
+            new Slot0Configs().withKP(500.0).withKI(0.0).withKD(0).withKS(0.07).withKV(0.1);
       }
       config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY.in(RotationsPerSecond);
       config.MotionMagic.MotionMagicAcceleration = ACCELERATION.in(RotationsPerSecondPerSecond);
