@@ -171,6 +171,16 @@ public static Command zeroHeading(Drive m_drive){
     .ignoringDisable(true);
 }
 
+/*
+ * angle in radians
+ */
+public static Command setHeading(Drive m_drive, double angle){
+  return Commands.runOnce(
+    () -> m_drive.setPose(new Pose2d(m_drive.getPose().getTranslation(), !isFlipped() ? new Rotation2d(angle):new Rotation2d(angle-Math.PI))), m_drive)
+    .withName("Pose Heading Zeroed")
+    .ignoringDisable(true);
+}
+
   /**
    * Measures the velocity feedforward constants for the drive motors.
    *

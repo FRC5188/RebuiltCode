@@ -195,6 +195,18 @@ public class Shooter extends SubsystemBase {
     return Commands.run(() -> {runFeeder(RotationsPerSecond.of(0)); setFlywheelVelocity(RotationsPerSecond.of(0));});
   }
 
+  public Command readyUp() {
+    return this.run(() -> {
+      setFlywheelVelocity(RotationsPerSecond.of(55));
+      _hood.runPosition(
+          Angle.ofBaseUnits(2.3, Degrees),
+          ShooterRotaryConstants.CRUISE_VELOCITY,
+          ShooterRotaryConstants.ACCELERATION,
+          ShooterRotaryConstants.JERK,
+          PIDSlot.SLOT_0);
+    });
+  }
+
   public void simShoot() {
     if (Robot.robotContainer.intake.simBalls <= 0) return;
 
