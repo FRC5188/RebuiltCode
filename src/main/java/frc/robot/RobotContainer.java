@@ -361,26 +361,10 @@ public class RobotContainer {
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Shoot
-    // controller.leftTrigger().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(55)));
-    // controller.leftTrigger().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
-    // controller
-    //     .x()
-    //     .onTrue(Commands.runOnce(() -> hopper.setGoal(HopperConstants.HOPPER_POSITION), hopper));
+    controller.leftTrigger().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(55)));
+    controller.leftTrigger().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
 
-    // // Commands for sim testing!
-    // controller.rightTrigger().onTrue(Commands.runOnce(() -> shooter.simShoot()));
-
-    // controller
-    //     .leftTrigger()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //             () -> {
-    //               Robot.fuelSim.clearFuel();
-    //               Robot.fuelSim.spawnStartingFuel();
-    //               intake.simBalls = 0;
-    //             }));
-
-    // Feed and Shoot
+    // Feed
     controller
         .leftBumper()
         .whileTrue(
@@ -401,6 +385,8 @@ public class RobotContainer {
     controller.rightTrigger().onFalse(Commands.runOnce(() -> intake.stop()));
 
     // Align
+    // controller.a().onTrue(getAutonomousCommand());
+    // controller.a().onFalse(getAutonomousCommand());
     // controller.a().onTrue(getAutonomousCommand());
     // controller.a().onFalse(getAutonomousCommand());
 
