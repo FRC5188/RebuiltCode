@@ -373,23 +373,19 @@ public class RobotContainer {
     //               intake.simBalls = 0;
     //             }));
 
-    // Shoot
-    controller.leftTrigger().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(67)));
-    controller.leftTrigger().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
-
-    // Feed
+    // Feed and Shoot
     controller
         .leftBumper()
         .whileTrue(
             Commands.parallel(
-                shooter.runTower(RotationsPerSecond.of(40)),
-                hopper.runSpindexer(RotationsPerSecond.of(20)),
+                shooter.score(),
+                hopper.runSpindexer(RotationsPerSecond.of(15)),
                 intake.intake()));
     controller
         .leftBumper()
         .onFalse(
             Commands.parallel(
-                shooter.runTower(RotationsPerSecond.of(0)),
+                shooter.stopScore(),
                 hopper.runSpindexer(RotationsPerSecond.of(0)),
                 Commands.run(() -> intake.stop())));
 
@@ -411,17 +407,17 @@ public class RobotContainer {
     controller.x().whileTrue(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
 
     // Climber Raise/Lower
-    controller.povUp().whileTrue(climber.raiseClimber());
-    controller.povUp().onFalse(climber.stopClimber());
-    controller.povDown().whileTrue(climber.lowerClimber());
-    controller.povDown().onFalse(climber.stopClimber());
+    // controller.povUp().whileTrue(climber.raiseClimber());
+    // controller.povUp().onFalse(climber.stopClimber());
+    // controller.povDown().whileTrue(climber.lowerClimber());
+    // controller.povDown().onFalse(climber.stopClimber());
 
-    controller.povLeft().onTrue(intake.zeroEncoder());
+    // controller.povLeft().onTrue(intake.zeroEncoder());
 
-    // // Testing Commands
-    // controller.povLeft().onTrue(shooter.setHoodAngle(6.8));
-    // controller.povDown().onTrue(shooter.setHoodAngle(12.1));
-    // controller.povRight().onTrue(shooter.setHoodAngle(0));
+    // Testing Commands
+    controller.povUp().onTrue(shooter.setHoodAngle(2.3));
+    controller.povRight().onTrue(shooter.setHoodAngle(8));
+    controller.povDown().onTrue(shooter.setHoodAngle(9.8));
 
     controller.povDown().onTrue(shooter.setAngleForDistance(Meters.of(1.0)));
     controller.povRight().onTrue(shooter.setAngleForDistance(Meters.of(2.0)));

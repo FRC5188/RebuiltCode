@@ -5,27 +5,27 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Move Down "
+            "name": "ExtendClimber"
           }
         },
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 1.0
+            "pathName": "JustClimb1"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": "Climb"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Olivia's Test Autos ",
+  "folder": "Only Climb",
   "choreoAuto": false
 }
