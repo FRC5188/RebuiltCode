@@ -162,7 +162,7 @@ public final class Constants {
     public static final Translation2d HUBCENTER = new Translation2d(hubCenterX, hubCenterY);
 
     public static final Translation2d OPPHUBCENTER = new Translation2d(oppHubCenterX, hubCenterY);
-  
+
   
   }
 
