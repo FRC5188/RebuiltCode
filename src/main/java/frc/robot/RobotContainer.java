@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.Rebuilt2026.HubShiftUtil;
@@ -84,6 +85,13 @@ public class RobotContainer {
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
+  private final GenericHID buttonbox1 = new GenericHID(1);
+
+  private final JoystickButton zeroDriveButton = new JoystickButton(buttonbox1, 1);
+  private final JoystickButton zeroIntakeButton = new JoystickButton(buttonbox1, 2);
+  private final JoystickButton zeroHoodButton = new JoystickButton(buttonbox1, 3);
+  private final JoystickButton lostAutoButton = new JoystickButton(buttonbox1, 8);
+  private final JoystickButton wonAutoButton = new JoystickButton(buttonbox1, 9);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -291,8 +299,6 @@ public class RobotContainer {
 
     // Set up auto routines
     // LEAVE THIS UP HERE
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
     // Extends climber arm
     NamedCommands.registerCommand("ExtendClimber", getAutonomousCommand());
     // Retracts climber arm
@@ -309,6 +315,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("IntakeOff", getAutonomousCommand());
     // Extends the intake
     NamedCommands.registerCommand("IntakeDown", getAutonomousCommand());
+
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+
 
     // Set up SysId routines
     autoChooser.addOption(
@@ -345,35 +354,20 @@ public class RobotContainer {
             () -> controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    // shooter.setDefaultCommand(shooter.runFlywheel(ShooterFlywheelConstants.IDLE_SPEED));
-
-    // Lock to 0° when A button is held
-    // controller
-    //     .a()
-    //     .whileTrue(
-    //         DriveCommands.joystickDriveAtAngle(
-    //             drive,
-    //             () -> -controller.getLeftY(),
-    //             () -> -controller.getLeftX(),
-    //             () -> new Rotation2d()));
-
-    // // Switch to X pattern when X button is pressed
-    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-
     // Shoot
-    controller.leftTrigger().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(55)));
-    controller.leftTrigger().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
+    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(55)));
+    controller.leftBumper().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
 
     // Feed
     controller
-        .leftBumper()
+        .leftTrigger()
         .whileTrue(
             Commands.parallel(
                 shooter.score(),
                 hopper.runSpindexer(RotationsPerSecond.of(15)),
                 intake.intake()));
     controller
-        .leftBumper()
+        .leftTrigger()
         .onFalse(
             Commands.parallel(
                 shooter.stopScore(),
@@ -384,40 +378,31 @@ public class RobotContainer {
     controller.rightTrigger().whileTrue(intake.intake());
     controller.rightTrigger().onFalse(Commands.runOnce(() -> intake.stop()));
 
-    // Align
-    // controller.a().onTrue(getAutonomousCommand());
-    // controller.a().onFalse(getAutonomousCommand());
-    // controller.a().onTrue(getAutonomousCommand());
-    // controller.a().onFalse(getAutonomousCommand());
-
     // Jostle
     controller.b().onTrue(intake.jostleIntake());
-
-    // Calibrate Hood
-    controller.y().onTrue(shooter.calibrateHood());
 
     // Stow Intake
     controller.x().whileTrue(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
 
-    // Climber Raise/Lower
-
-    // Testing Commands
+    // Fixed Shots
     controller.povUp().onTrue(shooter.setHoodAngle(2.3));
-    controller.povRight().onTrue(shooter.setHoodAngle(8));
-    controller.povDown().onTrue(shooter.setHoodAngle(9.8));
+    controller.povRight().onTrue(shooter.setHoodAngle(9.8));
+    controller.povLeft().onTrue(shooter.setHoodAngle(9.8));
+    controller.povDown().onTrue(shooter.setHoodAngle(8));
 
+    // Reset Buttons
+    zeroDriveButton.onTrue(DriveCommands.zeroHeading(drive));
+    zeroIntakeButton.onTrue(intake.zeroEncoder());
+    zeroHoodButton.onTrue(shooter.calibrateHood());
 
     HubShiftUtil.setAllianceWinOverride(
         () -> {
-            if (loseauto.get()) {return Optional.of(false); }
-            if (winauto.get()) {return Optional.of(true); }
-            return Optional.empty();
+            if (SmartDashboard.getBoolean("Auto Result", false)) {return Optional.of(false); }
+            else {return Optional.of(true); }
         }
     );
   }
 
-     Supplier<Boolean> loseauto = ()-> SmartDashboard.getBoolean("Auto Lost", false);
-     Supplier<Boolean> winauto = ()-> SmartDashboard.getBoolean("Auto Won", false);
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

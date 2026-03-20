@@ -301,9 +301,9 @@ public final class Constants {
 
     public static final double HARD_STOP_CURRENT_LIMIT = 3.0;
 
-    public static final double TOWER_ANGLE = 8.9; // degrees // Distance 120.5 Inches
-    public static final double HUB_ANGLE = 2.3; // degrees // Distance 49.5 inches
-    public static final double TRENCH_ANGLE = 9.8; // degrees
+    public static final Angle TOWER_ANGLE = Degrees.of(8); // degrees // Distance 120.5 Inches
+    public static final Angle HUB_ANGLE = Degrees.of(2.3); // degrees // Distance 49.5 inches
+    public static final Angle TRENCH_ANGLE = Degrees.of(9.8); // degrees
 
     public static final double ANGLE_AT_96 = 6.8; // degrees // Distance 96 inches
     public static final double ANGLE_AT_152 = 12.1; // degrees  // Distance 152 inches
@@ -685,11 +685,11 @@ public final class Constants {
   public class IntakePivotConstants {
     public static final String NAME = "Intake";
 
-    public static final Angle PICKUP_ANGLE = Degrees.of(123.0); // 123.0
+    public static final Angle PICKUP_ANGLE = Degrees.of(123.5); // 123.0
     public static final Angle STOW_ANGLE = Degrees.of(0.0);
     public static final Angle JOSTLE_ANGLE = Degrees.of(40.0);
 
-    public static final Angle TOLERANCE = Degrees.of(3.0);
+    public static final Angle TOLERANCE = Degrees.of(1.5);
 
     public static final AngularVelocity CRUISE_VELOCITY = RadiansPerSecond.of(100);
     public static final AngularAcceleration ACCELERATION = RadiansPerSecondPerSecond.of(200);
