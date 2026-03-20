@@ -121,7 +121,7 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during all modes. */
   @Override
   public void robotPeriodic() {
-     // Publish match time
+    // Publish match time
     SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
 
     // Update from HubShiftUtil

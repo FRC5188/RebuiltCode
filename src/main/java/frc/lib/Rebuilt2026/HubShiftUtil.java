@@ -7,7 +7,6 @@ package frc.lib.Rebuilt2026;
 // license that can be found in the LICENSE file at
 // the root directory of this project.
 
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;

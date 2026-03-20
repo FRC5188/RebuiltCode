@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -188,11 +187,19 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command score() {
-    return Commands.run(() -> {runFeeder(RotationsPerSecond.of(30)); setFlywheelVelocity(RotationsPerSecond.of(67));});
+    return Commands.run(
+        () -> {
+          runFeeder(RotationsPerSecond.of(30));
+          setFlywheelVelocity(RotationsPerSecond.of(67));
+        });
   }
 
   public Command stopScore() {
-    return Commands.run(() -> {runFeeder(RotationsPerSecond.of(0)); setFlywheelVelocity(RotationsPerSecond.of(0));});
+    return Commands.run(
+        () -> {
+          runFeeder(RotationsPerSecond.of(0));
+          setFlywheelVelocity(RotationsPerSecond.of(0));
+        });
   }
 
   public void simShoot() {

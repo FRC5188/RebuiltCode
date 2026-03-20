@@ -13,7 +13,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -25,7 +24,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.Rebuilt2026.HubShiftUtil;
 import frc.lib.W8.io.motor.*;
@@ -62,7 +60,6 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import java.util.Optional;
 import java.util.function.Supplier;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
@@ -370,9 +367,7 @@ public class RobotContainer {
         .leftBumper()
         .whileTrue(
             Commands.parallel(
-                shooter.score(),
-                hopper.runSpindexer(RotationsPerSecond.of(15)),
-                intake.intake()));
+                shooter.score(), hopper.runSpindexer(RotationsPerSecond.of(15)), intake.intake()));
     controller
         .leftBumper()
         .onFalse(
@@ -413,15 +408,19 @@ public class RobotContainer {
 
     HubShiftUtil.setAllianceWinOverride(
         () -> {
-            if (loseauto.get()) {return Optional.of(false); }
-            if (winauto.get()) {return Optional.of(true); }
-            return Optional.empty();
-        }
-    );
+          if (loseauto.get()) {
+            return Optional.of(false);
+          }
+          if (winauto.get()) {
+            return Optional.of(true);
+          }
+          return Optional.empty();
+        });
   }
 
-     Supplier<Boolean> loseauto = ()-> SmartDashboard.getBoolean("Auto Lost", false);
-     Supplier<Boolean> winauto = ()-> SmartDashboard.getBoolean("Auto Won", false);
+  Supplier<Boolean> loseauto = () -> SmartDashboard.getBoolean("Auto Lost", false);
+  Supplier<Boolean> winauto = () -> SmartDashboard.getBoolean("Auto Won", false);
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
