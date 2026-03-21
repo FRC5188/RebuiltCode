@@ -73,7 +73,6 @@ import frc.lib.W8.mechanisms.rotary.RotaryMechanism.RotaryMechCharacteristics;
 import frc.lib.W8.util.Device;
 import frc.lib.W8.util.Device.CAN;
 import frc.lib.W8.util.MechanismUtil.DistanceAngleConverter;
-import frc.robot.commands.multisubsystem_commands.CmdShootOnTheMove;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running

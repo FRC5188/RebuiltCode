@@ -28,7 +28,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.lib.Rebuilt2026.HubShiftUtil;
 import frc.lib.W8.io.motor.*;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.flywheel.*;
@@ -48,7 +47,6 @@ import frc.robot.Constants.ShooterFlywheelConstants;
 import frc.robot.Constants.ShooterRotaryConstants;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.multisubsystem_commands.CmdShootOnTheMove;;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Hopper;
@@ -393,26 +391,9 @@ public class RobotContainer {
     //     .a()
     //     .onFalse(new RunCommand(() -> intake._rollerIO.runVoltage(Volts.of(0.0)), intake));
 
-    controller
-        .a()
-        .whileTrue(new CmdShootOnTheMove(
-            drive, 
-            shooter, 
-            () -> controller.getLeftY(),
-            () -> controller.getLeftX()));
-
     // Intake + Out
     controller.rightTrigger().whileTrue(intake.intake());
     controller.rightTrigger().onFalse(Commands.runOnce(() -> intake.stop()));
-
-    // Auto Align
-    controller
-        .a()
-        .whileTrue(new CmdShootOnTheMove(
-            drive, 
-            shooter, 
-            () -> controller.getLeftY(),
-            () -> controller.getLeftX()));
 
     // Jostle
     controller.b().onTrue(intake.jostleIntake());
@@ -431,12 +412,6 @@ public class RobotContainer {
     zeroIntakeButton.onTrue(intake.zeroEncoder());
     zeroHoodButton.onTrue(shooter.calibrateHood());
 
-    HubShiftUtil.setAllianceWinOverride(
-        () -> {
-            if (SmartDashboard.getBoolean("Auto Result", false)) {return Optional.of(false); }
-            else {return Optional.of(true); }
-        }
-    );
   }
 
   /**
