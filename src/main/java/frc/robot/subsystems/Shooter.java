@@ -47,6 +47,9 @@ public class Shooter extends SubsystemBase {
   private double hoodAngle;
   private double desiredHoodAngle;
 
+
+   private static boolean autoShootEnabled = true;
+
   public AngularVelocity targetVelocity = RotationsPerSecond.of(0.0);
   public AngularVelocity feederTargetVelocity = RotationsPerSecond.of(0.0);
 
