@@ -316,8 +316,9 @@ public class RobotContainer {
     // Shoots
     NamedCommands.registerCommand("Shoot", Commands.parallel(
                 shooter.score(),
-                hopper.runSpindexer(RotationsPerSecond.of(15)),
-                intake.runRollers(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))));
+                //hopper.runSpindexer(RotationsPerSecond.of(15)),
+                //intake.runRollers(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))));
+                hopper.runSpindexer(RotationsPerSecond.of(15))));
 
     NamedCommands.registerCommand("Return", Commands.parallel(
                 shooter.stopScore(),
