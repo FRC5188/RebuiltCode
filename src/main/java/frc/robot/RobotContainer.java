@@ -299,19 +299,26 @@ public class RobotContainer {
     //Below Hub
     NamedCommands.registerCommand("SetHeading45", DriveCommands.setHeading(drive, -3*Math.PI/4));
     //Aligned with Hub
-    NamedCommands.registerCommand("SetHeading90", DriveCommands.zeroHeading(drive));
+    NamedCommands.registerCommand("SetHeading90", DriveCommands.setHeading(drive, 0));
     //Above Hub
     NamedCommands.registerCommand("SetHeadingNeg45", DriveCommands.setHeading(drive, 3*Math.PI/4));
 
+    // calibrate shooter
+    NamedCommands.registerCommand("ZeroHood", shooter.calibrateHood());
+
+    NamedCommands.registerCommand("TowerHood", shooter.setHoodAngle(7.5));
+
     // Bring flywheel up to speed + hood to position for known locations?
-    NamedCommands.registerCommand("ReadyUp", shooter.readyUp());
+    NamedCommands.registerCommand("ReadyUp", shooter.readyUp(2));
+
+    NamedCommands.registerCommand("ReadyUpAngle", shooter.readyUp(2.6));
 
     // Shoots
     NamedCommands.registerCommand("Shoot", Commands.parallel(
-                shooter.score(),
+                shooter.scoreAuto(),
                 //hopper.runSpindexer(RotationsPerSecond.of(15)),
                 //intake.runRollers(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))));
-                hopper.runSpindexer(RotationsPerSecond.of(14))));
+                hopper.runSpindexer(RotationsPerSecond.of(12))));
 
     NamedCommands.registerCommand("Return", Commands.parallel(
                 shooter.stopScore(),
@@ -402,9 +409,9 @@ public class RobotContainer {
     controller.x().whileTrue(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
 
     // Fixed Shots
-    controller.povUp().onTrue(shooter.setHoodAngle(2.3));
-    controller.povRight().onTrue(shooter.setHoodAngle(9.8));
-    controller.povDown().onTrue(shooter.setHoodAngle(7.5)); //8
+    controller.povUp().onTrue(shooter.setHoodAngle(2.5));
+    controller.povRight().onTrue(shooter.setHoodAngle(9.4));
+    controller.povDown().onTrue(shooter.setHoodAngle(9.5)); //8
 
     // Reset Buttons
     zeroDriveButton.onTrue(DriveCommands.zeroHeading(drive));

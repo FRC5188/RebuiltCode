@@ -194,15 +194,19 @@ public class Shooter extends SubsystemBase {
     return Commands.run(() -> {runFeeder(RotationsPerSecond.of(28)); setFlywheelVelocity(RotationsPerSecond.of(67));});
   }
 
+  public Command scoreAuto() {
+    return Commands.run(() -> {runFeeder(RotationsPerSecond.of(24)); setFlywheelVelocity(RotationsPerSecond.of(67));});
+  }
+
   public Command stopScore() {
     return Commands.run(() -> {runFeeder(RotationsPerSecond.of(0)); setFlywheelVelocity(RotationsPerSecond.of(0));});
   }
 
-  public Command readyUp() {
+  public Command readyUp(double angel) {
     return this.run(() -> {
       setFlywheelVelocity(RotationsPerSecond.of(55));
       _hood.runPosition(
-          Angle.ofBaseUnits(2.3, Degrees),
+          Angle.ofBaseUnits(angel, Degrees),
           ShooterRotaryConstants.CRUISE_VELOCITY,
           ShooterRotaryConstants.ACCELERATION,
           ShooterRotaryConstants.JERK,
