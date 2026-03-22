@@ -34,14 +34,11 @@ public class Intake extends SubsystemBase {
     _rollerIO = rollerIO;
     _pivotIO = pivotIO;
 
-    // if (Robot.isReal()) tunePivotPosition();
-
     simBalls = 0;
   }
 
   // Velocity of Rollers
   public void setVelocity(AngularVelocity velocity) {
-    // AngularVelocity angVelo = RotationsPerSecond.of(velocity);
 
     _rollerIO.runVelocity(velocity, IntakeFlywheelConstants.ACCELERATION, PIDSlot.SLOT_0);
     targetSpeed = velocity;
@@ -56,11 +53,7 @@ public class Intake extends SubsystemBase {
                 IntakePivotConstants.ACCELERATION,
                 IntakePivotConstants.JERK,
                 PIDSlot.SLOT_0)
-        // () ->
-        //   _pivotIO.runVelocity(IntakePivotConstants.CRUISE_VELOCITY,
-        // IntakePivotConstants.ACCELERATION, PIDSlot.SLOT_0)
         );
-    // .withName("Go To " + setpoint.toString() + " Setpoint");
   }
 
   public AngularVelocity getVelocity() {

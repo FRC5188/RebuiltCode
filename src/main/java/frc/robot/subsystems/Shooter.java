@@ -184,13 +184,11 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command runFlywheel(AngularVelocity velocity) {
-    System.out.println("Flywheel");
 
     return Commands.run(() -> setFlywheelVelocity(velocity), this);
   }
 
   public Command runTower(AngularVelocity velocity) {
-    System.out.println("Tower");
     return Commands.run(() -> runFeeder(velocity), this);
   }
 
@@ -208,6 +206,18 @@ public class Shooter extends SubsystemBase {
           runFeeder(RotationsPerSecond.of(0));
           setFlywheelVelocity(RotationsPerSecond.of(0));
         });
+  }
+
+  public Command readyUp() {
+    return this.run(() -> {
+      setFlywheelVelocity(RotationsPerSecond.of(55));
+      _hood.runPosition(
+          Angle.ofBaseUnits(2.3, Degrees),
+          ShooterRotaryConstants.CRUISE_VELOCITY,
+          ShooterRotaryConstants.ACCELERATION,
+          ShooterRotaryConstants.JERK,
+          PIDSlot.SLOT_0);
+    });
   }
 
   public void simShoot() {

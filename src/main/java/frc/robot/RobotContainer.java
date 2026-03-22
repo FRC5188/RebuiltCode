@@ -13,7 +13,7 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.Rebuilt2026.HubShiftUtil;
 import frc.lib.W8.io.motor.*;
@@ -84,6 +86,11 @@ public class RobotContainer {
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
+  private final GenericHID buttonbox1 = new GenericHID(1);
+
+  private final JoystickButton zeroDriveButton = new JoystickButton(buttonbox1, 1);
+  private final JoystickButton zeroIntakeButton = new JoystickButton(buttonbox1, 2);
+  private final JoystickButton zeroHoodButton = new JoystickButton(buttonbox1, 3);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -285,40 +292,57 @@ public class RobotContainer {
 
     // Set up auto routines
     // LEAVE THIS UP HERE
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
     // Extends climber arm
-    NamedCommands.registerCommand("ExtendClimber", getAutonomousCommand());
-    // Retracts climber arm
-    NamedCommands.registerCommand("Climb", getAutonomousCommand());
+    // NamedCommands.registerCommand("ExtendClimber", getAutonomousCommand());
+    // // Retracts climber arm
+    // NamedCommands.registerCommand("Climb", getAutonomousCommand());
+
+    //Below Hub
+    NamedCommands.registerCommand("SetHeading45", DriveCommands.setHeading(drive, -3*Math.PI/4));
+    //Aligned with Hub
+    NamedCommands.registerCommand("SetHeading90", DriveCommands.setHeading(drive, Math.PI));
+    //Above Hub
+    NamedCommands.registerCommand("SetHeadingNeg45", DriveCommands.setHeading(drive, 3*Math.PI/4));
 
     // Bring flywheel up to speed + hood to position for known locations?
-    NamedCommands.registerCommand("ReadyUp", getAutonomousCommand());
+    NamedCommands.registerCommand("ReadyUp", shooter.readyUp());
+
     // Shoots
-    NamedCommands.registerCommand("Shoot", getAutonomousCommand());
+    NamedCommands.registerCommand("Shoot", Commands.parallel(
+                shooter.score(),
+                hopper.runSpindexer(RotationsPerSecond.of(15))));
+
+    NamedCommands.registerCommand("Return", Commands.parallel(
+                shooter.stopScore(),
+                hopper.runSpindexer(RotationsPerSecond.of(0)),
+                Commands.run(() -> intake.stop())));
 
     // Runs Intake Rollers
-    NamedCommands.registerCommand("IntakeOn", getAutonomousCommand());
-    // Stops Intake Rollers
-    NamedCommands.registerCommand("IntakeOff", getAutonomousCommand());
+    // NamedCommands.registerCommand("IntakeOn", getAutonomousCommand());
+    // // Stops Intake Rollers
+    // NamedCommands.registerCommand("IntakeOff", getAutonomousCommand());
     // Extends the intake
-    NamedCommands.registerCommand("IntakeDown", getAutonomousCommand());
+    NamedCommands.registerCommand("IntakeDown", intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
+
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    autoChooser.addDefaultOption("Select An Auto", Commands.none());
+
 
     // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    // autoChooser.addOption(
+    //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    // autoChooser.addOption(
+    //     "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    // autoChooser.addOption(
+    //     "Drive SysId (Quasistatic Forward)",
+    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // autoChooser.addOption(
+    //     "Drive SysId (Quasistatic Reverse)",
+    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // autoChooser.addOption(
+    //     "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // autoChooser.addOption(
+    //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -339,33 +363,19 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    // shooter.setDefaultCommand(shooter.runFlywheel(ShooterFlywheelConstants.IDLE_SPEED));
+    // Just Shooter Flywheels
+    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(55)));
+    controller.leftBumper().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
 
-    // Lock to 0° when A button is held
-    // controller
-    //     .a()
-    //     .whileTrue(
-    //         DriveCommands.joystickDriveAtAngle(
-    //             drive,
-    //             () -> -controller.getLeftY(),
-    //             () -> -controller.getLeftX(),
-    //             () -> new Rotation2d()));
-
-    // // Switch to X pattern when X button is pressed
-    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Shoot
-    controller.leftTrigger().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(55)));
-    controller.leftTrigger().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
-
-    // Feed
     controller
-        .leftBumper()
+        .leftTrigger()
         .whileTrue(
             Commands.parallel(
                 shooter.score(), hopper.runSpindexer(RotationsPerSecond.of(15)), intake.intake()));
     controller
-        .leftBumper()
+        .leftTrigger()
         .onFalse(
             Commands.parallel(
                 shooter.stopScore(),
@@ -379,23 +389,10 @@ public class RobotContainer {
     //     .a()
     //     .onFalse(new RunCommand(() -> intake._rollerIO.runVoltage(Volts.of(0.0)), intake));
 
-    controller
-        .a()
-        .whileTrue(new CmdShootOnTheMove(
-            drive, 
-            shooter, 
-            () -> controller.getLeftY(),
-            () -> controller.getLeftX()));
 
     // Intake + Out
     controller.rightTrigger().whileTrue(intake.intake());
     controller.rightTrigger().onFalse(Commands.runOnce(() -> intake.stop()));
-
-    // Align
-    // controller.a().onTrue(getAutonomousCommand());
-    // controller.a().onFalse(getAutonomousCommand());
-    // controller.a().onTrue(getAutonomousCommand());
-    // controller.a().onFalse(getAutonomousCommand());
 
     // Auto Align
     controller
@@ -409,40 +406,35 @@ public class RobotContainer {
     // Jostle
     controller.b().onTrue(intake.jostleIntake());
 
-    // Calibrate Hood
-    controller.y().onTrue(shooter.calibrateHood());
-
     // Stow Intake
     controller.x().whileTrue(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
 
-    // Climber Raise/Lower
-
-    // Testing Commands
+    // Fixed Shots
     controller.povUp().whileTrue(shooter.setHoodAngle(2.3));
-    controller.povRight().whileTrue(shooter.setHoodAngle(8));
-    controller.povDown().whileTrue(shooter.setHoodAngle(9.8));
+    controller.povRight().whileTrue(shooter.setHoodAngle(9.8));
+    controller.povLeft().whileTrue(shooter.setHoodAngle(9.8));
+    controller.povDown().whileTrue(shooter.setHoodAngle(8));
 
     shooter.setDefaultCommand(shooter.setAngleForDistance(() -> drive.getRadiusToHubInMeters()));
 
     // controller.povDown().onTrue(shooter.setAngleForDistance(Meters.of(1.0)));
     // controller.povRight().onTrue(shooter.setAngleForDistance(Meters.of(2.0)));
     // controller.povUp().onTrue(shooter.setAngleForDistance(Meters.of(5.0)));
+    // Reset Buttons
+    zeroDriveButton.onTrue(DriveCommands.zeroHeading(drive));
+    zeroIntakeButton.onTrue(intake.zeroEncoder());
+    zeroHoodButton.onTrue(shooter.calibrateHood());
 
     HubShiftUtil.setAllianceWinOverride(
         () -> {
-          if (loseauto.get()) {
-            return Optional.of(false);
-          }
-          if (winauto.get()) {
-            return Optional.of(true);
-          }
-          return Optional.empty();
-        });
+            if (SmartDashboard.getBoolean("Auto Result", false)) {return Optional.of(false); }
+            else {return Optional.of(true); }
+        }
+    );
   }
 
-  Supplier<Boolean> loseauto = () -> SmartDashboard.getBoolean("Auto Lost", false);
-  Supplier<Boolean> winauto = () -> SmartDashboard.getBoolean("Auto Won", false);
-
+     Supplier<Boolean> loseauto = ()-> SmartDashboard.getBoolean("Auto Lost", false);
+     Supplier<Boolean> winauto = ()-> SmartDashboard.getBoolean("Auto Won", false);
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
