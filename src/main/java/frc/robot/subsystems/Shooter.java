@@ -140,7 +140,7 @@ public class Shooter extends SubsystemBase {
   public Command setHoodAngle(double angleDegrees) {
     hoodAngle = angleDegrees;
     desiredHoodAngle = angleDegrees;
-    return this.run(
+    return this.runOnce(
             () -> {
               _hood.runPosition(
                   Angle.ofBaseUnits(angleDegrees * ShooterConstants.SIM_MULTIPLIER, Degrees),
@@ -193,11 +193,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command score() {
-    return Commands.run(
-        () -> {
-          runFeeder(RotationsPerSecond.of(30));
-          setFlywheelVelocity(RotationsPerSecond.of(67));
-        });
+    return Commands.run(() -> {runFeeder(RotationsPerSecond.of(28)); setFlywheelVelocity(RotationsPerSecond.of(67));});
   }
 
   public Command stopScore() {
@@ -295,7 +291,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command setAngleForDistance(DoubleSupplier distance) {
-    return this.run(
+    return this.runOnce(
             () -> {
               double distanceMeters = distance.getAsDouble();
               double angle = hoodAngleMap.get(distanceMeters);

@@ -73,7 +73,6 @@ import frc.lib.W8.mechanisms.rotary.RotaryMechanism.RotaryMechCharacteristics;
 import frc.lib.W8.util.Device;
 import frc.lib.W8.util.Device.CAN;
 import frc.lib.W8.util.MechanismUtil.DistanceAngleConverter;
-import frc.robot.commands.multisubsystem_commands.CmdShootOnTheMove;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -298,12 +297,12 @@ public final class Constants {
     public static final double FLYWHEEL_VELOCITY_TOLERANCE = 1.0;
 
     public static final double SIM_MULTIPLIER = (simMode == Mode.SIM) ? 1.0 / 57.0 : 1.0;
-
-    // Hood Constants
-    public static final double TIME_TO_SHOOT = 0.2; // In seconds, how long it takes for a ball to leave once "shoot" is pressed
+    public static final double TIME_TO_SHOOT =
+        0.2; // In seconds, how long it takes for a ball to leave once "shoot" is pressed
     
         // Hood Constants
-    public static final double HEIGHT_DIFFERENCE = 1.295; // Meters between flywheel center and top of hub opening
+    public static final double HEIGHT_DIFFERENCE =
+        1.295; // Meters between flywheel center and top of hub opening
     public static final double EXIT_VELOCITY = 7.4; // m/s from ReCalc Flywheel Calculator
     public static final AngularVelocity HOOD_VELOCITY = RotationsPerSecond.of(-0.0005);
     public static final AngularAcceleration HOOD_ACCELERATION = RotationsPerSecondPerSecond.of(.2);
@@ -559,7 +558,7 @@ public final class Constants {
     public static final Angle MIN_ANGLE = Rotations.of(0.0);
     public static final Angle MAX_ANGLE = Rotations.of(1);
     public static final Angle STARTING_ANGLE = Rotations.of(0.0);
-    public static final double PICKUP_SPEED = 30.0;
+    public static final double PICKUP_SPEED = 40.0;
     public static final Distance WHEEL_RADIUS = Meters.of(0.05);
     public static final Translation3d OFFSET = Translation3d.kZero;
     public static final MomentOfInertia MOI = KilogramSquareMeters.of(0.0028125);

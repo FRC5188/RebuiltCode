@@ -28,7 +28,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.lib.Rebuilt2026.HubShiftUtil;
 import frc.lib.W8.io.motor.*;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.flywheel.*;
@@ -82,7 +81,7 @@ public class RobotContainer {
   public final Intake intake;
   //   private final BallCounter ballCounter;
   private final Vision vision;
-  private final Climber climber;
+//   private final Climber climber;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -160,18 +159,18 @@ public class RobotContainer {
                         Ports.IntakePivot),
                     IntakePivotConstants.CONSTANTS,
                     Optional.empty()));
-        climber =
-            new Climber(
-                new LinearMechanismReal(
-                    new MotorIOTalonFX(
-                        ClimberConstants.MOTOR_NAME,
-                        ClimberConstants.getFXConfig(),
-                        Ports.ClimberMotor),
-                    ClimberConstants.CHARACTERISTICS));
+        // climber =
+        //     new Climber(
+        //         new LinearMechanismReal(
+        //             new MotorIOTalonFX(
+        //                 ClimberConstants.MOTOR_NAME,
+        //                 ClimberConstants.getFXConfig(),
+        //                 Ports.ClimberMotor),
+        //             ClimberConstants.CHARACTERISTICS));
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOLimelight(camera0Name, drive::getRotation));
+                new VisionIOLimelight("limelight", drive::getRotation));
 
         break;
 
@@ -247,17 +246,17 @@ public class RobotContainer {
                     drive::addVisionMeasurement,
                     new VisionIOLimelight(camera0Name, drive::getRotation));
 
-        climber =
-            new Climber(
-                new LinearMechanismSim(
-                    new MotorIOTalonFXSim(
-                        ClimberConstants.MOTOR_NAME,
-                        ClimberConstants.getFXConfig(),
-                        Ports.ClimberMotor),
-                    ClimberConstants.DCMOTOR,
-                    ClimberConstants.CARRIAGE_MASS,
-                    ClimberConstants.CHARACTERISTICS,
-                    false));
+        // climber =
+        //     new Climber(
+        //         new LinearMechanismSim(
+        //             new MotorIOTalonFXSim(
+        //                 ClimberConstants.MOTOR_NAME,
+        //                 ClimberConstants.getFXConfig(),
+        //                 Ports.ClimberMotor),
+        //             ClimberConstants.DCMOTOR,
+        //             ClimberConstants.CARRIAGE_MASS,
+        //             ClimberConstants.CHARACTERISTICS,
+        //             false));
         break;
 
       default:
@@ -284,9 +283,9 @@ public class RobotContainer {
                 new RotaryMechanism(IntakePivotConstants.NAME, IntakePivotConstants.CONSTANTS) {});
         vision = new Vision(null);
 
-        climber =
-            new Climber(
-                new LinearMechanism(ClimberConstants.NAME, ClimberConstants.CHARACTERISTICS) {});
+        // climber =
+        //     new Climber(
+        //         new LinearMechanism(ClimberConstants.NAME, ClimberConstants.CHARACTERISTICS) {});
         break;
     }
 
@@ -300,7 +299,7 @@ public class RobotContainer {
     //Below Hub
     NamedCommands.registerCommand("SetHeading45", DriveCommands.setHeading(drive, -3*Math.PI/4));
     //Aligned with Hub
-    NamedCommands.registerCommand("SetHeading90", DriveCommands.setHeading(drive, Math.PI));
+    NamedCommands.registerCommand("SetHeading90", DriveCommands.zeroHeading(drive));
     //Above Hub
     NamedCommands.registerCommand("SetHeadingNeg45", DriveCommands.setHeading(drive, 3*Math.PI/4));
 
@@ -310,7 +309,9 @@ public class RobotContainer {
     // Shoots
     NamedCommands.registerCommand("Shoot", Commands.parallel(
                 shooter.score(),
-                hopper.runSpindexer(RotationsPerSecond.of(15))));
+                //hopper.runSpindexer(RotationsPerSecond.of(15)),
+                //intake.runRollers(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))));
+                hopper.runSpindexer(RotationsPerSecond.of(14))));
 
     NamedCommands.registerCommand("Return", Commands.parallel(
                 shooter.stopScore(),
@@ -389,7 +390,6 @@ public class RobotContainer {
     //     .a()
     //     .onFalse(new RunCommand(() -> intake._rollerIO.runVoltage(Volts.of(0.0)), intake));
 
-
     // Intake + Out
     controller.rightTrigger().whileTrue(intake.intake());
     controller.rightTrigger().onFalse(Commands.runOnce(() -> intake.stop()));
@@ -410,12 +410,11 @@ public class RobotContainer {
     controller.x().whileTrue(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
 
     // Fixed Shots
-    controller.povUp().whileTrue(shooter.setHoodAngle(2.3));
-    controller.povRight().whileTrue(shooter.setHoodAngle(9.8));
-    controller.povLeft().whileTrue(shooter.setHoodAngle(9.8));
-    controller.povDown().whileTrue(shooter.setHoodAngle(8));
+    controller.povUp().onTrue(shooter.setHoodAngle(2.3));
+    controller.povRight().onTrue(shooter.setHoodAngle(9.8));
+    controller.povDown().onTrue(shooter.setHoodAngle(7.5)); //8
 
-    shooter.setDefaultCommand(shooter.setAngleForDistance(() -> drive.getRadiusToHubInMeters()));
+    controller.povLeft().onTrue((shooter.setAngleForDistance(() -> drive.getRadiusToHubInMeters())));
 
     // controller.povDown().onTrue(shooter.setAngleForDistance(Meters.of(1.0)));
     // controller.povRight().onTrue(shooter.setAngleForDistance(Meters.of(2.0)));
@@ -425,16 +424,8 @@ public class RobotContainer {
     zeroIntakeButton.onTrue(intake.zeroEncoder());
     zeroHoodButton.onTrue(shooter.calibrateHood());
 
-    HubShiftUtil.setAllianceWinOverride(
-        () -> {
-            if (SmartDashboard.getBoolean("Auto Result", false)) {return Optional.of(false); }
-            else {return Optional.of(true); }
-        }
-    );
   }
 
-     Supplier<Boolean> loseauto = ()-> SmartDashboard.getBoolean("Auto Lost", false);
-     Supplier<Boolean> winauto = ()-> SmartDashboard.getBoolean("Auto Won", false);
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
