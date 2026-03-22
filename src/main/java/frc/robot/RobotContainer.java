@@ -81,7 +81,7 @@ public class RobotContainer {
   public final Intake intake;
   //   private final BallCounter ballCounter;
   private final Vision vision;
-  private final Climber climber;
+//   private final Climber climber;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -159,18 +159,18 @@ public class RobotContainer {
                         Ports.IntakePivot),
                     IntakePivotConstants.CONSTANTS,
                     Optional.empty()));
-        climber =
-            new Climber(
-                new LinearMechanismReal(
-                    new MotorIOTalonFX(
-                        ClimberConstants.MOTOR_NAME,
-                        ClimberConstants.getFXConfig(),
-                        Ports.ClimberMotor),
-                    ClimberConstants.CHARACTERISTICS));
+        // climber =
+        //     new Climber(
+        //         new LinearMechanismReal(
+        //             new MotorIOTalonFX(
+        //                 ClimberConstants.MOTOR_NAME,
+        //                 ClimberConstants.getFXConfig(),
+        //                 Ports.ClimberMotor),
+        //             ClimberConstants.CHARACTERISTICS));
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOLimelight(camera0Name, drive::getRotation));
+                new VisionIOLimelight("limelight", drive::getRotation));
 
         break;
 
@@ -246,17 +246,17 @@ public class RobotContainer {
                     drive::addVisionMeasurement,
                     new VisionIOLimelight(camera0Name, drive::getRotation));
 
-        climber =
-            new Climber(
-                new LinearMechanismSim(
-                    new MotorIOTalonFXSim(
-                        ClimberConstants.MOTOR_NAME,
-                        ClimberConstants.getFXConfig(),
-                        Ports.ClimberMotor),
-                    ClimberConstants.DCMOTOR,
-                    ClimberConstants.CARRIAGE_MASS,
-                    ClimberConstants.CHARACTERISTICS,
-                    false));
+        // climber =
+        //     new Climber(
+        //         new LinearMechanismSim(
+        //             new MotorIOTalonFXSim(
+        //                 ClimberConstants.MOTOR_NAME,
+        //                 ClimberConstants.getFXConfig(),
+        //                 Ports.ClimberMotor),
+        //             ClimberConstants.DCMOTOR,
+        //             ClimberConstants.CARRIAGE_MASS,
+        //             ClimberConstants.CHARACTERISTICS,
+        //             false));
         break;
 
       default:
@@ -283,9 +283,9 @@ public class RobotContainer {
                 new RotaryMechanism(IntakePivotConstants.NAME, IntakePivotConstants.CONSTANTS) {});
         vision = new Vision(null);
 
-        climber =
-            new Climber(
-                new LinearMechanism(ClimberConstants.NAME, ClimberConstants.CHARACTERISTICS) {});
+        // climber =
+        //     new Climber(
+        //         new LinearMechanism(ClimberConstants.NAME, ClimberConstants.CHARACTERISTICS) {});
         break;
     }
 
@@ -299,7 +299,7 @@ public class RobotContainer {
     //Below Hub
     NamedCommands.registerCommand("SetHeading45", DriveCommands.setHeading(drive, -3*Math.PI/4));
     //Aligned with Hub
-    NamedCommands.registerCommand("SetHeading90", DriveCommands.setHeading(drive, Math.PI));
+    NamedCommands.registerCommand("SetHeading90", DriveCommands.zeroHeading(drive));
     //Above Hub
     NamedCommands.registerCommand("SetHeadingNeg45", DriveCommands.setHeading(drive, 3*Math.PI/4));
 
@@ -311,7 +311,7 @@ public class RobotContainer {
                 shooter.score(),
                 //hopper.runSpindexer(RotationsPerSecond.of(15)),
                 //intake.runRollers(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))));
-                hopper.runSpindexer(RotationsPerSecond.of(15))));
+                hopper.runSpindexer(RotationsPerSecond.of(14))));
 
     NamedCommands.registerCommand("Return", Commands.parallel(
                 shooter.stopScore(),
@@ -404,8 +404,7 @@ public class RobotContainer {
     // Fixed Shots
     controller.povUp().onTrue(shooter.setHoodAngle(2.3));
     controller.povRight().onTrue(shooter.setHoodAngle(9.8));
-    controller.povLeft().onTrue(shooter.setHoodAngle(9.8));
-    controller.povDown().onTrue(shooter.setHoodAngle(8));
+    controller.povDown().onTrue(shooter.setHoodAngle(7.5)); //8
 
     // Reset Buttons
     zeroDriveButton.onTrue(DriveCommands.zeroHeading(drive));

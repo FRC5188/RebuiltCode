@@ -191,7 +191,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command score() {
-    return Commands.run(() -> {runFeeder(RotationsPerSecond.of(30)); setFlywheelVelocity(RotationsPerSecond.of(67));});
+    return Commands.run(() -> {runFeeder(RotationsPerSecond.of(28)); setFlywheelVelocity(RotationsPerSecond.of(67));});
   }
 
   public Command stopScore() {
