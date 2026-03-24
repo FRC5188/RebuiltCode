@@ -11,6 +11,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "ZeroHood"
+          }
+        },
+        {
           "type": "deadline",
           "data": {
             "commands": [
@@ -23,7 +29,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ReadyUp"
+                  "name": "ReadyUpAngle"
                 }
               }
             ]

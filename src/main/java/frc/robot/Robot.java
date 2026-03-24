@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -51,8 +52,13 @@ public class Robot extends LoggedRobot {
   private Alert lowBatteryAlert = new Alert("The robot is low on battery!", AlertType.kWarning);
   public static FuelSim fuelSim = new FuelSim();
 
+  private final Field2d displayField = new Field2d();
+
   public Robot() {
     CanBridge.runTCP();
+
+    SmartDashboard.putData("Display Field 2D", displayField);
+
     // Record metadata
     // Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
     // Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
@@ -96,6 +102,8 @@ public class Robot extends LoggedRobot {
     // Start AdvantageKit logger
     Logger.start();
 
+  
+
     // Check for valid swerve config
     var modules =
         new SwerveModuleConstants[] {
@@ -123,6 +131,7 @@ public class Robot extends LoggedRobot {
   public void robotPeriodic() {
     // Publish match time
     SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
+    displayField.setRobotPose(robotContainer.drive.getPose());
 
     // Update from HubShiftUtil
     SmartDashboard.putString(
