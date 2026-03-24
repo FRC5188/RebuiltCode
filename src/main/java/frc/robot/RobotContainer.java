@@ -400,8 +400,8 @@ public class RobotContainer {
         .whileTrue(new CmdShootOnTheMove(
             drive, 
             shooter, 
-            () -> controller.getLeftY(),
-            () -> controller.getLeftX()));
+            () -> -controller.getLeftY(),
+            () -> -controller.getLeftX()));
 
     // Jostle
     controller.b().onTrue(intake.jostleIntake());

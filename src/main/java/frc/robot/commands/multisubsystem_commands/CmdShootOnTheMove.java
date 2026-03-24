@@ -87,7 +87,7 @@ public class CmdShootOnTheMove extends Command {
             Drive.SHOOT_ON_THE_MOVE_P, Drive.SHOOT_ON_THE_MOVE_I, Drive.SHOOT_ON_THE_MOVE_D);
 
     _rotationPID.setTolerance(Drive.SHOOT_ON_THE_MOVE_TOLERANCE);
-    _rotationPID.enableContinuousInput(-180.0, 180.0);
+    _rotationPID.enableContinuousInput(-Math.PI, Math.PI);
 
     _shotTimer = new Timer();
     _hasRunOnce = false;
@@ -148,6 +148,7 @@ public class CmdShootOnTheMove extends Command {
 
     // Angle to the speaker from the future position as a Rotation2d.
     _futureAngleToSpeaker = _drive.getRotation2dToHub(_futureRobotTranslation);
+    
 
     // All PID calculations are done in radians, so convert our setpoint from a
     // Rotation2d to radians.
@@ -277,6 +278,7 @@ public class CmdShootOnTheMove extends Command {
     if (check < 0) {
       return ShooterConstants.IDLE_HOOD_ANGLE; // Default angle if the shot is not possible
     }
+
     return Math.toDegrees(
         Math.atan(
             (ShooterConstants.EXIT_VELOCITY * ShooterConstants.EXIT_VELOCITY + Math.sqrt(check))
