@@ -48,8 +48,7 @@ public class VisionIOLimelight implements VisionIO {
     tySubscriber = table.getDoubleTopic("ty").subscribe(0.0);
     megatag1Subscriber = table.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[] {});
     megatag2Subscriber =
-         table.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[] {});
-
+        table.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[] {});
   }
 
   @Override
@@ -99,7 +98,7 @@ public class VisionIOLimelight implements VisionIO {
               // Observation type
               PoseObservationType.MEGATAG_1));
     }
-    
+
     for (var rawSample : megatag2Subscriber.readQueue()) {
       if (rawSample.value.length == 0) continue;
       for (int i = 11; i < rawSample.value.length; i += 7) {
@@ -124,7 +123,7 @@ public class VisionIOLimelight implements VisionIO {
 
               // Observation type
               PoseObservationType.MEGATAG_2));
-    } 
+    }
 
     // Save pose observations to inputs object
     inputs.poseObservations = new PoseObservation[poseObservations.size()];

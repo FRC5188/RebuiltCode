@@ -2,12 +2,9 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
-
-import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
@@ -21,7 +18,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -35,6 +31,7 @@ import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShooterRotaryConstants;
 import frc.robot.Robot;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
@@ -48,8 +45,7 @@ public class Shooter extends SubsystemBase {
   private double hoodAngle;
   private double desiredHoodAngle;
 
-
-   private static boolean autoShootEnabled = true;
+  private static boolean autoShootEnabled = true;
 
   public AngularVelocity targetVelocity = RotationsPerSecond.of(0.0);
   public AngularVelocity feederTargetVelocity = RotationsPerSecond.of(0.0);
@@ -136,19 +132,20 @@ public class Shooter extends SubsystemBase {
   public void setAutoShootEnabled(boolean enabled) {
     autoShootEnabled = enabled;
   }
+
   // Sets hood angle
   public Command setHoodAngle(double angleDegrees) {
     hoodAngle = angleDegrees;
     desiredHoodAngle = angleDegrees;
     return this.runOnce(
-            () -> {
-              _hood.runPosition(
-                  Angle.ofBaseUnits(angleDegrees * ShooterConstants.SIM_MULTIPLIER, Degrees),
-                  ShooterRotaryConstants.CRUISE_VELOCITY,
-                  ShooterRotaryConstants.ACCELERATION,
-                  ShooterRotaryConstants.JERK,
-                  PIDSlot.SLOT_0);
-            });
+        () -> {
+          _hood.runPosition(
+              Angle.ofBaseUnits(angleDegrees * ShooterConstants.SIM_MULTIPLIER, Degrees),
+              ShooterRotaryConstants.CRUISE_VELOCITY,
+              ShooterRotaryConstants.ACCELERATION,
+              ShooterRotaryConstants.JERK,
+              PIDSlot.SLOT_0);
+        });
   }
 
   // Checks if hood is at angle
@@ -193,11 +190,19 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command score() {
-    return Commands.run(() -> {runFeeder(RotationsPerSecond.of(28)); setFlywheelVelocity(RotationsPerSecond.of(67));});
+    return Commands.run(
+        () -> {
+          runFeeder(RotationsPerSecond.of(28));
+          setFlywheelVelocity(RotationsPerSecond.of(67));
+        });
   }
 
   public Command scoreAuto() {
-    return Commands.run(() -> {runFeeder(RotationsPerSecond.of(24)); setFlywheelVelocity(RotationsPerSecond.of(67));});
+    return Commands.run(
+        () -> {
+          runFeeder(RotationsPerSecond.of(24));
+          setFlywheelVelocity(RotationsPerSecond.of(67));
+        });
   }
 
   public Command stopScore() {
@@ -209,15 +214,16 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command readyUp(double angel) {
-    return this.run(() -> {
-      setFlywheelVelocity(RotationsPerSecond.of(55));
-      _hood.runPosition(
-          Angle.ofBaseUnits(angel, Degrees),
-          ShooterRotaryConstants.CRUISE_VELOCITY,
-          ShooterRotaryConstants.ACCELERATION,
-          ShooterRotaryConstants.JERK,
-          PIDSlot.SLOT_0);
-    });
+    return this.run(
+        () -> {
+          setFlywheelVelocity(RotationsPerSecond.of(55));
+          _hood.runPosition(
+              Angle.ofBaseUnits(angel, Degrees),
+              ShooterRotaryConstants.CRUISE_VELOCITY,
+              ShooterRotaryConstants.ACCELERATION,
+              ShooterRotaryConstants.JERK,
+              PIDSlot.SLOT_0);
+        });
   }
 
   public void simShoot() {
@@ -296,17 +302,17 @@ public class Shooter extends SubsystemBase {
 
   public Command setAngleForDistance(DoubleSupplier distance) {
     return this.runOnce(
-            () -> {
-              double distanceMeters = distance.getAsDouble();
-              double angle = hoodAngleMap.get(distanceMeters);
-              desiredHoodAngle = angle;
-              _hood.runPosition(
-                  Angle.ofBaseUnits(angle * ShooterConstants.SIM_MULTIPLIER, Degrees),
-                  ShooterRotaryConstants.CRUISE_VELOCITY,
-                  ShooterRotaryConstants.ACCELERATION,
-                  ShooterRotaryConstants.JERK,
-                  PIDSlot.SLOT_0);
-            });
+        () -> {
+          double distanceMeters = distance.getAsDouble();
+          double angle = hoodAngleMap.get(distanceMeters);
+          desiredHoodAngle = angle;
+          _hood.runPosition(
+              Angle.ofBaseUnits(angle * ShooterConstants.SIM_MULTIPLIER, Degrees),
+              ShooterRotaryConstants.CRUISE_VELOCITY,
+              ShooterRotaryConstants.ACCELERATION,
+              ShooterRotaryConstants.JERK,
+              PIDSlot.SLOT_0);
+        });
   }
 
   public void periodic() {

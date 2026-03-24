@@ -13,31 +13,23 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.W8.io.motor.*;
-import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.flywheel.*;
-import frc.lib.W8.mechanisms.linear.LinearMechanism;
-import frc.lib.W8.mechanisms.linear.LinearMechanismReal;
-import frc.lib.W8.mechanisms.linear.LinearMechanismSim;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanismReal;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanismSim;
-import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.Constants.IntakeFlywheelConstants;
@@ -45,26 +37,22 @@ import frc.robot.Constants.IntakePivotConstants;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.ShooterFlywheelConstants;
 import frc.robot.Constants.ShooterRotaryConstants;
-import static frc.robot.subsystems.vision.VisionConstants.*;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.multisubsystem_commands.CmdShootOnTheMove;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIOLimelight;
 import java.util.Optional;
-import java.util.function.Supplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -81,7 +69,7 @@ public class RobotContainer {
   public final Intake intake;
   //   private final BallCounter ballCounter;
   private final Vision vision;
-//   private final Climber climber;
+  //   private final Climber climber;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -241,10 +229,10 @@ public class RobotContainer {
                     false,
                     IntakePivotConstants.CONSTANTS,
                     Optional.empty()));
-       vision = 
-                new Vision(
-                    drive::addVisionMeasurement,
-                    new VisionIOLimelight(camera0Name, drive::getRotation));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOLimelight(camera0Name, drive::getRotation));
 
         // climber =
         //     new Climber(
@@ -296,12 +284,14 @@ public class RobotContainer {
     // // Retracts climber arm
     // NamedCommands.registerCommand("Climb", getAutonomousCommand());
 
-    //Below Hub
-    NamedCommands.registerCommand("SetHeading45", DriveCommands.setHeading(drive, -3*Math.PI/4));
-    //Aligned with Hub
+    // Below Hub
+    NamedCommands.registerCommand(
+        "SetHeading45", DriveCommands.setHeading(drive, -3 * Math.PI / 4));
+    // Aligned with Hub
     NamedCommands.registerCommand("SetHeading90", DriveCommands.setHeading(drive, 0));
-    //Above Hub
-    NamedCommands.registerCommand("SetHeadingNeg45", DriveCommands.setHeading(drive, 3*Math.PI/4));
+    // Above Hub
+    NamedCommands.registerCommand(
+        "SetHeadingNeg45", DriveCommands.setHeading(drive, 3 * Math.PI / 4));
 
     // calibrate shooter
     NamedCommands.registerCommand("ZeroHood", shooter.calibrateHood());
@@ -314,27 +304,31 @@ public class RobotContainer {
     NamedCommands.registerCommand("ReadyUpAngle", shooter.readyUp(2.6));
 
     // Shoots
-    NamedCommands.registerCommand("Shoot", Commands.parallel(
-                shooter.scoreAuto(),
-                //hopper.runSpindexer(RotationsPerSecond.of(15)),
-                //intake.runRollers(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))));
-                hopper.runSpindexer(RotationsPerSecond.of(12))));
+    NamedCommands.registerCommand(
+        "Shoot",
+        Commands.parallel(
+            shooter.scoreAuto(),
+            // hopper.runSpindexer(RotationsPerSecond.of(15)),
+            // intake.runRollers(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))));
+            hopper.runSpindexer(RotationsPerSecond.of(12))));
 
-    NamedCommands.registerCommand("Return", Commands.parallel(
-                shooter.stopScore(),
-                hopper.runSpindexer(RotationsPerSecond.of(0)),
-                Commands.run(() -> intake.stop())));
+    NamedCommands.registerCommand(
+        "Return",
+        Commands.parallel(
+            shooter.stopScore(),
+            hopper.runSpindexer(RotationsPerSecond.of(0)),
+            Commands.run(() -> intake.stop())));
 
     // Runs Intake Rollers
     // NamedCommands.registerCommand("IntakeOn", getAutonomousCommand());
     // // Stops Intake Rollers
     // NamedCommands.registerCommand("IntakeOff", getAutonomousCommand());
     // Extends the intake
-    NamedCommands.registerCommand("IntakeDown", intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
+    NamedCommands.registerCommand(
+        "IntakeDown", intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     autoChooser.addDefaultOption("Select An Auto", Commands.none());
-
 
     // Set up SysId routines
     // autoChooser.addOption(
@@ -375,7 +369,6 @@ public class RobotContainer {
     controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(55)));
     controller.leftBumper().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
 
-
     // Shoot
     controller
         .leftTrigger()
@@ -404,11 +397,9 @@ public class RobotContainer {
     // Auto Align
     controller
         .a()
-        .whileTrue(new CmdShootOnTheMove(
-            drive, 
-            shooter, 
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX()));
+        .whileTrue(
+            new CmdShootOnTheMove(
+                drive, shooter, () -> -controller.getLeftY(), () -> -controller.getLeftX()));
 
     // Jostle
     controller.b().onTrue(intake.jostleIntake());
@@ -419,9 +410,11 @@ public class RobotContainer {
     // Fixed Shots
     controller.povUp().onTrue(shooter.setHoodAngle(2.5));
     controller.povRight().onTrue(shooter.setHoodAngle(9.4));
-    controller.povDown().onTrue(shooter.setHoodAngle(9.5)); //8
+    controller.povDown().onTrue(shooter.setHoodAngle(9.5)); // 8
 
-    controller.povLeft().onTrue((shooter.setAngleForDistance(() -> drive.getRadiusToHubInMeters())));
+    controller
+        .povLeft()
+        .onTrue((shooter.setAngleForDistance(() -> drive.getRadiusToHubInMeters())));
 
     // controller.povDown().onTrue(shooter.setAngleForDistance(Meters.of(1.0)));
     // controller.povRight().onTrue(shooter.setAngleForDistance(Meters.of(2.0)));
@@ -430,7 +423,6 @@ public class RobotContainer {
     zeroDriveButton.onTrue(DriveCommands.zeroHeading(drive));
     zeroIntakeButton.onTrue(intake.zeroEncoder());
     zeroHoodButton.onTrue(shooter.calibrateHood());
-
   }
 
   /**
