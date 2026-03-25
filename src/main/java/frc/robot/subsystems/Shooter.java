@@ -140,6 +140,7 @@ public class Shooter extends SubsystemBase {
   public Command setHoodAngle(double angleDegrees) {
     hoodAngle = angleDegrees;
     desiredHoodAngle = angleDegrees;
+    System.out.println("Setting hood angle to: " + angleDegrees + " degrees");
     return this.runOnce(
             () -> {
               _hood.runPosition(
