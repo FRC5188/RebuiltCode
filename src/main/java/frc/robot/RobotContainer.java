@@ -320,9 +320,9 @@ public class RobotContainer {
             Commands.run(() -> intake.stop())));
 
     // Runs Intake Rollers
-    // NamedCommands.registerCommand("IntakeOn", getAutonomousCommand());
+    NamedCommands.registerCommand("IntakeOn", Commands.runOnce(() -> intake.setVelocity(RotationsPerSecond.of(22.5))));
     // // Stops Intake Rollers
-    // NamedCommands.registerCommand("IntakeOff", getAutonomousCommand());
+    NamedCommands.registerCommand("IntakeOff", Commands.run(() -> intake.stop()));
     // Extends the intake
     NamedCommands.registerCommand(
         "IntakeDown", intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
@@ -408,9 +408,9 @@ public class RobotContainer {
     controller.x().whileTrue(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
 
     // Fixed Shots
-    controller.povUp().onTrue(shooter.setHoodAngle(2.5));
-    controller.povRight().onTrue(shooter.setHoodAngle(9.4));
-    controller.povDown().onTrue(shooter.setHoodAngle(9.5)); // 8
+    controller.povUp().onTrue(shooter.setHoodAngle(2.3));
+    controller.povRight().onTrue(shooter.setHoodAngle(9.8));
+    controller.povDown().onTrue(shooter.setHoodAngle(15)); //8
 
     controller
         .povLeft()

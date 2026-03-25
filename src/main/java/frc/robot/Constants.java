@@ -292,7 +292,7 @@ public final class Constants {
     public static final double DEFAULT_SPEED_RPM = (1.0);
     public static final double FLYWHEEL_VELOCITY_TOLERANCE = 1.0;
 
-    public static final double SIM_MULTIPLIER = (simMode == Mode.SIM) ? 1.0 / 57.0 : 1.0;
+    public static final double SIM_MULTIPLIER = (currentMode == Mode.REAL) ? 1.0 : 1.0 / 57.0;
     public static final double TIME_TO_SHOOT =
         0.2; // In seconds, how long it takes for a ball to leave once "shoot" is pressed
 

@@ -132,20 +132,37 @@ public class Shooter extends SubsystemBase {
   public void setAutoShootEnabled(boolean enabled) {
     autoShootEnabled = enabled;
   }
+  // Sets hood angle
+  // public Command setHoodAngle(double angleDegrees) {
+  //   hoodAngle = angleDegrees;
+  //   desiredHoodAngle = angleDegrees;
+  //   System.out.println("Setting hood angle to: " + angleDegrees + " degrees");
+  //   return this.runOnce(
+  //           () -> {
+  //             _hood.runPosition(
+  //                 Angle.ofBaseUnits(angleDegrees * ShooterConstants.SIM_MULTIPLIER, Degrees),
+  //                 ShooterRotaryConstants.CRUISE_VELOCITY,
+  //                 ShooterRotaryConstants.ACCELERATION,
+  //                 ShooterRotaryConstants.JERK,
+  //                 PIDSlot.SLOT_0);
+  //           });
+  // }
 
   // Sets hood angle
   public Command setHoodAngle(double angleDegrees) {
     hoodAngle = angleDegrees;
     desiredHoodAngle = angleDegrees;
     return this.runOnce(
-        () -> {
-          _hood.runPosition(
-              Angle.ofBaseUnits(angleDegrees * ShooterConstants.SIM_MULTIPLIER, Degrees),
-              ShooterRotaryConstants.CRUISE_VELOCITY,
-              ShooterRotaryConstants.ACCELERATION,
-              ShooterRotaryConstants.JERK,
-              PIDSlot.SLOT_0);
-        });
+            () -> {
+              System.out.println("Setting hood angle to: " + angleDegrees + " degrees");
+              _hood.runPosition(
+                  Angle.ofBaseUnits(angleDegrees * ShooterConstants.SIM_MULTIPLIER, Degrees),
+                  ShooterRotaryConstants.CRUISE_VELOCITY,
+                  ShooterRotaryConstants.ACCELERATION,
+                  ShooterRotaryConstants.JERK,
+                  PIDSlot.SLOT_0);
+            })
+        .andThen(() -> System.out.println("Command finished"));
   }
 
   // Checks if hood is at angle
@@ -302,18 +319,21 @@ public class Shooter extends SubsystemBase {
 
   public Command setAngleForDistance(DoubleSupplier distance) {
     return this.runOnce(
-        () -> {
-          double distanceMeters = distance.getAsDouble();
-          double angle = hoodAngleMap.get(distanceMeters);
-          desiredHoodAngle = angle;
-          _hood.runPosition(
-              Angle.ofBaseUnits(angle * ShooterConstants.SIM_MULTIPLIER, Degrees),
-              ShooterRotaryConstants.CRUISE_VELOCITY,
-              ShooterRotaryConstants.ACCELERATION,
-              ShooterRotaryConstants.JERK,
-              PIDSlot.SLOT_0);
-        });
+            () -> {
+              double distanceMeters = distance.getAsDouble();
+              double angle = hoodAngleMap.get(distanceMeters);
+              desiredHoodAngle = angle;
+              System.out.println("Setting hood angle to: " + angle + " degrees");
+              _hood.runPosition(
+                  Angle.ofBaseUnits(angle * ShooterConstants.SIM_MULTIPLIER, Degrees),
+                  ShooterRotaryConstants.CRUISE_VELOCITY,
+                  ShooterRotaryConstants.ACCELERATION,
+                  ShooterRotaryConstants.JERK,
+                  PIDSlot.SLOT_0);
+            })
+          .andThen(() -> System.out.println("Command finished"));
   }
+
 
   public void periodic() {
     _hood.periodic();
