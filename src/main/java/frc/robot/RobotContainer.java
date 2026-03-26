@@ -319,12 +319,10 @@ public class RobotContainer {
                 Commands.run(() -> intake.stop())));
 
     // Runs Intake Rollers
-    NamedCommands.registerCommand("IntakeOn", Commands.runOnce(() -> intake.setVelocity(RotationsPerSecond.of(22.5))));
+    NamedCommands.registerCommand("Intake", intake.intake().andThen(() -> intake.stop()));
     // // Stops Intake Rollers
     NamedCommands.registerCommand("IntakeOff", Commands.run(() -> intake.stop()));
-    // Extends the intake
-    NamedCommands.registerCommand("IntakeDown", intake.setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
-
+    
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     autoChooser.addDefaultOption("Select An Auto", Commands.none());
 

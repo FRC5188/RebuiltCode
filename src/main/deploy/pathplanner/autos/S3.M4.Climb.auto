@@ -23,7 +23,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeDown"
+                  "name": null
                 }
               }
             ]
@@ -58,7 +58,7 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "IntakeOn"
+                        "name": "Intake"
                       }
                     }
                   ]

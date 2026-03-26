@@ -20,7 +20,7 @@
         "y": 5.928370209225911
       },
       "prevControl": {
-        "x": 3.266582362332618,
+        "x": 3.2665823623326182,
         "y": 6.158762779507035
       },
       "nextControl": null,
@@ -38,7 +38,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "IntakeOn",
+      "name": "Intake",
       "waypointRelativePos": 0.787892376681611,
       "endWaypointRelativePos": 1.0,
       "command": null

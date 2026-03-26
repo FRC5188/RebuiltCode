@@ -5,13 +5,19 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "Shoot2-Depot"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "Shoot2-Depot"
+                  "name": "IntakeOff"
                 }
               },
               {
@@ -19,27 +25,21 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "wait",
+                      "type": "path",
                       "data": {
-                        "waitTime": 1.0
+                        "pathName": "Depot-Shoot3"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "IntakeOn"
+                        "name": "Shoot"
                       }
                     }
                   ]
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Depot-Shoot3"
           }
         },
         {
