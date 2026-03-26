@@ -365,7 +365,7 @@ public class RobotContainer {
             () -> -controller.getRightX()));
 
     // Just Shooter Flywheels
-    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(55)));
+    controller.leftBumper().whileTrue(shooter.setVelocityForDistance(() -> drive.getRadiusToHubInMeters()));
     controller.leftBumper().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
 
 

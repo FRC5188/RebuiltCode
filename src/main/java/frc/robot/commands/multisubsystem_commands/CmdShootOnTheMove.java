@@ -196,7 +196,7 @@ public class CmdShootOnTheMove extends Command {
           DriverStation.getAlliance().isPresent()
               && DriverStation.getAlliance().get() == Alliance.Red;
 
-    _shooter.setAngleForDistance(() -> _drive.getRadiusToHubInMeters());
+    _shooter.setHoodAngleForDistance(() -> _correctedRadius);
     
     _drive.runVelocity(
     ChassisSpeeds.fromFieldRelativeSpeeds(
