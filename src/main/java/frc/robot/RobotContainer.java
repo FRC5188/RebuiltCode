@@ -306,17 +306,19 @@ public class RobotContainer {
     // Bring flywheel up to speed + hood to position for known locations?
     NamedCommands.registerCommand("ReadyUp", shooter.readyUp());
 
+    NamedCommands.registerCommand("ZeroHood", shooter.calibrateHood());
+
     // Shoots
     NamedCommands.registerCommand("Shoot", Commands.parallel(
                 shooter.score(),
                 //hopper.runSpindexer(RotationsPerSecond.of(15)),
                 //intake.runRollers(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))));
-                hopper.runSpindexer(RotationsPerSecond.of(14))));
+                hopper.runSpindexer(RotationsPerSecond.of(14)),
+                shooter.setAngleForDistance(() -> drive.getRadiusToHubInMeters())));
 
     NamedCommands.registerCommand("Return", Commands.parallel(
                 shooter.stopScore(),
-                hopper.runSpindexer(RotationsPerSecond.of(0)),
-                Commands.run(() -> intake.stop())));
+                hopper.runSpindexer(RotationsPerSecond.of(0))));
 
     // Runs Intake Rollers
     NamedCommands.registerCommand("Intake", intake.intake().andThen(() -> intake.stop()));
