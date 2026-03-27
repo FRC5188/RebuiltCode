@@ -20,6 +20,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -90,6 +91,7 @@ public class RobotContainer {
   private final JoystickButton zeroDriveButton = new JoystickButton(buttonbox1, 1);
   private final JoystickButton zeroIntakeButton = new JoystickButton(buttonbox1, 2);
   private final JoystickButton zeroHoodButton = new JoystickButton(buttonbox1, 3);
+  private final JoystickButton testingButton7 = new JoystickButton(buttonbox1, 7);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -371,7 +373,7 @@ public class RobotContainer {
         .leftTrigger()
         .whileTrue(
             Commands.parallel(
-                shooter.score(), hopper.runSpindexer(RotationsPerSecond.of(15)), intake.intake()));
+                shooter.score(), hopper.runSpindexer(RotationsPerSecond.of(15)), intake.jostleIntake()));
     controller
         .leftTrigger()
         .onFalse(
