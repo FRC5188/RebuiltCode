@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "LBump-Shoot3"
+                  "pathName": "LBump-ShootC"
                 }
               },
               {
@@ -42,7 +42,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Shoot3-Main4"
+                  "pathName": "ShootC-Main4"
                 }
               },
               {

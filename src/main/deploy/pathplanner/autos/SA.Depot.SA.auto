@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "UBump-ShootA"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "ZeroHood"
@@ -36,7 +42,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Shoot2-Depot"
+                  "pathName": "ShootA-Depot"
                 }
               },
               {
@@ -65,7 +71,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "Depot-Shoot3"
+                        "pathName": "Depot-ShootC"
                       }
                     },
                     {
