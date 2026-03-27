@@ -368,6 +368,10 @@ public class RobotContainer {
     controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(55)));
     controller.leftBumper().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
 
+    controller.rightBumper().and(controller.a().negate()).whileTrue(Commands.parallel(shooter.runTower(RotationsPerSecond.of(30)),
+    hopper.runSpindexer(RotationsPerSecond.of(15))));
+    controller.rightBumper().and(controller.a().negate()).onFalse(Commands.parallel(shooter.runTower(RotationsPerSecond.of(0)),
+    hopper.runSpindexer(RotationsPerSecond.of(0))));
 
     // Shoot
     controller
@@ -400,11 +404,29 @@ public class RobotContainer {
         .whileTrue(new CmdShootOnTheMove(
             drive, 
             shooter, 
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX()));
+            hopper,
+            () -> controller.getLeftY(),
+            () -> controller.getLeftX(),
+            () -> controller.rightBumper().getAsBoolean()));
 
     // Jostle
     controller.b().onTrue(intake.jostleIntake());
+
+    // Tune Shoot
+    controller.y().whileTrue(
+        Commands.parallel(
+            shooter.tuneShoot(),
+            hopper.runSpindexer(RotationsPerSecond.of(30)),
+            intake.intake()
+        )
+    );
+    controller.y().onFalse(
+        Commands.parallel(
+            shooter.stopScore(),
+            hopper.runSpindexer(RotationsPerSecond.of(0)),
+            Commands.runOnce(() -> intake.stop())
+        )
+    );
 
     // Stow Intake
     controller.x().whileTrue(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));

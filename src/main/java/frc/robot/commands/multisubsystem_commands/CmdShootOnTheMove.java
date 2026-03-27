@@ -16,21 +16,18 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.drive.Drive;
-// import frc.robot.subsystems.drive.DriveConstants;
-// import frc.robot.subsystems.intake.Intake;
-// import frc.robot.subsystems.shooter.Shooter;
-// import frc.robot.subsystems.shooter.ShooterConstants;
-// import frc.robot.subsystems.shooter.Shooter.ShooterZone;
+import frc.robot.subsystems.Hopper;
+import frc.lib.firecontrol.ShotCalculator;
+
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class CmdShootOnTheMove extends Command {
@@ -41,6 +38,7 @@ public class CmdShootOnTheMove extends Command {
 
   private DoubleSupplier _translationXSupplier;
   private DoubleSupplier _translationYSupplier;
+  private BooleanSupplier _trigger;
   private boolean _isFinished;
 
   private Translation2d _currentRobotTranslation;
@@ -53,7 +51,6 @@ public class CmdShootOnTheMove extends Command {
   private double _correctedRotationRate;
   private double _timeUntilShot;
   private Translation2d _moveDelta;
-  // private DoubleSupplier _trigger;
   private Timer _shotTimer;
   private Boolean _hasRunOnce;
   private double _correctedRadius;
@@ -62,25 +59,35 @@ public class CmdShootOnTheMove extends Command {
 
   private PIDController _rotationPID;
 
+  private ShotCalculator _shotCalc;
+  private Hopper _hopper;
+
   /**
    * CmdAdjustShooterAutomatically is the default command for the shooter. Disable it when we run
    * this command.
    *
    * @param drivetrainSubsystem the drive subsystem
    * @param shooterSubsystem the shooter subsystem
+   * @param hopperSubsystem the hopper subsystem
    * @param translationXSupplier translation x supplied by driver translation joystick
    * @param translationYSupplier translation y supplied by driver translation joystick []\
+   * @param trigger the shoot button
    */
   public CmdShootOnTheMove(
       Drive drivetrainSubsystem,
       Shooter shooterSubsystem,
+      Hopper hopperSubsystem,
       DoubleSupplier translationXSupplier,
-      DoubleSupplier translationYSupplier) {
+      DoubleSupplier translationYSupplier,
+      BooleanSupplier trigger) {
 
     _drive = drivetrainSubsystem;
     _shooter = shooterSubsystem;
+    _hopper = hopperSubsystem;
     _translationXSupplier = translationXSupplier;
     _translationYSupplier = translationYSupplier;
+    _trigger = trigger;
+    _shotCalc = _shooter.getShotCalculator();
 
     _rotationPID =
         new PIDController(
@@ -93,7 +100,7 @@ public class CmdShootOnTheMove extends Command {
     _hasRunOnce = false;
     // _triggerThreshold = 0.1;
 
-    addRequirements(drivetrainSubsystem);
+    addRequirements(drivetrainSubsystem, shooterSubsystem, hopperSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -107,123 +114,64 @@ public class CmdShootOnTheMove extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // if (_trigger.getAsDouble() > _triggerThreshold) {
-      if (!_hasRunOnce) {
-        _shotTimer.start();
-        _hasRunOnce = true;
-      // }
+    double xSpeed = _translationXSupplier.getAsDouble() * _drive.getMaxLinearSpeedMetersPerSec();
+    double ySpeed = _translationYSupplier.getAsDouble() * _drive.getMaxLinearSpeedMetersPerSec();
+
+    Translation2d hubCenter = _drive.getHubPos();
+    Translation2d hubForward = (edu.wpi.first.wpilibj.DriverStation.getAlliance().orElse(edu.wpi.first.wpilibj.DriverStation.Alliance.Blue) == edu.wpi.first.wpilibj.DriverStation.Alliance.Blue) 
+            ? new Translation2d(1, 0) 
+            : new Translation2d(-1, 0);
+
+    ChassisSpeeds robotVel = _drive.getChassisSpeeds();
+    ChassisSpeeds fieldVel = ChassisSpeeds.fromRobotRelativeSpeeds(robotVel, _drive.getPose().getRotation());
+
+    ShotCalculator.ShotInputs inputs = new ShotCalculator.ShotInputs(
+      _drive.getPose(),
+      fieldVel,
+      robotVel, // robot velocity
+      hubCenter,
+      hubForward, 
+      1.0,  // Confidence
+      0.0,  // pitch fallback
+      0.0   // roll fallback
+    );
+
+    ShotCalculator.LaunchParameters shot = _shotCalc.calculate(inputs);
+
+    org.littletonrobotics.junction.Logger.recordOutput("SOTM/Confidence", shot.confidence());
+    org.littletonrobotics.junction.Logger.recordOutput("SOTM/IsValid", shot.isValid());
+    org.littletonrobotics.junction.Logger.recordOutput("SOTM/Distance", shot.solvedDistanceM());
+    org.littletonrobotics.junction.Logger.recordOutput("SOTM/RPM", shot.rpm());
+
+    if (shot.isValid() && shot.confidence() > 50) {
+      
+      _shooter.setFlywheelVelocity(edu.wpi.first.units.Units.RotationsPerSecond.of(shot.rpm() / 60.0));
+      _shooter.setHoodAngleImmediate(_shotCalc.getHoodAngle(shot.solvedDistanceM()));
+
+      _rotationPID.setSetpoint(shot.driveAngle().getRadians());
+    } else {
+      _rotationPID.setSetpoint(_drive.getRotation2dToHub(_drive.getPose().getTranslation()).getRadians());
     }
-
-    // Get *translation only* of the robot
-    _currentRobotTranslation = _drive.getPose().getTranslation();
-
-    _speeds = _drive.getChassisSpeeds();
-
-    _timeUntilShot = ShooterConstants.TIME_TO_SHOOT - _shotTimer.get();
-
-    if (_timeUntilShot < 0.0) {
-      _timeUntilShot = 0.0;
-    }
-
-    // Calculate change in x and y distances due to time and velocity.
-    _moveDelta =
-        new Translation2d(
-            _timeUntilShot * (_speeds.vxMetersPerSecond),
-            _timeUntilShot * (_speeds.vyMetersPerSecond));
-
-    // Get linear velocity
-      // Translation2d linearVelocity =
-      //     new Pose2d().transformBy(
-      //             new Transform2d(
-      //                 new Translation2d(
-      //                     _translationXSupplier.getAsDouble(), _translationYSupplier.getAsDouble()),
-      //                 new Rotation2d())).getTranslation();
-             // _translationXSupplier.getAsDouble(), _translationYSupplier.getAsDouble()));
-
-    // Add current position + change in position due to velocity to get future
-    // position. This is where the robot will be at _timeUntilShot.
-    _futureRobotTranslation = _currentRobotTranslation.plus(_moveDelta);
 
     _currentAngleRadians = _drive.getRotation().getRadians();
+    _correctedRotationRate = _rotationPID.calculate(MathUtil.inputModulus(_currentAngleRadians, -1 * Math.PI, Math.PI));
 
-    // Angle to the speaker from the future position as a Rotation2d.
-    _futureAngleToSpeaker = _drive.getRotation2dToHub(_futureRobotTranslation);
-    
+    _drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, _correctedRotationRate, _drive.getRotation()));
 
-    // All PID calculations are done in radians, so convert our setpoint from a
-    // Rotation2d to radians.
-    _rotationPID.setSetpoint(_futureAngleToSpeaker.getRadians());
+    if (_trigger.getAsBoolean() && shot.isValid() && shot.confidence() > 50) {
+      // _shooter.runFeeder(edu.wpi.first.units.Units.RotationsPerSecond.of(30));
+      // _hopper.runSpindexerImmediate(edu.wpi.first.units.Units.RotationsPerSecond.of(15));
+    } else {
+      _shooter.runFeeder(edu.wpi.first.units.Units.RotationsPerSecond.of(0));
+      _hopper.runSpindexerImmediate(edu.wpi.first.units.Units.RotationsPerSecond.of(0));
+    }
 
-    // Angle in radians (omegaRadiansPerSecond) to pass to the drivetrain later in a
-    // ChassisSpeeds object
-    _correctedRotationRate =
-        _rotationPID.calculate(
-            (MathUtil.inputModulus(_currentAngleRadians, -1 * Math.PI, Math.PI)));
-
-    // Get a Pose2d based on the newly-calculated future translation and angle.
-    _futureRobotPose2d = new Pose2d(_futureRobotTranslation, _futureAngleToSpeaker);
-    _correctedRadius = _drive.getRadiusToHubInMeters(_futureRobotPose2d);
-
-    // drive the robot based on the calculations from above
-    // _drive.runVelocity(
-    //     _drive.transformJoystickInputsToChassisSpeeds(
-    //       _translationXSupplier.getAsDouble(),
-    //       _translationYSupplier.getAsDouble(),
-    //        _correctedRotation, false));
-
-    // DriveCommands.joystickDriveAtAngle(
-    //   _drive,
-    //   _translationXSupplier,
-    //     _translationYSupplier,
-    //     _correctedRotation);
-
-    // ChassisSpeeds speeds =
-    //   new ChassisSpeeds(
-    //       linearVelocity.getX() * _drive.getMaxLinearSpeedMetersPerSec(),
-    //       linearVelocity.getY() * _drive.getMaxLinearSpeedMetersPerSec(),
-    //       _correctedRotationRate);
-    //   boolean isFlipped =
-    //       DriverStation.getAlliance().isPresent()
-    //           && DriverStation.getAlliance().get() == Alliance.Red;
-
-    ChassisSpeeds speeds =
-      new ChassisSpeeds(
-          _translationXSupplier.getAsDouble() * _drive.getMaxLinearSpeedMetersPerSec(),
-          _translationYSupplier.getAsDouble() * _drive.getMaxLinearSpeedMetersPerSec(),
-          _correctedRotationRate);
-          
-      boolean isFlipped =
-          DriverStation.getAlliance().isPresent()
-              && DriverStation.getAlliance().get() == Alliance.Red;
-
-    _shooter.setAngleForDistance(() -> _drive.getRadiusToHubInMeters());
-    
-    _drive.runVelocity(
-    ChassisSpeeds.fromFieldRelativeSpeeds(
-        speeds,
-        isFlipped
-            ? _drive.getRotation().plus(new Rotation2d(Math.PI))
-            : _drive.getRotation()));
-
-    // _drive.runVelocity(
-    //     ChassisSpeeds.fromFieldRelativeSpeeds(
-    //         linearVelocity.getX(),
-    //         linearVelocity.getY(),
-    //         _correctedRotationRate,
-    //         _drive.getRotation()));
-  // if (_intake.hasNote()) {
-      // if (_correctedZone != _shooter.getCurrentZone()) {
-      //   // We want to shoot!
-      //   _shooter.runShooterForZone(_correctedZone);
-      // }
-      
-    // else {
-    //   if (_shooter.getCurrentZone() != ShooterZone.Unknown) {
-    //     _shooter.runShooterForZone(ShooterZone.Unknown);
-    //   }
-    // }
+    // Keep state machine alive
+    if (!_hasRunOnce) {
+        _shotTimer.start();
+        _hasRunOnce = true;
+    }
   }
-  
 
   // Called once the command ends or is interrupted.
   @Override
@@ -238,6 +186,9 @@ public class CmdShootOnTheMove extends Command {
     _shotTimer.reset();
     _hasRunOnce = false;
 
+    _shooter.runFeeder(edu.wpi.first.units.Units.RotationsPerSecond.of(0));
+    _hopper.runSpindexerImmediate(edu.wpi.first.units.Units.RotationsPerSecond.of(0));
+    _shooter.setFlywheelVelocity(edu.wpi.first.units.Units.RotationsPerSecond.of(0));
     // Reenable CmdAdjustShooterAutomatically because this command is finished.
     _shooter.setAutoShootEnabled(true);
   }
