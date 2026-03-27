@@ -303,26 +303,23 @@ public class RobotContainer {
     //Above Hub
     NamedCommands.registerCommand("SetHeadingNeg45", DriveCommands.setHeading(drive, 3*Math.PI/4));
 
-    // Bring flywheel up to speed + hood to position for known locations?
-    NamedCommands.registerCommand("ReadyUp", shooter.readyUp());
-
+    // Calibrates the hood
     NamedCommands.registerCommand("ZeroHood", shooter.calibrateHood());
 
-    // Shoots
+    // Runs tower, flywheel, spindexer, and auto hood angle
     NamedCommands.registerCommand("Shoot", Commands.parallel(
                 shooter.score(),
-                //hopper.runSpindexer(RotationsPerSecond.of(15)),
-                //intake.runRollers(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))));
                 hopper.runSpindexer(RotationsPerSecond.of(14)),
                 shooter.setAngleForDistance(() -> drive.getRadiusToHubInMeters())));
-
+    // Stops tower, flywheels, and spindexer
     NamedCommands.registerCommand("Return", Commands.parallel(
                 shooter.stopScore(),
                 hopper.runSpindexer(RotationsPerSecond.of(0))));
 
-    // Runs Intake Rollers
+    // Runs rollers and pickup position ONLY when called
+    // This is a zoned command.
     NamedCommands.registerCommand("Intake", intake.intake().andThen(() -> intake.stop()));
-    // // Stops Intake Rollers
+    // Stops rollers - we shouldn't need this, but throw it in if autos are tweaking.
     NamedCommands.registerCommand("IntakeOff", Commands.run(() -> intake.stop()));
     
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
