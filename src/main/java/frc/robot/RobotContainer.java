@@ -20,6 +20,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -78,6 +79,7 @@ public class RobotContainer {
   private final JoystickButton zeroDriveButton = new JoystickButton(buttonbox1, 1);
   private final JoystickButton zeroIntakeButton = new JoystickButton(buttonbox1, 2);
   private final JoystickButton zeroHoodButton = new JoystickButton(buttonbox1, 3);
+  private final JoystickButton testingButton7 = new JoystickButton(buttonbox1, 7);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -298,35 +300,25 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("TowerHood", shooter.setHoodAngle(7.5));
 
-    // Bring flywheel up to speed + hood to position for known locations?
-    NamedCommands.registerCommand("ReadyUp", shooter.readyUp(2));
+    // Calibrates the hood
+    NamedCommands.registerCommand("ZeroHood", shooter.calibrateHood());
 
-    NamedCommands.registerCommand("ReadyUpAngle", shooter.readyUp(2.6));
+    // Runs tower, flywheel, spindexer, and auto hood angle
+    NamedCommands.registerCommand("Shoot", Commands.parallel(
+                shooter.score(),
+                hopper.runSpindexer(RotationsPerSecond.of(14)),
+                shooter.setAngleForDistance(() -> drive.getRadiusToHubInMeters())));
+    // Stops tower, flywheels, and spindexer
+    NamedCommands.registerCommand("Return", Commands.parallel(
+                shooter.stopScore(),
+                hopper.runSpindexer(RotationsPerSecond.of(0))));
 
-    // Shoots
-    NamedCommands.registerCommand(
-        "Shoot",
-        Commands.parallel(
-            shooter.scoreAuto(),
-            // hopper.runSpindexer(RotationsPerSecond.of(15)),
-            // intake.runRollers(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED))));
-            hopper.runSpindexer(RotationsPerSecond.of(12))));
-
-    NamedCommands.registerCommand(
-        "Return",
-        Commands.parallel(
-            shooter.stopScore(),
-            hopper.runSpindexer(RotationsPerSecond.of(0)),
-            Commands.run(() -> intake.stop())));
-
-    // Runs Intake Rollers
-    NamedCommands.registerCommand("IntakeOn", Commands.runOnce(() -> intake.setVelocity(RotationsPerSecond.of(22.5))));
-    // // Stops Intake Rollers
+    // Runs rollers and pickup position ONLY when called
+    // This is a zoned command.
+    NamedCommands.registerCommand("Intake", intake.intake().andThen(() -> intake.stop()));
+    // Stops rollers - we shouldn't need this, but throw it in if autos are tweaking.
     NamedCommands.registerCommand("IntakeOff", Commands.run(() -> intake.stop()));
-    // Extends the intake
-    NamedCommands.registerCommand(
-        "IntakeDown", intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
-
+    
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     autoChooser.addDefaultOption("Select An Auto", Commands.none());
 
@@ -366,7 +358,7 @@ public class RobotContainer {
             () -> -controller.getRightX()));
 
     // Just Shooter Flywheels
-    controller.leftBumper().whileTrue(shooter.runFlywheel(RotationsPerSecond.of(55)));
+    controller.leftBumper().whileTrue(shooter.setVelocityForDistance(() -> drive.getRadiusToHubInMeters()));
     controller.leftBumper().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
 
     // Shoot
@@ -374,7 +366,7 @@ public class RobotContainer {
         .leftTrigger()
         .whileTrue(
             Commands.parallel(
-                shooter.score(), hopper.runSpindexer(RotationsPerSecond.of(15)), intake.intake()));
+                shooter.score(), hopper.runSpindexer(RotationsPerSecond.of(15)), intake.jostleIntake()));
     controller
         .leftTrigger()
         .onFalse(

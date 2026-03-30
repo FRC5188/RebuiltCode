@@ -120,7 +120,7 @@
       "command": null
     },
     {
-      "name": "IntakeOn",
+      "name": "Intake",
       "waypointRelativePos": 1.7690582959641157,
       "endWaypointRelativePos": null,
       "command": null

@@ -290,11 +290,11 @@ public class Shooter extends SubsystemBase {
   private static final InterpolatingDoubleTreeMap hoodAngleMap = new InterpolatingDoubleTreeMap();
 
   static {
-    hoodAngleMap.put(1.28, 2.3);
-    hoodAngleMap.put(2.44, 6.8);
-    hoodAngleMap.put(3.1, 8.9);
-    hoodAngleMap.put(3.86, 12.1);
-    hoodAngleMap.put(5.0, 18.6);
+    hoodAngleMap.put(1.28, 2.3); //2.3
+    hoodAngleMap.put(2.44, 6.8); //6.8
+    hoodAngleMap.put(3.1, 8.9); //8.9
+    hoodAngleMap.put(3.86, 12.1); //12.1
+    hoodAngleMap.put(5.0, 18.6); //`8.6
   }
 
   /** Distance from feed pose in meters -> flywheel speed in rotations per second */
@@ -333,6 +333,30 @@ public class Shooter extends SubsystemBase {
             })
           .andThen(() -> System.out.println("Command finished"));
   }
+
+  public void setHoodAngleForDistance(DoubleSupplier distance) {
+              double distanceMeters = distance.getAsDouble();
+              double angle = hoodAngleMap.get(distanceMeters);
+              desiredHoodAngle = angle;
+              System.out.println("Setting hood angle to: " + angle + " degrees");
+              _hood.runPosition(
+                  Angle.ofBaseUnits(angle * ShooterConstants.SIM_MULTIPLIER, Degrees),
+                  ShooterRotaryConstants.CRUISE_VELOCITY,
+                  ShooterRotaryConstants.ACCELERATION,
+                  ShooterRotaryConstants.JERK,
+                  PIDSlot.SLOT_0);
+  }
+
+  public Command setVelocityForDistance(DoubleSupplier distance) {
+    return this.runOnce(
+      () -> {
+      double distanceMeters = distance.getAsDouble();
+      AngularVelocity speed = RotationsPerSecond.of(feedFlywheelMap.get(distanceMeters));
+      targetVelocity = speed;
+      System.out.println("Setting speed to: " + speed + " m/s");
+      _flywheel.runVelocity(speed, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
+    });
+}
 
 
   public void periodic() {

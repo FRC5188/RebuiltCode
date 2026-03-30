@@ -64,6 +64,6 @@
     }
   },
   "resetOdom": false,
-  "folder": null,
+  "folder": "ShootNoMove",
   "choreoAuto": false
 }

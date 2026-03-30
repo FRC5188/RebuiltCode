@@ -186,15 +186,17 @@ public class CmdShootOnTheMove extends Command {
     //           && DriverStation.getAlliance().get() == Alliance.Red;
 
     ChassisSpeeds speeds =
-        new ChassisSpeeds(
-            _translationXSupplier.getAsDouble() * _drive.getMaxLinearSpeedMetersPerSec(),
-            _translationYSupplier.getAsDouble() * _drive.getMaxLinearSpeedMetersPerSec(),
-            _correctedRotationRate);
+      new ChassisSpeeds(
+          _translationXSupplier.getAsDouble() * _drive.getMaxLinearSpeedMetersPerSec(),
+          _translationYSupplier.getAsDouble() * _drive.getMaxLinearSpeedMetersPerSec(),
+          _correctedRotationRate);
+          
+      boolean isFlipped =
+          DriverStation.getAlliance().isPresent()
+              && DriverStation.getAlliance().get() == Alliance.Red;
 
-    boolean isFlipped =
-        DriverStation.getAlliance().isPresent()
-            && DriverStation.getAlliance().get() == Alliance.Red;
-
+    _shooter.setHoodAngleForDistance(() -> _correctedRadius);
+    
     _drive.runVelocity(
         ChassisSpeeds.fromFieldRelativeSpeeds(
             speeds,
@@ -206,15 +208,12 @@ public class CmdShootOnTheMove extends Command {
     //         linearVelocity.getY(),
     //         _correctedRotationRate,
     //         _drive.getRotation()));
-
-    if (_shooter.isAutoShootEnabled()) {
-      // if (_intake.hasNote()) {
+  // if (_intake.hasNote()) {
       // if (_correctedZone != _shooter.getCurrentZone()) {
       //   // We want to shoot!
       //   _shooter.runShooterForZone(_correctedZone);
       // }
-      _shooter.setHoodAngle(_correctedRadius);
-    }
+      
     // else {
     //   if (_shooter.getCurrentZone() != ShooterZone.Unknown) {
     //     _shooter.runShooterForZone(ShooterZone.Unknown);

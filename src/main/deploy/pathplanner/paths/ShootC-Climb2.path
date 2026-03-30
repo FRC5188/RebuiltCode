@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.735517857150679,
-        "y": 1.3139999999959786
+        "x": 2.6085176282051274,
+        "y": 1.4477243589743591
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.9157243685140113,
-        "y": 2.7792527943438943
+        "x": 1.2544096385542172,
+        "y": 2.0243012048192766
       },
       "isLocked": false,
-      "linkedName": "EndDownSweep"
+      "linkedName": "S3"
     },
     {
       "anchor": {
-        "x": 0.751734939759036,
-        "y": 2.330277108433736
+        "x": 0.8828674698795178,
+        "y": 2.2428554216867465
       },
       "prevControl": {
-        "x": 1.341831325301205,
-        "y": 2.2865662650602405
+        "x": 1.0841649533235005,
+        "y": 2.0946011699463005
       },
       "nextControl": {
-        "x": 0.28312723263173417,
-        "y": 2.364988790443167
+        "x": 0.4871988983811609,
+        "y": 2.534262681236635
       },
       "isLocked": false,
       "linkedName": null
@@ -36,8 +36,8 @@
         "y": 2.8801012661030256
       },
       "prevControl": {
-        "x": 0.3692650602409637,
-        "y": 2.854807228915663
+        "x": 0.44575903614457857,
+        "y": 2.811096385542169
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,7 +46,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.1,
+      "waypointRelativePos": 1.6647619047619044,
       "rotationDegrees": -90.0
     }
   ],
@@ -69,7 +69,7 @@
   "folder": "Climb Paths ✔",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -100.0
+    "rotation": 39.09385888622944
   },
   "useDefaultConstraints": true
 }
