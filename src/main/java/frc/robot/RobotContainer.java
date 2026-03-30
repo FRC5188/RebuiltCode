@@ -404,6 +404,9 @@ public class RobotContainer {
     controller.povRight().onTrue(shooter.setHoodAngle(9.8));
     controller.povDown().onTrue(shooter.setHoodAngle(15)); //8
 
+    // controller.povUp().onTrue(shooter.incrementHoodAngle());
+    // controller.povDown().onTrue(shooter.decrementHoodAngle());
+
     controller
         .povLeft()
         .onTrue((shooter.setAngleForDistance(() -> drive.getRadiusToHubInMeters())));
