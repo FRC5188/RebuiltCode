@@ -170,7 +170,7 @@ public class RobotContainer {
             new Shooter(
                 new FlywheelMechanismSim(
                     new MotorIOTalonFXSim(
-                        ShooterFlywheelConstants.NAME,
+                        "Left" + ShooterFlywheelConstants.NAME,
                         ShooterFlywheelConstants.getFXConfig(false),
                         Ports.LeftFlywheel),
                     ShooterFlywheelConstants.DCMOTOR,
@@ -178,7 +178,7 @@ public class RobotContainer {
                     ShooterFlywheelConstants.TOLERANCE),
                 new FlywheelMechanismSim(
                     new MotorIOTalonFXSim(
-                        ShooterFlywheelConstants.NAME,
+                        "Right" + ShooterFlywheelConstants.NAME,
                         ShooterFlywheelConstants.getFXConfig(true),
                         Ports.LeftFlywheel),
                     ShooterFlywheelConstants.DCMOTOR,
@@ -311,11 +311,14 @@ public class RobotContainer {
 
     controller
         .a()
-        .whileTrue(new CmdShootOnTheMove(
+        .whileTrue(Commands.parallel(
+            new CmdShootOnTheMove(
             drive, 
             shooter, 
             () -> controller.getLeftY(),
-            () -> controller.getLeftX()));
+            () -> controller.getLeftX()),
+            shooter.runFlywheel()
+            ));
 
     // // Switch to X pattern when X button is pressed
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -349,7 +352,6 @@ public class RobotContainer {
     controller.y().onTrue(Commands.runOnce(() -> intake.setVelocity(1)));
     controller.leftBumper().onTrue(intake.intake());
     controller.rightBumper().onTrue(intake.stowAndStopRollers());
-    controller.a().onTrue(shooter.runFlywheel());
   }
 
   /**

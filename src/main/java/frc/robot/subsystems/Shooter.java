@@ -186,7 +186,7 @@ public class Shooter extends SubsystemBase {
   public void simShoot() {
     if (Robot.robotContainer.intake.simBalls <= 0) return;
 
-    double flywheelSpeed = 6;
+    double flywheelSpeed = _lflywheel.getVelocity().magnitude();
     Translation2d robotPose2d = Robot.robotContainer.drive.getPose().getTranslation();
     double Yaw = Robot.robotContainer.drive.getPose().getRotation().getRadians();
     Pose3d robotPose3d =
@@ -229,12 +229,11 @@ public class Shooter extends SubsystemBase {
 
   public void periodic() {
     _hood.periodic();
-    // _feeder.periodic();
-    // _flywheel.periodic();
+    _feeder.periodic();
+    _lflywheel.periodic();
+    _rflywheel.periodic();
 
-    double pitch =
-        Math.toRadians(
-            Math.abs(Math.sin(Timer.getFPGATimestamp()) * 45)); // Placeholder for position
+    double pitch = _hood.getPosition().in(Radians); // Placeholder for position
 
     // The pitch of the Rotation3D should be '_hood.getPosition().in(Radians)', change after fixing
     // motor configs.
@@ -242,7 +241,7 @@ public class Shooter extends SubsystemBase {
         "3DField/3_Hood",
         new Pose3d(new Translation3d(-0.0075, 0.0, 0.523), new Rotation3d(0, pitch, 0)));
 
-    _hood.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp()) * 0.25));
+    //_hood.runVoltage(Volts.of(Math.sin(Timer.getFPGATimestamp()) * 0.25));
   }
 
   public void runShooterForRadius(double radius) {

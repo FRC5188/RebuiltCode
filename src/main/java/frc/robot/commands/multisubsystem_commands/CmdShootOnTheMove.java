@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.drive.Drive;
 // import frc.robot.subsystems.drive.DriveConstants;
@@ -29,6 +30,7 @@ import frc.robot.subsystems.drive.Drive;
 // import frc.robot.subsystems.shooter.ShooterConstants;
 // import frc.robot.subsystems.shooter.Shooter.ShooterZone;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 public class CmdShootOnTheMove extends Command {
 
@@ -76,8 +78,10 @@ public class CmdShootOnTheMove extends Command {
 
     _drive = drivetrainSubsystem;
     _shooter = shooterSubsystem;
-    _translationXSupplier = translationXSupplier;
-    _translationYSupplier = translationYSupplier;
+
+    Supplier<Translation2d> linearVelocity = ()->DriveCommands.getLinearVelocityFromJoysticks(translationXSupplier.getAsDouble(), translationYSupplier.getAsDouble());
+    _translationXSupplier = () -> linearVelocity.get().getX();
+    _translationYSupplier = () -> linearVelocity.get().getY();
 
     _rotationPID =
         new PIDController(
