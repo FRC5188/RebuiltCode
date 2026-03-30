@@ -108,7 +108,7 @@ public class Intake extends SubsystemBase {
     return Commands.sequence(runRollers(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED)).withTimeout(0.1),
         setPivotAngle(IntakePivotConstants.JOSTLE_ANGLE),
         new WaitCommand(0.5),
-        setPivotAngle(IntakePivotConstants.PICKUP_ANGLE)).repeatedly();
+        setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
   }
 
   public void tunePivotPosition() {

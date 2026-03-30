@@ -373,7 +373,7 @@ public class RobotContainer {
         .leftTrigger()
         .whileTrue(
             Commands.parallel(
-                shooter.score(), hopper.runSpindexer(RotationsPerSecond.of(15)), intake.jostleIntake()));
+                shooter.score(), hopper.runSpindexer(RotationsPerSecond.of(15)), intake.intake()));
     controller
         .leftTrigger()
         .onFalse(
