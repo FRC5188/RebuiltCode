@@ -2,12 +2,9 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
-
-import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
@@ -21,7 +18,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -35,6 +31,7 @@ import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShooterRotaryConstants;
 import frc.robot.Robot;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
@@ -48,8 +45,10 @@ public class Shooter extends SubsystemBase {
   private double hoodAngle;
   private double desiredHoodAngle;
 
+  private double currentHoodAngle;
+  private double offset;
 
-   private static boolean autoShootEnabled = true;
+  private static boolean autoShootEnabled = true;
 
   public AngularVelocity targetVelocity = RotationsPerSecond.of(0.0);
   public AngularVelocity feederTargetVelocity = RotationsPerSecond.of(0.0);
@@ -61,6 +60,9 @@ public class Shooter extends SubsystemBase {
     _flywheel = rflywheel;
     _feeder = feeder;
     _hood = hood;
+    currentHoodAngle = 0;
+    offset = 0;
+    desiredHoodAngle = 0;
     homedTrigger =
         new Trigger(
             () ->
@@ -154,19 +156,20 @@ public class Shooter extends SubsystemBase {
 
   // Sets hood angle
   public Command setHoodAngle(double angleDegrees) {
-    hoodAngle = angleDegrees;
-    desiredHoodAngle = angleDegrees;
     return this.runOnce(
             () -> {
-              System.out.println("Setting hood angle to: " + angleDegrees + " degrees");
+              hoodAngle = angleDegrees + offset;
+              desiredHoodAngle = angleDegrees + offset;
+              currentHoodAngle = angleDegrees + offset;
+              System.out.println("Setting hood angle to: " + angleDegrees + offset+ " degrees");
               _hood.runPosition(
-                  Angle.ofBaseUnits(angleDegrees * ShooterConstants.SIM_MULTIPLIER, Degrees),
+                  Angle.ofBaseUnits((angleDegrees + offset) * ShooterConstants.SIM_MULTIPLIER, Degrees),
                   ShooterRotaryConstants.CRUISE_VELOCITY,
                   ShooterRotaryConstants.ACCELERATION,
                   ShooterRotaryConstants.JERK,
                   PIDSlot.SLOT_0);
             })
-        .andThen(() -> System.out.println("Command finished"));
+      .andThen(() -> System.out.println("Command finished"));
   }
 
   // Checks if hood is at angle
@@ -176,13 +179,38 @@ public class Shooter extends SubsystemBase {
 
   // Increases Hood Angle
   public Command incrementHoodAngle() {
-    Angle currentHoodAngle = _hood.getPosition().plus(Degrees.of(2.5));
-    return setHoodAngle(currentHoodAngle.in(Degrees));
+    // Get the actual current position from the hood motor
+    return this.runOnce(
+            () -> {
+              double currentPos = _hood.getPosition().in(Degrees);
+              double newAngle = currentPos + ShooterConstants.ADJUST_ANGLE;
+              currentHoodAngle = newAngle;
+              desiredHoodAngle = newAngle;
+              offset += ShooterConstants.ADJUST_ANGLE;
+              _hood.runPosition(
+                  Angle.ofBaseUnits(newAngle * ShooterConstants.SIM_MULTIPLIER, Degrees),
+                  ShooterRotaryConstants.CRUISE_VELOCITY,
+                  ShooterRotaryConstants.ACCELERATION,
+                  ShooterRotaryConstants.JERK,
+                  PIDSlot.SLOT_0);
+     });
   }
 
   public Command decrementHoodAngle() {
-    Angle currentHoodAngle = _hood.getPosition().minus(Degrees.of(2.5));
-    return setHoodAngle(currentHoodAngle.in(Degrees));
+    return this.runOnce(
+            () -> {
+              double currentPos = _hood.getPosition().in(Degrees);
+              double newAngle = currentPos - ShooterConstants.ADJUST_ANGLE;
+              currentHoodAngle = newAngle;
+              desiredHoodAngle = newAngle;
+              offset -= ShooterConstants.ADJUST_ANGLE;
+              _hood.runPosition(
+                  Angle.ofBaseUnits(newAngle * ShooterConstants.SIM_MULTIPLIER, Degrees),
+                  ShooterRotaryConstants.CRUISE_VELOCITY,
+                  ShooterRotaryConstants.ACCELERATION,
+                  ShooterRotaryConstants.JERK,
+                  PIDSlot.SLOT_0);
+     });
   }
 
   public boolean isAboveCurrentLimit() {
@@ -198,7 +226,9 @@ public class Shooter extends SubsystemBase {
         runOnce(() -> _hood.runVoltage(Voltage.ofBaseUnits(-1, Volts))),
         Commands.waitUntil(homedTrigger),
         runOnce(() -> _hood.setEncoderPosition(Angle.ofBaseUnits(0, Degrees))),
-        runOnce(() -> _hood.runVoltage(Voltage.ofBaseUnits(0, Volts))));
+        runOnce(() -> _hood.runVoltage(Voltage.ofBaseUnits(0, Volts))),
+        runOnce(() -> currentHoodAngle = 0),
+        runOnce(() -> offset = 0));
   }
 
   public Command runFlywheel(AngularVelocity velocity) {
@@ -233,7 +263,7 @@ public class Shooter extends SubsystemBase {
           PIDSlot.SLOT_0);
     });
   }
-
+  
   public void simShoot() {
     if (Robot.robotContainer.intake.simBalls <= 0) return;
 
@@ -305,10 +335,10 @@ public class Shooter extends SubsystemBase {
             () -> {
               double distanceMeters = distance.getAsDouble();
               double angle = hoodAngleMap.get(distanceMeters);
-              desiredHoodAngle = angle;
-              System.out.println("Setting hood angle to: " + angle + " degrees");
+              desiredHoodAngle = angle + offset;
+              System.out.println("Setting hood angle to: " + angle + offset +  " degrees");
               _hood.runPosition(
-                  Angle.ofBaseUnits(angle * ShooterConstants.SIM_MULTIPLIER, Degrees),
+                  Angle.ofBaseUnits((angle + offset) * ShooterConstants.SIM_MULTIPLIER, Degrees),
                   ShooterRotaryConstants.CRUISE_VELOCITY,
                   ShooterRotaryConstants.ACCELERATION,
                   ShooterRotaryConstants.JERK,
@@ -320,10 +350,11 @@ public class Shooter extends SubsystemBase {
   public void setHoodAngleForDistance(DoubleSupplier distance) {
               double distanceMeters = distance.getAsDouble();
               double angle = hoodAngleMap.get(distanceMeters);
-              desiredHoodAngle = angle;
-              System.out.println("Setting hood angle to: " + angle + " degrees");
+              currentHoodAngle = angle + offset;
+              desiredHoodAngle = angle + offset;
+              System.out.println("Setting hood angle to: " + angle + offset + " degrees");
               _hood.runPosition(
-                  Angle.ofBaseUnits(angle * ShooterConstants.SIM_MULTIPLIER, Degrees),
+                  Angle.ofBaseUnits((angle + offset) * ShooterConstants.SIM_MULTIPLIER, Degrees),
                   ShooterRotaryConstants.CRUISE_VELOCITY,
                   ShooterRotaryConstants.ACCELERATION,
                   ShooterRotaryConstants.JERK,
@@ -351,6 +382,7 @@ public class Shooter extends SubsystemBase {
     Logger.recordOutput("Hood/position", _hood.getPosition());
     Logger.recordOutput("Hood/desired_position", desiredHoodAngle);
     Logger.recordOutput("Hood/current", _hood.getSupplyCurrent());
+    Logger.recordOutput("Hood/offset", offset);
     // _feeder.periodic();
     // _flywheel.periodic();
 

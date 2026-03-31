@@ -98,6 +98,8 @@ public class RobotContainer {
   private final JoystickButton zeroClimberButton = new JoystickButton(buttonbox1, 4);
   private final JoystickButton extendClimberButton = new JoystickButton(buttonbox2, 2);
   private final JoystickButton retractClimberButton = new JoystickButton(buttonbox2, 1);  
+  private final JoystickButton incrementHoodButton = new JoystickButton(buttonbox2, 3);
+  private final JoystickButton decrementHoodButton = new JoystickButton(buttonbox2, 4);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -440,6 +442,9 @@ public class RobotContainer {
 
     extendClimberButton.onTrue(climber.runClimber());
     retractClimberButton.onTrue(climber.retractClimber());
+
+    incrementHoodButton.onTrue(shooter.incrementHoodAngle());
+    decrementHoodButton.onTrue(shooter.decrementHoodAngle());
   }
 
   /**
