@@ -292,8 +292,8 @@ public class Shooter extends SubsystemBase {
     return Commands.run(
         () -> {
           runFeeder(RotationsPerSecond.of(28));
-          // setFlywheelVelocity(RotationsPerSecond.of(67));
-          setVelocityForDistance(distance);
+          setFlywheelVelocity(RotationsPerSecond.of(67));
+          // setVelocityForDistance(distance);
         });
   }
 
