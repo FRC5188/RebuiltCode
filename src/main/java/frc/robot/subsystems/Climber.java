@@ -6,6 +6,8 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Volts;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
@@ -65,12 +67,24 @@ public class Climber extends SubsystemBase {
     return this.runOnce(
         () ->
             _io.runPosition(
-                ClimberConstants.CONVERTER.toAngle(ClimberConstants.TOP),
+                ClimberConstants.TOP,
                 ClimberConstants.CRUISE_VELOCITY,
                 ClimberConstants.ACCELERATION,
                 ClimberConstants.JERK,
                 PIDSlot.SLOT_0));
   }
+
+  public Command retractClimber() {
+    return this.runOnce(
+        () ->
+            _io.runPosition(
+                ClimberConstants.CLIMB,
+                ClimberConstants.CRUISE_VELOCITY,
+                ClimberConstants.ACCELERATION,
+                ClimberConstants.JERK,
+                PIDSlot.SLOT_1));
+  }
+
 
   public Command calibrateClimber() {
     return Commands.sequence(
@@ -121,6 +135,7 @@ public class Climber extends SubsystemBase {
   @Override
   public void periodic() {
     _io.periodic();
+    Logger.recordOutput("climberMotor/CurrentPosition", _io.getPosition());
 
     // double z = Math.abs(Math.sin(Timer.getFPGATimestamp()) * 0.33); // Placeholder for position
 

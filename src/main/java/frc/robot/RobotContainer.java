@@ -22,6 +22,8 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.simulation.JoystickSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -80,6 +82,7 @@ public class RobotContainer {
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
   private final GenericHID buttonbox1 = new GenericHID(1);
+  private final GenericHID buttonbox2 = new GenericHID(2);
 
   private final JoystickButton zeroDriveButton = new JoystickButton(buttonbox1, 1);
   private final JoystickButton zeroIntakeButton = new JoystickButton(buttonbox1, 2);
@@ -89,6 +92,8 @@ public class RobotContainer {
   private final JoystickButton zeroClimberButton = new JoystickButton(buttonbox1, 4);
   private final JoystickButton incrementHoodButton = new JoystickButton(buttonbox1, 5);
   private final JoystickButton decrementHoodButton = new JoystickButton(buttonbox1, 6);
+  private final JoystickButton extendClimberButton = new JoystickButton(buttonbox2, 2);
+  private final JoystickButton retractClimberButton = new JoystickButton(buttonbox2, 1);  
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -459,6 +464,9 @@ public class RobotContainer {
 
     incrementHoodButton.onTrue(shooter.incrementHoodAngle());
     decrementHoodButton.onTrue(shooter.decrementHoodAngle());
+
+    extendClimberButton.onTrue(climber.runClimber());
+    retractClimberButton.onTrue(climber.retractClimber());
   }
 
   /**
