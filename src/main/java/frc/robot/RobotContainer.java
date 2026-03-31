@@ -28,9 +28,13 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.lib.W8.io.motor.*;
 import frc.lib.W8.mechanisms.flywheel.*;
+import frc.lib.W8.mechanisms.linear.LinearMechanism;
+import frc.lib.W8.mechanisms.linear.LinearMechanismReal;
+import frc.lib.W8.mechanisms.linear.LinearMechanismSim;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanismReal;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanismSim;
+import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.Constants.IntakeFlywheelConstants;
@@ -41,6 +45,7 @@ import frc.robot.Constants.ShooterRotaryConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.multisubsystem_commands.CmdShootOnTheMove;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -82,6 +87,8 @@ public class RobotContainer {
   private final JoystickButton climberDownButton = new JoystickButton(buttonbox1, 7);
   private final JoystickButton climberUpButton = new JoystickButton(buttonbox1, 8);
   private final JoystickButton zeroClimberButton = new JoystickButton(buttonbox1, 4);
+  private final JoystickButton incrementHoodButton = new JoystickButton(buttonbox1, 5);
+  private final JoystickButton decrementHoodButton = new JoystickButton(buttonbox1, 6);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -307,7 +314,7 @@ public class RobotContainer {
 
     // Runs tower, flywheel, spindexer, and auto hood angle
     NamedCommands.registerCommand("Shoot", Commands.parallel(
-                shooter.score(),
+                shooter.score(() -> drive.getRadiusToHubInMeters()),
                 hopper.runSpindexer(RotationsPerSecond.of(14)),
                 shooter.setAngleForDistance(() -> drive.getRadiusToHubInMeters())));
     // Stops tower, flywheels, and spindexer
@@ -370,7 +377,7 @@ public class RobotContainer {
         .leftTrigger()
         .whileTrue(
             Commands.parallel(
-                shooter.score(), hopper.runSpindexer(RotationsPerSecond.of(15)), intake.intake()));
+                shooter.score(() -> drive.getRadiusToHubInMeters()), hopper.runSpindexer(RotationsPerSecond.of(15)), intake.intake()));
     controller
         .leftTrigger()
         .onFalse(
@@ -393,12 +400,32 @@ public class RobotContainer {
     // Auto Align
     controller
         .a()
-        .whileTrue(
-            new CmdShootOnTheMove(
-                drive, shooter, () -> -controller.getLeftY(), () -> -controller.getLeftX()));
+        .whileTrue(new CmdShootOnTheMove(
+            drive, 
+            shooter, 
+            hopper,
+            () -> controller.getLeftY(),
+            () -> controller.getLeftX(),
+            () -> controller.rightBumper().getAsBoolean()));
 
     // Jostle
     controller.b().onTrue(intake.jostleIntake());
+
+    // Tune Shoot
+    controller.y().whileTrue(
+        Commands.parallel(
+            shooter.tuneShoot(),
+            hopper.runSpindexer(RotationsPerSecond.of(30)),
+            intake.intake()
+        )
+    );
+    controller.y().onFalse(
+        Commands.parallel(
+            shooter.stopScore(),
+            hopper.runSpindexer(RotationsPerSecond.of(0)),
+            Commands.runOnce(() -> intake.stop())
+        )
+    );
 
     // Stow Intake
     controller.x().whileTrue(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
@@ -429,6 +456,9 @@ public class RobotContainer {
     climberDownButton.onTrue(climber.lowerClimber());
     climberDownButton.onFalse(climber.stopClimber());
     zeroClimberButton.onTrue(climber.calibrateClimber());
+
+    incrementHoodButton.onTrue(shooter.incrementHoodAngle());
+    decrementHoodButton.onTrue(shooter.decrementHoodAngle());
   }
 
   /**
