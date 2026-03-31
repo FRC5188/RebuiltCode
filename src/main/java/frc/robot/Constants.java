@@ -19,6 +19,8 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radian;
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
@@ -882,9 +884,9 @@ public final class Constants {
 
     public static final AngularAcceleration ACCELERATION = CRUISE_VELOCITY.div(0.1).per(Second);
     public static final Velocity<AngularAccelerationUnit> JERK = ACCELERATION.per(Second);
-    public static final Distance BOTTOM = Inches.of(0.0);
-    public static final Distance MIDDLE = Inches.of(15.0);
-    public static final Distance TOP = Inches.of(30.0);
+    public static final Angle BOTTOM = Angle.ofBaseUnits(0, Radians);
+    public static final Angle CLIMB = Angle.ofBaseUnits(0.2, Radians);
+    public static final Angle TOP = Angle.ofBaseUnits(4.79, Radians);
 
     public static final double L1 = 10;
     public static final double STOW = 0;
@@ -928,8 +930,8 @@ public final class Constants {
       config.Feedback.SensorToMechanismRatio = GEARING;
 
       if (Robot.isReal()) {
-        config.Slot0 = new Slot0Configs().withKP(10).withKI(0.0).withKD(0.0);
-        config.Slot1 = new Slot1Configs().withKP(1).withKI(0.0).withKD(0.0);
+        config.Slot0 = new Slot0Configs().withKP(30.0).withKI(0.0).withKD(0.0);
+        config.Slot1 = new Slot1Configs().withKP(100.0).withKI(0.0).withKD(0.0);
       } else {
         config.Slot0 = new Slot0Configs().withKP(0.75).withKI(0.0).withKD(0.0);
       }
@@ -946,6 +948,6 @@ public final class Constants {
     public static final AngularAcceleration ANGULAR_ACCELERATION =
         RotationsPerSecondPerSecond.of(1);
     public static final double CLIMB_SPEED = 1.0;
-    public static final double HARD_STOP_CURRENT_LIMIT = 20.0;
+    public static final double HARD_STOP_CURRENT_LIMIT = 0.4;
   }
 }
