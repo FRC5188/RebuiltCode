@@ -16,10 +16,12 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Shooter;
@@ -35,7 +37,6 @@ public class CmdShootOnTheMove extends Command {
 
   /** Creates a new CmdDriveShootOnTheMove. */
   private final Drive _drive;
-
   private final Shooter _shooter;
 
   private DoubleSupplier _translationXSupplier;
@@ -107,9 +108,9 @@ public class CmdShootOnTheMove extends Command {
   @Override
   public void execute() {
     // if (_trigger.getAsDouble() > _triggerThreshold) {
-    if (!_hasRunOnce) {
-      _shotTimer.start();
-      _hasRunOnce = true;
+      if (!_hasRunOnce) {
+        _shotTimer.start();
+        _hasRunOnce = true;
       // }
     }
 
@@ -131,14 +132,13 @@ public class CmdShootOnTheMove extends Command {
             _timeUntilShot * (_speeds.vyMetersPerSecond));
 
     // Get linear velocity
-    // Translation2d linearVelocity =
-    //     new Pose2d().transformBy(
-    //             new Transform2d(
-    //                 new Translation2d(
-    //                     _translationXSupplier.getAsDouble(),
-    // _translationYSupplier.getAsDouble()),
-    //                 new Rotation2d())).getTranslation();
-    // _translationXSupplier.getAsDouble(), _translationYSupplier.getAsDouble()));
+      // Translation2d linearVelocity =
+      //     new Pose2d().transformBy(
+      //             new Transform2d(
+      //                 new Translation2d(
+      //                     _translationXSupplier.getAsDouble(), _translationYSupplier.getAsDouble()),
+      //                 new Rotation2d())).getTranslation();
+             // _translationXSupplier.getAsDouble(), _translationYSupplier.getAsDouble()));
 
     // Add current position + change in position due to velocity to get future
     // position. This is where the robot will be at _timeUntilShot.
@@ -148,6 +148,7 @@ public class CmdShootOnTheMove extends Command {
 
     // Angle to the speaker from the future position as a Rotation2d.
     _futureAngleToSpeaker = _drive.getRotation2dToHub(_futureRobotTranslation);
+    
 
     // All PID calculations are done in radians, so convert our setpoint from a
     // Rotation2d to radians.
@@ -198,9 +199,11 @@ public class CmdShootOnTheMove extends Command {
     _shooter.setHoodAngleForDistance(() -> _correctedRadius);
     
     _drive.runVelocity(
-        ChassisSpeeds.fromFieldRelativeSpeeds(
-            speeds,
-            isFlipped ? _drive.getRotation().plus(new Rotation2d(Math.PI)) : _drive.getRotation()));
+    ChassisSpeeds.fromFieldRelativeSpeeds(
+        speeds,
+        isFlipped
+            ? _drive.getRotation().plus(new Rotation2d(Math.PI))
+            : _drive.getRotation()));
 
     // _drive.runVelocity(
     //     ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -220,6 +223,7 @@ public class CmdShootOnTheMove extends Command {
     //   }
     // }
   }
+  
 
   // Called once the command ends or is interrupted.
   @Override
