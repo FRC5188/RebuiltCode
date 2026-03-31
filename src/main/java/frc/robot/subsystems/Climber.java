@@ -1,8 +1,10 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import edu.wpi.first.math.filter.Debouncer;
@@ -24,8 +26,6 @@ import frc.robot.Constants.ClimberConstants;
 public class Climber extends SubsystemBase {
   private Debouncer homedDebounce = new Debouncer(0.1, DebounceType.kRising);
   private Trigger homedTrigger;
-  private AngleUnit Degrees;
-  private VoltageUnit Volts;
   private LinearMechanism _io;
   RotaryMechanism climber;
   Distance goalDistance;
@@ -34,6 +34,7 @@ public class Climber extends SubsystemBase {
 
   public Climber(LinearMechanism io) {
     _io = io;
+
     homedTrigger =
         new Trigger(
             () ->
@@ -73,7 +74,7 @@ public class Climber extends SubsystemBase {
 
   public Command calibrateClimber() {
     return Commands.sequence(
-        runOnce(() -> _io.runVoltage(Voltage.ofBaseUnits(-1, Volts))),
+        runOnce(() -> _io.runVoltage(Voltage.ofBaseUnits(-1.0, Volts))),
         Commands.waitUntil(homedTrigger),
         runOnce(() -> _io.setEncoderPosition(Angle.ofBaseUnits(0, Degrees))),
         runOnce(() -> _io.runVoltage(Voltage.ofBaseUnits(0, Volts))));

@@ -70,7 +70,7 @@ public class RobotContainer {
   public final Intake intake;
   //   private final BallCounter ballCounter;
   private final Vision vision;
-  //   private final Climber climber;
+  private final Climber climber;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -79,7 +79,9 @@ public class RobotContainer {
   private final JoystickButton zeroDriveButton = new JoystickButton(buttonbox1, 1);
   private final JoystickButton zeroIntakeButton = new JoystickButton(buttonbox1, 2);
   private final JoystickButton zeroHoodButton = new JoystickButton(buttonbox1, 3);
-  private final JoystickButton testingButton7 = new JoystickButton(buttonbox1, 7);
+  private final JoystickButton climberDownButton = new JoystickButton(buttonbox1, 7);
+  private final JoystickButton climberUpButton = new JoystickButton(buttonbox1, 8);
+  private final JoystickButton zeroClimberButton = new JoystickButton(buttonbox1, 4);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -149,14 +151,14 @@ public class RobotContainer {
                         Ports.IntakePivot),
                     IntakePivotConstants.CONSTANTS,
                     Optional.empty()));
-        // climber =
-        //     new Climber(
-        //         new LinearMechanismReal(
-        //             new MotorIOTalonFX(
-        //                 ClimberConstants.MOTOR_NAME,
-        //                 ClimberConstants.getFXConfig(),
-        //                 Ports.ClimberMotor),
-        //             ClimberConstants.CHARACTERISTICS));
+        climber =
+            new Climber(
+                new LinearMechanismReal(
+                    new MotorIOTalonFX(
+                        ClimberConstants.MOTOR_NAME,
+                        ClimberConstants.getFXConfig(),
+                        Ports.ClimberMotor),
+                    ClimberConstants.CHARACTERISTICS));
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -236,17 +238,17 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOLimelight(camera0Name, drive::getRotation));
 
-        // climber =
-        //     new Climber(
-        //         new LinearMechanismSim(
-        //             new MotorIOTalonFXSim(
-        //                 ClimberConstants.MOTOR_NAME,
-        //                 ClimberConstants.getFXConfig(),
-        //                 Ports.ClimberMotor),
-        //             ClimberConstants.DCMOTOR,
-        //             ClimberConstants.CARRIAGE_MASS,
-        //             ClimberConstants.CHARACTERISTICS,
-        //             false));
+        climber =
+            new Climber(
+                new LinearMechanismSim(
+                    new MotorIOTalonFXSim(
+                        ClimberConstants.MOTOR_NAME,
+                        ClimberConstants.getFXConfig(),
+                        Ports.ClimberMotor),
+                    ClimberConstants.DCMOTOR,
+                    ClimberConstants.CARRIAGE_MASS,
+                    ClimberConstants.CHARACTERISTICS,
+                    false));
         break;
 
       default:
@@ -273,9 +275,9 @@ public class RobotContainer {
                 new RotaryMechanism(IntakePivotConstants.NAME, IntakePivotConstants.CONSTANTS) {});
         vision = new Vision(null);
 
-        // climber =
-        //     new Climber(
-        //         new LinearMechanism(ClimberConstants.NAME, ClimberConstants.CHARACTERISTICS) {});
+        climber =
+            new Climber(
+                new LinearMechanism(ClimberConstants.NAME, ClimberConstants.CHARACTERISTICS) {});
         break;
     }
 
@@ -318,6 +320,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("Intake", intake.intake().andThen(() -> intake.stop()));
     // Stops rollers - we shouldn't need this, but throw it in if autos are tweaking.
     NamedCommands.registerCommand("IntakeOff", Commands.run(() -> intake.stop()));
+
+    NamedCommands.registerCommand("Jostle", Commands.run(() -> intake.setPivotAngle(IntakePivotConstants.JOSTLE_ANGLE)));
     
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     autoChooser.addDefaultOption("Select An Auto", Commands.none());
@@ -366,7 +370,7 @@ public class RobotContainer {
         .leftTrigger()
         .whileTrue(
             Commands.parallel(
-                shooter.score(), hopper.runSpindexer(RotationsPerSecond.of(15)), intake.jostleIntake()));
+                shooter.score(), hopper.runSpindexer(RotationsPerSecond.of(15)), intake.intake()));
     controller
         .leftTrigger()
         .onFalse(
@@ -415,9 +419,16 @@ public class RobotContainer {
     // controller.povRight().onTrue(shooter.setAngleForDistance(Meters.of(2.0)));
     // controller.povUp().onTrue(shooter.setAngleForDistance(Meters.of(5.0)));
     // Reset Buttons
+
     zeroDriveButton.onTrue(DriveCommands.zeroHeading(drive));
     zeroIntakeButton.onTrue(intake.zeroEncoder());
     zeroHoodButton.onTrue(shooter.calibrateHood());
+
+    climberUpButton.onTrue(climber.raiseClimber());
+    climberUpButton.onFalse(climber.stopClimber());
+    climberDownButton.onTrue(climber.lowerClimber());
+    climberDownButton.onFalse(climber.stopClimber());
+    zeroClimberButton.onTrue(climber.calibrateClimber());
   }
 
   /**

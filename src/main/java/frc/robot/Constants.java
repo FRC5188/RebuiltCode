@@ -555,8 +555,8 @@ public final class Constants {
     public static final Angle MIN_ANGLE = Rotations.of(0.0);
     public static final Angle MAX_ANGLE = Rotations.of(1);
     public static final Angle STARTING_ANGLE = Rotations.of(0.0);
-    public static final double PICKUP_SPEED = 40.0;
-    public static final Distance WHEEL_RADIUS = Meters.of(0.05);
+    public static final double PICKUP_SPEED = -40.0;
+    public static final Distance WHEEL_RADIUS = Meters.of(0.0381);
     public static final Translation3d OFFSET = Translation3d.kZero;
     public static final MomentOfInertia MOI = KilogramSquareMeters.of(0.0028125);
     public static final RotaryMechCharacteristics CONSTANTS =
@@ -758,7 +758,7 @@ public final class Constants {
 
       if (RobotBase.isReal()) {
         config.Slot0 =
-            new Slot0Configs().withKP(300.0).withKI(1000).withKD(80).withKS(8.0).withKV(0.0);
+            new Slot0Configs().withKP(1000.0).withKI(1000).withKD(80).withKS(8.0).withKV(0.0);
 
       } else {
         config.Slot0 =
