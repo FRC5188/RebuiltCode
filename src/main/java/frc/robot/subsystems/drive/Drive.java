@@ -383,7 +383,7 @@ public class Drive extends SubsystemBase {
     return alliance;
   }
 
-  public Translation2d getHubPos() {
+  private Translation2d getHubPos() {
     hubPosition =
         (getAlliance() == DriverStation.Alliance.Blue)
             ? FieldConstants.HUBCENTER

@@ -39,11 +39,6 @@ public class Hopper extends SubsystemBase {
         this);
   }
 
-  public void runSpindexerImmediate(AngularVelocity velocity) {
-    _io.runVelocity(velocity, HopperConstants.ACCELERATION, PIDSlot.SLOT_0);
-    targetVelocity = velocity;
-  }
-
   @Override
   public void periodic() {
     _io.periodic();

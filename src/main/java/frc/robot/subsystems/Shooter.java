@@ -19,7 +19,6 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -34,9 +33,6 @@ import frc.robot.Constants.ShooterRotaryConstants;
 import frc.robot.Robot;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
-
-import frc.lib.firecontrol.ShotCalculator;
-import frc.lib.firecontrol.ShotLUT;
 
 public class Shooter extends SubsystemBase {
 
@@ -60,8 +56,6 @@ public class Shooter extends SubsystemBase {
   private Debouncer homeDebouncer = new Debouncer(0.1, DebounceType.kRising);
   private Trigger homedTrigger;
 
-  private final ShotCalculator shotCalculator; // NEW!
-
   public Shooter(FlywheelMechanism rflywheel, FlywheelMechanism feeder, RotaryMechanism hood) {
     _flywheel = rflywheel;
     _feeder = feeder;
@@ -76,43 +70,6 @@ public class Shooter extends SubsystemBase {
                     _hood
                         .getSupplyCurrent()
                         .gte(Amps.of(ShooterConstants.HARD_STOP_CURRENT_LIMIT))));
-                        
-    // Setup Shot Calculator
-    ShotCalculator.Config config = new ShotCalculator.Config();
-    config.launcherOffsetX = 0.0;  // Configure distance from robot center
-    config.launcherOffsetY = 0.0;
-    config.phaseDelayMs = 0.0;
-    config.mechLatencyMs = 20.0;
-    config.maxTiltDeg = 5.0; 
-    config.headingSpeedScalar = 1.0; 
-    config.headingReferenceDistance = 2.5; 
-    
-    shotCalculator = new ShotCalculator(config);
-    
-    // Option 2: ShotLUT (RPM + angle + TOF, for adjustable hoods)
-      // ShotLUT lut = new ShotLUT();
-      // lut.put(1.0, 2000, 45.0, 0.45);  // distance, RPM, angle, TOF
-      // lut.put(2.0, 2800, 42.0, 0.62);
-      // lut.put(3.0, 3500, 38.0, 0.78);
-      // shotCalculator.loadShotLUT(lut);
-
-    // Initialize your custom empirical data lookup table
-    ShotLUT customLut = new ShotLUT();
-    
-    // Add your physical test data here:
-    // format: .put(distance_meters, rpm, hood_angle_degrees, time_of_flight_seconds)
-    customLut.put(1.3, 3600, 2.3, 0.11); 
-    customLut.put(2.0, 3400, 6.2, 0.45);
-    customLut.put(3.0, 4000, 8.8, 0.60);
-    customLut.put(4.0, 4500, 12.3, 0.85);
-    customLut.put(4.0, 4500, 18.6, 0.85);
-
-    // Load custom lookup table into the shot calculator
-    shotCalculator.loadShotLUT(customLut);
-
-    // Setup tuning variables in smart dashboard
-    SmartDashboard.putNumber("ShooterTuning/TuneHoodAngle", 15.0);
-    SmartDashboard.putNumber("ShooterTuning/TuneRPM", 3000.0);
   }
 
   // Sets feeder motor speed
@@ -129,10 +86,6 @@ public class Shooter extends SubsystemBase {
     // AngularVelocity negangVelo = RotationsPerSecond.of(velocity);
     _flywheel.runVelocity(velocity, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
     targetVelocity = velocity;
-  }
-
-  public ShotCalculator getShotCalculator() {
-    return shotCalculator;
   }
 
   public enum State {
@@ -201,23 +154,22 @@ public class Shooter extends SubsystemBase {
   //           });
   // }
 
-  // Sets hood angle returning a command
+  // Sets hood angle
   public Command setHoodAngle(double angleDegrees) {
-    return this.runOnce(() -> setHoodAngleImmediate(angleDegrees))
-        .andThen(() -> System.out.println("Command finished"));
-  }
-
-  // Sets the hood angle immediately (for use inside other commands' execute loops)
-  public void setHoodAngleImmediate(double angleDegrees) {
-    hoodAngle = angleDegrees;
-    desiredHoodAngle = angleDegrees;
-    System.out.println("Setting hood angle to: " + angleDegrees + " degrees");
-    _hood.runPosition(
-        Angle.ofBaseUnits(angleDegrees * ShooterConstants.SIM_MULTIPLIER, Degrees),
-        ShooterRotaryConstants.CRUISE_VELOCITY,
-        ShooterRotaryConstants.ACCELERATION,
-        ShooterRotaryConstants.JERK,
-        PIDSlot.SLOT_0);
+    return this.runOnce(
+            () -> {
+              hoodAngle = angleDegrees + offset;
+              desiredHoodAngle = angleDegrees + offset;
+              currentHoodAngle = angleDegrees + offset;
+              System.out.println("Setting hood angle to: " + angleDegrees + offset+ " degrees");
+              _hood.runPosition(
+                  Angle.ofBaseUnits((angleDegrees + offset) * ShooterConstants.SIM_MULTIPLIER, Degrees),
+                  ShooterRotaryConstants.CRUISE_VELOCITY,
+                  ShooterRotaryConstants.ACCELERATION,
+                  ShooterRotaryConstants.JERK,
+                  PIDSlot.SLOT_0);
+            })
+      .andThen(() -> System.out.println("Command finished"));
   }
 
   // Checks if hood is at angle
@@ -288,12 +240,11 @@ public class Shooter extends SubsystemBase {
     return Commands.run(() -> runFeeder(velocity), this);
   }
 
-  public Command score(DoubleSupplier distance) {
+  public Command score() {
     return Commands.run(
         () -> {
           runFeeder(RotationsPerSecond.of(28));
-          // setFlywheelVelocity(RotationsPerSecond.of(67));
-          setVelocityForDistance(distance);
+          setFlywheelVelocity(RotationsPerSecond.of(67));
         });
   }
 
@@ -311,18 +262,6 @@ public class Shooter extends SubsystemBase {
           runFeeder(RotationsPerSecond.of(0));
           setFlywheelVelocity(RotationsPerSecond.of(0));
         });
-  }
-
-  public Command tuneShoot() {
-    return Commands.run(
-        () -> {
-          double targetRpm = SmartDashboard.getNumber("ShooterTuning/TuneRPM", 4020.0);
-          double targetAngle = SmartDashboard.getNumber("ShooterTuning/TuneHoodAngle", 9.8);
-          
-          setFlywheelVelocity(RotationsPerSecond.of(targetRpm / 60.0));
-          setHoodAngleImmediate(targetAngle);
-          runFeeder(RotationsPerSecond.of(60));
-        }, this);
   }
 
   public Command readyUp(double angel) {
@@ -398,11 +337,11 @@ public class Shooter extends SubsystemBase {
       new InterpolatingDoubleTreeMap();
 
   static {
-    flywheelMap.put(0.0, 67.0); // 50.0
-    flywheelMap.put(6.0, 67.0); // 50.0
-    flywheelMap.put(7.0, 67.0); // 55.0
-    flywheelMap.put(8.0, 67.0); // 60.0
-    flywheelMap.put(20.0, 67.0); // 60.0
+    flywheelMap.put(0.0, 50.0);
+    flywheelMap.put(6.0, 50.0);
+    flywheelMap.put(7.0, 55.0);
+    flywheelMap.put(8.0, 60.0);
+    flywheelMap.put(20.0, 60.0);
   }
 
   public Command setAngleForDistance(DoubleSupplier distance) {
@@ -436,7 +375,7 @@ public class Shooter extends SubsystemBase {
                   PIDSlot.SLOT_0);
   }
 
-   public Command setVelocityForDistance(DoubleSupplier distance) {
+  public Command setVelocityForDistance(DoubleSupplier distance) {
     return this.runOnce(
       () -> {
       double distanceMeters = distance.getAsDouble();
@@ -445,7 +384,7 @@ public class Shooter extends SubsystemBase {
       System.out.println("Setting speed to: " + speed + " m/s");
       _flywheel.runVelocity(speed, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
     });
-  }
+}
 
 
   public void periodic() {
@@ -458,9 +397,6 @@ public class Shooter extends SubsystemBase {
     Logger.recordOutput("Hood/desired_position", desiredHoodAngle);
     Logger.recordOutput("Hood/current", _hood.getSupplyCurrent());
     Logger.recordOutput("Hood/offset", offset);
-    Logger.recordOutput("ShooterTuning/FlywheelRPM", _flywheel.getVelocity().in(RotationsPerSecond) * 60.0);
-    Logger.recordOutput("ShooterTuning/HoodAngleDegrees", _hood.getPosition().in(Degrees));
-    Logger.recordOutput("ShooterTuning/TargetRPM", targetVelocity.in(RotationsPerSecond) * 60.0);
     // _feeder.periodic();
     // _flywheel.periodic();
 
