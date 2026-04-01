@@ -100,8 +100,8 @@ public class RobotContainer {
   private final JoystickButton retractClimberButton = new JoystickButton(buttonbox2, 1);
   private final JoystickButton dislodgeButton = new JoystickButton(buttonbox2, 3);
   private final JoystickButton towerFixButton = new JoystickButton(buttonbox2, 6);  
-  private final JoystickButton incrementHoodButton = new JoystickButton(buttonbox2, 5);
-  private final JoystickButton decrementHoodButton = new JoystickButton(buttonbox2, 4);
+  private final JoystickButton incrementHoodButton = new JoystickButton(buttonbox2, 4);
+  private final JoystickButton decrementHoodButton = new JoystickButton(buttonbox2, 7);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
