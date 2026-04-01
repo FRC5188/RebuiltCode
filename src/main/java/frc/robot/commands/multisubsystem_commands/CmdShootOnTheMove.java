@@ -160,8 +160,8 @@ public class CmdShootOnTheMove extends Command {
     _drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, _correctedRotationRate, _drive.getRotation()));
 
     if (_trigger.getAsBoolean() && shot.isValid() && shot.confidence() > 50) {
-      // _shooter.runFeeder(edu.wpi.first.units.Units.RotationsPerSecond.of(30));
-      // _hopper.runSpindexerImmediate(edu.wpi.first.units.Units.RotationsPerSecond.of(15));
+      _shooter.runFeeder(edu.wpi.first.units.Units.RotationsPerSecond.of(30));
+      _hopper.runSpindexerImmediate(edu.wpi.first.units.Units.RotationsPerSecond.of(15));
     } else {
       _shooter.runFeeder(edu.wpi.first.units.Units.RotationsPerSecond.of(0));
       _hopper.runSpindexerImmediate(edu.wpi.first.units.Units.RotationsPerSecond.of(0));

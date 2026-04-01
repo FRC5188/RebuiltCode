@@ -187,6 +187,8 @@ public final class Constants {
 
     // CHANGE TO PROPER RPMS !!!!
 
+    public static final AngularVelocity SPIN_SPEED = RotationsPerSecond.of(15.0);
+
     public static final double SLOW_SPEED_RPM = 0.0;
     public static final double FAST_SPEED_RPM = 100.0;
     public static final Voltage VOLTAGE = Volts.of(12.0);
@@ -774,7 +776,7 @@ public final class Constants {
   }
 
   public class FeederConstants {
-    public static final AngularVelocity FEED_SPEED = RotationsPerSecond.of(20.0);
+    public static final AngularVelocity FEED_SPEED = RotationsPerSecond.of(30.0);
     public static final AngularAcceleration FEED_ACCELERATION = RotationsPerSecondPerSecond.of(50);
 
     public static String NAME = "ShooterTower";
