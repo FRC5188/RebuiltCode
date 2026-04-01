@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.linear.LinearMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
+import frc.lib.W8.util.PID;
 import frc.robot.Constants.ClimberConstants;
 
 public class Climber extends SubsystemBase {
@@ -63,7 +64,7 @@ public class Climber extends SubsystemBase {
     }
   }
 
-  public Command runClimber() {
+  public Command extendClimber() {
     return this.runOnce(
         () ->
             _io.runPosition(
@@ -74,7 +75,7 @@ public class Climber extends SubsystemBase {
                 PIDSlot.SLOT_0));
   }
 
-  public Command retractClimber() {
+  public Command retractClimber(PIDSlot slot) {
     return this.runOnce(
         () ->
             _io.runPosition(
@@ -82,7 +83,7 @@ public class Climber extends SubsystemBase {
                 ClimberConstants.CRUISE_VELOCITY,
                 ClimberConstants.ACCELERATION,
                 ClimberConstants.JERK,
-                PIDSlot.SLOT_1));
+                slot));
   }
 
 
@@ -101,7 +102,7 @@ public class Climber extends SubsystemBase {
                 DegreesPerSecond.of(0.0), ClimberConstants.ACCELERATION, PIDSlot.SLOT_0));
   }
 
-  public Command raiseClimber() {
+  public Command incrementClimber() {
     return this.run(
             () ->
                 _io.runVelocity(
@@ -111,7 +112,7 @@ public class Climber extends SubsystemBase {
         .until(() -> isAboveCurrentLimit());
   }
 
-  public Command lowerClimber() {
+  public Command decrementClimber() {
     System.out.println(ClimberConstants.LOWER_VELOCITY);
     System.out.println(ClimberConstants.ACCELERATION);
     return this.run(

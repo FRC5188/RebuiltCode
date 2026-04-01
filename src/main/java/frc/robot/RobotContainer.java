@@ -90,18 +90,21 @@ public class RobotContainer {
   private final GenericHID buttonbox1 = new GenericHID(1);
   private final GenericHID buttonbox2 = new GenericHID(2);
 
-  private final JoystickButton zeroDriveButton = new JoystickButton(buttonbox1, 1);
-  private final JoystickButton zeroIntakeButton = new JoystickButton(buttonbox1, 2);
-  private final JoystickButton zeroHoodButton = new JoystickButton(buttonbox1, 3);
-  private final JoystickButton climberDownButton = new JoystickButton(buttonbox1, 7);
-  private final JoystickButton climberUpButton = new JoystickButton(buttonbox1, 8);
-  private final JoystickButton zeroClimberButton = new JoystickButton(buttonbox1, 4);
-  private final JoystickButton extendClimberButton = new JoystickButton(buttonbox2, 2);
-  private final JoystickButton retractClimberButton = new JoystickButton(buttonbox2, 1);
-  private final JoystickButton dislodgeButton = new JoystickButton(buttonbox2, 3);
-  private final JoystickButton towerFixButton = new JoystickButton(buttonbox2, 6);  
-  private final JoystickButton incrementHoodButton = new JoystickButton(buttonbox2, 4);
-  private final JoystickButton decrementHoodButton = new JoystickButton(buttonbox2, 7);
+  private final JoystickButton reverseIntakeButton = new JoystickButton(buttonbox1, 1);
+  private final JoystickButton reverseTowerButton = new JoystickButton(buttonbox1, 4);
+  private final JoystickButton incrementHoodButton = new JoystickButton(buttonbox1, 5);
+  private final JoystickButton incrementClimberButton = new JoystickButton(buttonbox1, 6);
+  private final JoystickButton reverseSpinButton = new JoystickButton(buttonbox1, 7);
+  private final JoystickButton decrementHoodButton  = new JoystickButton(buttonbox1, 8);
+  private final JoystickButton decrementClimberButton = new JoystickButton(buttonbox1, 9);
+
+  private final JoystickButton zeroDriveButton = new JoystickButton(buttonbox2, 1);
+  private final JoystickButton zeroIntakeButton = new JoystickButton(buttonbox2, 2);
+  private final JoystickButton zeroHoodButton = new JoystickButton(buttonbox2, 3);
+  private final JoystickButton calibrateClimberButton = new JoystickButton(buttonbox2, 4);  
+  private final JoystickButton lowerClimberButton = new JoystickButton(buttonbox2, 6);
+  private final JoystickButton climbButton = new JoystickButton(buttonbox2, 7);
+  private final JoystickButton extendClimButton = new JoystickButton(buttonbox2, 8);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -425,38 +428,43 @@ public class RobotContainer {
     controller.povRight().onTrue(shooter.setHoodAngle(9.8));
     controller.povDown().onTrue(shooter.setHoodAngle(15)); //8
 
-    // controller.povUp().onTrue(shooter.setHoodAngle(4));
-    // controller.povRight().onTrue(shooter.setHoodAngle(5));
-    // controller.povDown().onTrue(shooter.setHoodAngle(7)); //8
+ 
 
     controller.povLeft().onTrue((shooter.setAngleForDistance(() -> drive.getRadiusToHubInMeters())));
 
-    // controller.povDown().onTrue(shooter.setAngleForDistance(Meters.of(1.0)));
-    // controller.povRight().onTrue(shooter.setAngleForDistance(Meters.of(2.0)));
-    // controller.povUp().onTrue(shooter.setAngleForDistance(Meters.of(5.0)));
-    // Reset Buttons
+    // BUTTON BOX 1 - UPPER SET
+    reverseIntakeButton.onTrue(intake.runRollers(RotationsPerSecond.of(20)));
+    reverseIntakeButton.onFalse(Commands.runOnce(() -> intake.stop()));
+
+    reverseSpinButton.onTrue(hopper.runSpindexer(RotationsPerSecond.of(-10)));
+    reverseSpinButton.onFalse(hopper.runSpindexer(RotationsPerSecond.of(0)));
+
+    reverseTowerButton.onTrue(shooter.runTower(RotationsPerSecond.of(-10)));
+    reverseTowerButton.onFalse(shooter.runTower(RotationsPerSecond.of(0)));
+    
+    // Manual climber control
+    incrementClimberButton.onTrue(climber.incrementClimber());
+    incrementClimberButton.onFalse(climber.stopClimber());
+    decrementClimberButton.onTrue(climber.decrementClimber());
+    decrementClimberButton.onFalse(climber.stopClimber());
+
+    // Manual hood control
+    incrementHoodButton.onTrue(shooter.incrementHoodAngle());
+    decrementHoodButton.onTrue(shooter.decrementHoodAngle());
+
+    // BUTTON BOX 2 - LOWER SET
+    // Puts the climber in position to climb, then retracts it to lift the robot up.
+    extendClimButton.onTrue(climber.extendClimber());
+    climbButton.onTrue(climber.retractClimber(PIDSlot.SLOT_1));
+
+    // Runs a less agressive PID to put climber in a lower position.
+    lowerClimberButton.onTrue(climber.retractClimber(PIDSlot.SLOT_0));
+
+    calibrateClimberButton.onTrue(climber.calibrateClimber());
 
     zeroDriveButton.onTrue(DriveCommands.zeroHeading(drive));
     zeroIntakeButton.onTrue(intake.zeroEncoder());
     zeroHoodButton.onTrue(shooter.calibrateHood());
-
-    climberUpButton.onTrue(climber.raiseClimber());
-    climberUpButton.onFalse(climber.stopClimber());
-    climberDownButton.onTrue(climber.lowerClimber());
-    climberDownButton.onFalse(climber.stopClimber());
-    zeroClimberButton.onTrue(climber.calibrateClimber());
-
-    extendClimberButton.onTrue(climber.runClimber());
-    retractClimberButton.onTrue(climber.retractClimber());
-
-    dislodgeButton.onTrue(hopper.runSpindexer(RotationsPerSecond.of(-10)));
-    dislodgeButton.onFalse(hopper.runSpindexer(RotationsPerSecond.of(0)));
-
-    towerFixButton.onTrue(shooter.runTower(RotationsPerSecond.of(-10)));
-    towerFixButton.onFalse(shooter.runTower(RotationsPerSecond.of(0)));
-
-    incrementHoodButton.onTrue(shooter.incrementHoodAngle());
-    decrementHoodButton.onTrue(shooter.decrementHoodAngle());
   }
 
   /**
