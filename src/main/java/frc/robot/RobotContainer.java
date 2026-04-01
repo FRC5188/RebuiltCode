@@ -429,14 +429,14 @@ public class RobotContainer {
         .onTrue((shooter.setAngleForDistance(() -> drive.getRadiusToHubInMeters())));
 
     // BUTTON BOX 1 - UPPER SET
-    reverseIntakeButton.onTrue(intake.runRollers(RotationsPerSecond.of(20)));
+    reverseIntakeButton.whileTrue(intake.runRollers(RotationsPerSecond.of(20)));
     reverseIntakeButton.onFalse(Commands.runOnce(() -> intake.stop()));
 
     reverseSpinButton.onTrue(hopper.runSpindexer(RotationsPerSecond.of(-10)));
     reverseSpinButton.onFalse(hopper.runSpindexer(RotationsPerSecond.of(0)));
 
     reverseTowerButton.onTrue(shooter.runTower(RotationsPerSecond.of(-10)));
-    reverseTowerButton.onFalse(shooter.runTower(RotationsPerSecond.of(0)));
+    reverseTowerButton.onFalse(shooter.runTower(RotationsPerSecond.of(0))); 
 
     // Manual climber control
     incrementClimberButton.onTrue(climber.incrementClimber());
@@ -445,8 +445,8 @@ public class RobotContainer {
     decrementClimberButton.onFalse(climber.stopClimber());
 
     // Manual hood control
-    incrementHoodButton.onTrue(shooter.incrementHoodAngle());
-    decrementHoodButton.onTrue(shooter.decrementHoodAngle());
+    // incrementHoodButton.onTrue(shooter.incrementHoodAngle());
+    // decrementHoodButton.onTrue(shooter.decrementHoodAngle());
 
     // BUTTON BOX 2 - LOWER SET
     // Puts the climber in position to climb, then retracts it to lift the robot up.

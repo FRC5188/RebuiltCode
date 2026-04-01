@@ -114,10 +114,10 @@ public class Intake extends SubsystemBase {
     return Commands.parallel(
         runRollers(RotationsPerSecond.of(-20)),
         Commands.sequence(
+                new WaitCommand(1.0),
                 setPivotAngle(IntakePivotConstants.LITTLE_JOSTLE_ANGLE, PIDSlot.SLOT_1),
-                new WaitCommand(0.3),
-                setPivotAngle(IntakePivotConstants.PICKUP_ANGLE, PIDSlot.SLOT_0),
-                new WaitCommand(0.8))
+                new WaitCommand(0.5),
+                setPivotAngle(IntakePivotConstants.PICKUP_ANGLE, PIDSlot.SLOT_0))
             .repeatedly());
   }
 
