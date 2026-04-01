@@ -281,11 +281,12 @@ public class Shooter extends SubsystemBase {
   private static final InterpolatingDoubleTreeMap hoodAngleMap = new InterpolatingDoubleTreeMap();
 
   static {
-    hoodAngleMap.put(1.2542, 2.3); //1.28 at 2.3
-    hoodAngleMap.put(2.74, 4.8); //2.44 at 6.8
-    hoodAngleMap.put(3.1, 8.9); //8.9
-    hoodAngleMap.put(3.86, 11.5); //12.1
-    hoodAngleMap.put(5.0, 17.6); //`8.6
+    hoodAngleMap.put(1.92, 4.0); //1.28 at 2.3
+    hoodAngleMap.put(2.4, 5.0); //2.44 at 6.8
+    hoodAngleMap.put(2.57, 6.0); //8.9
+    hoodAngleMap.put(3.59, 7.0);
+    hoodAngleMap.put(3.8, 8.0); //12.1
+    //hoodAngleMap.put(4.2, 17.6); //`8.6
   }
 
   /** Distance from feed pose in meters -> flywheel speed in rotations per second */
