@@ -378,7 +378,7 @@ public final class Constants {
       if (RobotBase.isReal()) {
         // Velocity PID
         config.Slot0 =
-            new Slot0Configs().withKP(3.5).withKI(0.15).withKD(0.0).withKV(0.1).withKS(8.5);
+            new Slot0Configs().withKP(4).withKI(0.15).withKD(0.0).withKV(0.1).withKS(8.5);
       } else {
         config.Slot0 = new Slot0Configs().withKP(0.75).withKI(0.0).withKD(0.0);
       }
@@ -722,9 +722,10 @@ public final class Constants {
 
     public static final Angle PICKUP_ANGLE = Degrees.of(123.5); // 123.0
     public static final Angle STOW_ANGLE = Degrees.of(0.0);
-    public static final Angle JOSTLE_ANGLE = Degrees.of(40.0);
+    public static final Angle BIG_JOSTLE_ANGLE = Degrees.of(40.0);
+    public static final Angle LITTLE_JOSTLE_ANGLE = Degrees.of(70.0);
 
-    public static final Angle TOLERANCE = Degrees.of(1.5);
+    public static final Angle TOLERANCE = Degrees.of(10);
 
     public static final AngularVelocity CRUISE_VELOCITY = RadiansPerSecond.of(100);
     public static final AngularAcceleration ACCELERATION = RadiansPerSecondPerSecond.of(200);
@@ -786,7 +787,7 @@ public final class Constants {
 
       if (RobotBase.isReal()) {
         config.Slot0 =
-            new Slot0Configs().withKP(1000.0).withKI(1000).withKD(80).withKS(8.0).withKV(0.0);
+            new Slot0Configs().withKP(700.0).withKI(1000).withKD(80).withKS(8.0).withKV(0.0);
 
       } else {
         config.Slot0 =
@@ -853,7 +854,7 @@ public final class Constants {
       // config.Slot0 = SLOT0CONFIG;
       if (RobotBase.isReal()) {
         config.Slot0 =
-            new Slot0Configs().withKP(5.0).withKI(0.0).withKD(0.0).withKV(0.05).withKS(12.0);
+            new Slot0Configs().withKP(22.5).withKI(0.05).withKD(0.0).withKV(0.05).withKS(12.0);
 
       } else {
         config.Slot0 = new Slot0Configs().withKP(0.0).withKI(0.0).withKD(0.0).withKS(10.0);

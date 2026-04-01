@@ -97,8 +97,10 @@ public class RobotContainer {
   private final JoystickButton climberUpButton = new JoystickButton(buttonbox1, 8);
   private final JoystickButton zeroClimberButton = new JoystickButton(buttonbox1, 4);
   private final JoystickButton extendClimberButton = new JoystickButton(buttonbox2, 2);
-  private final JoystickButton retractClimberButton = new JoystickButton(buttonbox2, 1);  
-  private final JoystickButton incrementHoodButton = new JoystickButton(buttonbox2, 3);
+  private final JoystickButton retractClimberButton = new JoystickButton(buttonbox2, 1);
+  private final JoystickButton dislodgeButton = new JoystickButton(buttonbox2, 3);
+  private final JoystickButton towerFixButton = new JoystickButton(buttonbox2, 6);  
+  private final JoystickButton incrementHoodButton = new JoystickButton(buttonbox2, 5);
   private final JoystickButton decrementHoodButton = new JoystickButton(buttonbox2, 4);
 
   // Dashboard inputs
@@ -332,7 +334,7 @@ public class RobotContainer {
     // Stops rollers - we shouldn't need this, but throw it in if autos are tweaking.
     NamedCommands.registerCommand("IntakeOff", Commands.run(() -> intake.stop()));
 
-    NamedCommands.registerCommand("Jostle", Commands.run(() -> intake.setPivotAngle(IntakePivotConstants.JOSTLE_ANGLE)));
+    NamedCommands.registerCommand("Jostle", Commands.run(() -> intake.setPivotAngle(IntakePivotConstants.BIG_JOSTLE_ANGLE)));
     
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     autoChooser.addDefaultOption("Select An Auto", Commands.none());
@@ -383,14 +385,14 @@ public class RobotContainer {
         .leftTrigger()
         .whileTrue(
             Commands.parallel(
-                shooter.score(), hopper.runSpindexer(RotationsPerSecond.of(15)), intake.intake()));
+                shooter.score(), hopper.runSpindexer(RotationsPerSecond.of(10)), intake.littleJostle()));
     controller
         .leftTrigger()
         .onFalse(
             Commands.parallel(
                 shooter.stopScore(),
                 hopper.runSpindexer(RotationsPerSecond.of(0)),
-                Commands.run(() -> intake.stop())));
+                intake.stopPickupIntake()));
 
     // Intake Rollers 11 Motor: 9 Intake
 
@@ -413,7 +415,7 @@ public class RobotContainer {
             () -> -controller.getLeftX()));
 
     // Jostle
-    controller.b().onTrue(intake.jostleIntake());
+    controller.b().onTrue(intake.bigJostle());
 
     // Stow Intake
     controller.x().whileTrue(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
@@ -442,6 +444,12 @@ public class RobotContainer {
 
     extendClimberButton.onTrue(climber.runClimber());
     retractClimberButton.onTrue(climber.retractClimber());
+
+    dislodgeButton.onTrue(hopper.runSpindexer(RotationsPerSecond.of(-10)));
+    dislodgeButton.onFalse(hopper.runSpindexer(RotationsPerSecond.of(0)));
+
+    towerFixButton.onTrue(shooter.runTower(RotationsPerSecond.of(-10)));
+    towerFixButton.onFalse(shooter.runTower(RotationsPerSecond.of(0)));
 
     incrementHoodButton.onTrue(shooter.incrementHoodAngle());
     decrementHoodButton.onTrue(shooter.decrementHoodAngle());
