@@ -318,7 +318,6 @@ public class Drive extends SubsystemBase {
     return getRadiusToHubInMeters();
   }
 
-
   /** Returns the position of each module in radians. */
   public double[] getWheelRadiusCharacterizationPositions() {
     double[] values = new double[4];

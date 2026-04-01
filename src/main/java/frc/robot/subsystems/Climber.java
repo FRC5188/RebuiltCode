@@ -6,13 +6,9 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Volts;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
-import edu.wpi.first.units.AngleUnit;
-import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
@@ -23,8 +19,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.linear.LinearMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
-import frc.lib.W8.util.PID;
 import frc.robot.Constants.ClimberConstants;
+import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
   private Debouncer homedDebounce = new Debouncer(0.1, DebounceType.kRising);
@@ -85,7 +81,6 @@ public class Climber extends SubsystemBase {
                 ClimberConstants.JERK,
                 slot));
   }
-
 
   public Command calibrateClimber() {
     return Commands.sequence(

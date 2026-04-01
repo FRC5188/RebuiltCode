@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import edu.wpi.first.math.geometry.Pose3d;
@@ -15,8 +14,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandStadiaController;
 import frc.lib.W8.io.motor.MotorIO.PIDSlot;
 import frc.lib.W8.mechanisms.flywheel.FlywheelMechanism;
 import frc.lib.W8.mechanisms.rotary.RotaryMechanism;
@@ -55,8 +52,7 @@ public class Intake extends SubsystemBase {
                 IntakePivotConstants.CRUISE_VELOCITY,
                 IntakePivotConstants.ACCELERATION,
                 IntakePivotConstants.JERK,
-                slot)
-        );
+                slot));
   }
 
   public AngularVelocity getVelocity() {
@@ -115,12 +111,14 @@ public class Intake extends SubsystemBase {
 
   // Agressive up PID and regular down PID used in shooting to help agitate fuel.
   public Command littleJostle() {
-    return Commands.parallel(runRollers(RotationsPerSecond.of(-20)), 
-    Commands.sequence(
-        setPivotAngle(IntakePivotConstants.LITTLE_JOSTLE_ANGLE, PIDSlot.SLOT_1),
-        new WaitCommand(0.3),
-        setPivotAngle(IntakePivotConstants.PICKUP_ANGLE, PIDSlot.SLOT_0),
-        new WaitCommand(0.8)).repeatedly());
+    return Commands.parallel(
+        runRollers(RotationsPerSecond.of(-20)),
+        Commands.sequence(
+                setPivotAngle(IntakePivotConstants.LITTLE_JOSTLE_ANGLE, PIDSlot.SLOT_1),
+                new WaitCommand(0.3),
+                setPivotAngle(IntakePivotConstants.PICKUP_ANGLE, PIDSlot.SLOT_0),
+                new WaitCommand(0.8))
+            .repeatedly());
   }
 
   // Regular jostle commmand called by driver.

@@ -2,12 +2,9 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
-
-import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
@@ -21,7 +18,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -35,6 +31,7 @@ import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShooterRotaryConstants;
 import frc.robot.Robot;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
@@ -48,8 +45,7 @@ public class Shooter extends SubsystemBase {
   private double hoodAngle;
   private double desiredHoodAngle;
 
-
-   private static boolean autoShootEnabled = true;
+  private static boolean autoShootEnabled = true;
 
   public AngularVelocity targetVelocity = RotationsPerSecond.of(0.0);
   public AngularVelocity feederTargetVelocity = RotationsPerSecond.of(0.0);
@@ -136,6 +132,7 @@ public class Shooter extends SubsystemBase {
   public void setAutoShootEnabled(boolean enabled) {
     autoShootEnabled = enabled;
   }
+
   // Sets hood angle
   // public Command setHoodAngle(double angleDegrees) {
   //   hoodAngle = angleDegrees;
@@ -211,7 +208,11 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command score() {
-    return Commands.run(() -> {runFeeder(RotationsPerSecond.of(35)); setFlywheelVelocity(RotationsPerSecond.of(67));});
+    return Commands.run(
+        () -> {
+          runFeeder(RotationsPerSecond.of(35));
+          setFlywheelVelocity(RotationsPerSecond.of(67));
+        });
   }
 
   public Command stopScore() {
@@ -223,15 +224,16 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command readyUp() {
-    return this.run(() -> {
-      setFlywheelVelocity(RotationsPerSecond.of(55));
-      _hood.runPosition(
-          Angle.ofBaseUnits(2.3, Degrees),
-          ShooterRotaryConstants.CRUISE_VELOCITY,
-          ShooterRotaryConstants.ACCELERATION,
-          ShooterRotaryConstants.JERK,
-          PIDSlot.SLOT_0);
-    });
+    return this.run(
+        () -> {
+          setFlywheelVelocity(RotationsPerSecond.of(55));
+          _hood.runPosition(
+              Angle.ofBaseUnits(2.3, Degrees),
+              ShooterRotaryConstants.CRUISE_VELOCITY,
+              ShooterRotaryConstants.ACCELERATION,
+              ShooterRotaryConstants.JERK,
+              PIDSlot.SLOT_0);
+        });
   }
 
   public void simShoot() {
@@ -281,17 +283,16 @@ public class Shooter extends SubsystemBase {
   private static final InterpolatingDoubleTreeMap hoodAngleMap = new InterpolatingDoubleTreeMap();
 
   static {
-    hoodAngleMap.put(1.92, 4.0); //1.28 at 2.3
-    hoodAngleMap.put(2.4, 5.0); //2.44 at 6.8
-    hoodAngleMap.put(2.57, 6.0); //8.9
+    hoodAngleMap.put(1.92, 4.0); // 1.28 at 2.3
+    hoodAngleMap.put(2.4, 5.0); // 2.44 at 6.8
+    hoodAngleMap.put(2.57, 6.0); // 8.9
     hoodAngleMap.put(3.59, 7.0);
-    hoodAngleMap.put(3.8, 8.0); //12.1
-    //hoodAngleMap.put(4.2, 17.6); //`8.6
+    hoodAngleMap.put(3.8, 8.0); // 12.1
+    // hoodAngleMap.put(4.2, 17.6); //`8.6
   }
 
   /** Distance from feed pose in meters -> flywheel speed in rotations per second */
-  private static final InterpolatingDoubleTreeMap flywheelMap =
-      new InterpolatingDoubleTreeMap();
+  private static final InterpolatingDoubleTreeMap flywheelMap = new InterpolatingDoubleTreeMap();
 
   static {
     flywheelMap.put(0.0, 50.0);
@@ -315,33 +316,32 @@ public class Shooter extends SubsystemBase {
                   ShooterRotaryConstants.JERK,
                   PIDSlot.SLOT_0);
             })
-          .andThen(() -> System.out.println("Command finished"));
+        .andThen(() -> System.out.println("Command finished"));
   }
 
   public void setHoodAngleForDistance(DoubleSupplier distance) {
-              double distanceMeters = distance.getAsDouble();
-              double angle = hoodAngleMap.get(distanceMeters);
-              desiredHoodAngle = angle;
-              System.out.println("Setting hood angle to: " + angle + " degrees");
-              _hood.runPosition(
-                  Angle.ofBaseUnits(angle * ShooterConstants.SIM_MULTIPLIER, Degrees),
-                  ShooterRotaryConstants.CRUISE_VELOCITY,
-                  ShooterRotaryConstants.ACCELERATION,
-                  ShooterRotaryConstants.JERK,
-                  PIDSlot.SLOT_0);
+    double distanceMeters = distance.getAsDouble();
+    double angle = hoodAngleMap.get(distanceMeters);
+    desiredHoodAngle = angle;
+    System.out.println("Setting hood angle to: " + angle + " degrees");
+    _hood.runPosition(
+        Angle.ofBaseUnits(angle * ShooterConstants.SIM_MULTIPLIER, Degrees),
+        ShooterRotaryConstants.CRUISE_VELOCITY,
+        ShooterRotaryConstants.ACCELERATION,
+        ShooterRotaryConstants.JERK,
+        PIDSlot.SLOT_0);
   }
 
   public Command setVelocityForDistance(DoubleSupplier distance) {
     return this.runOnce(
-      () -> {
-      double distanceMeters = distance.getAsDouble();
-      AngularVelocity speed = RotationsPerSecond.of(flywheelMap.get(distanceMeters));
-      targetVelocity = speed;
-      System.out.println("Setting speed to: " + speed + " m/s");
-      _flywheel.runVelocity(speed, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
-    });
-}
-
+        () -> {
+          double distanceMeters = distance.getAsDouble();
+          AngularVelocity speed = RotationsPerSecond.of(flywheelMap.get(distanceMeters));
+          targetVelocity = speed;
+          System.out.println("Setting speed to: " + speed + " m/s");
+          _flywheel.runVelocity(speed, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
+        });
+  }
 
   public void periodic() {
     _hood.periodic();
