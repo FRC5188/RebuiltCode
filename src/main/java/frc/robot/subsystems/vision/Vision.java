@@ -5,14 +5,13 @@
 // license that can be found in the LICENSE file
 // at the root directory of this project.
 
-
-/* TODO: 
+/* TODO:
 
 * Set camera position coords. Since we're running a Limelight, this is done on the Limelight's web-ui instead
    of here in code.
 
 * Follow directions on https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltags to set up params
-   such as gain. 
+   such as gain.
 
 * Make sure the map is loading correctly on the Limelight web-ui and check positioning to ensure accuracy.
 
@@ -23,10 +22,9 @@
 * If possible, calibrate the Limelight camera
 * Make sure we are rejecting the april tags we don't care about. Check out alignment tags in Constants.java
 * Check out megatag2 stuff from Limelight https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-robot-localization-megatag2
-* Currently storing vision constants in robot/subsystems/vision/VisionConstants.java 
+* Currently storing vision constants in robot/subsystems/vision/VisionConstants.java
   Refactor this to move constants into the robot/Constants.java
 */
-
 
 package frc.robot.subsystems.vision;
 
@@ -107,7 +105,6 @@ public class Vision extends SubsystemBase {
 
       // Add tag poses
 
-    
       for (int tagId : inputs[cameraIndex].tagIds) {
         var tagPose = VisionConstants.aprilTagLayout.getTagPose(tagId);
         if (tagPose.isPresent()) {

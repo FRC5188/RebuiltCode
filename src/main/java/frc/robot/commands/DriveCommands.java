@@ -157,29 +157,40 @@ public class DriveCommands {
         .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
   }
 
-  public static boolean isFlipped(){
+  public static boolean isFlipped() {
     boolean isFlipped =
-      DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+        DriverStation.getAlliance().isPresent()
+            && DriverStation.getAlliance().get() == Alliance.Red;
 
     return isFlipped;
   }
 
-public static Command zeroHeading(Drive m_drive){
-  return Commands.runOnce(
-    () -> m_drive.setPose(new Pose2d(m_drive.getPose().getTranslation(), !isFlipped() ? new Rotation2d(Math.PI):Rotation2d.kZero)), m_drive)
-    .withName("Pose Heading Zeroed")
-    .ignoringDisable(true);
-}
+  public static Command zeroHeading(Drive m_drive) {
+    return Commands.runOnce(
+            () ->
+                m_drive.setPose(
+                    new Pose2d(
+                        m_drive.getPose().getTranslation(),
+                        !isFlipped() ? new Rotation2d(Math.PI) : Rotation2d.kZero)),
+            m_drive)
+        .withName("Pose Heading Zeroed")
+        .ignoringDisable(true);
+  }
 
-/*
- * angle in radians
- */
-public static Command setHeading(Drive m_drive, double angle){
-  return Commands.runOnce(
-    () -> m_drive.setPose(new Pose2d(m_drive.getPose().getTranslation(), !isFlipped() ? new Rotation2d(angle):new Rotation2d(angle-Math.PI))), m_drive)
-    .withName("Pose Heading Zeroed")
-    .ignoringDisable(true);
-}
+  /*
+   * angle in radians
+   */
+  public static Command setHeading(Drive m_drive, double angle) {
+    return Commands.runOnce(
+            () ->
+                m_drive.setPose(
+                    new Pose2d(
+                        m_drive.getPose().getTranslation(),
+                        !isFlipped() ? new Rotation2d(angle) : new Rotation2d(angle - Math.PI))),
+            m_drive)
+        .withName("Pose Heading Zeroed")
+        .ignoringDisable(true);
+  }
 
   /**
    * Measures the velocity feedforward constants for the drive motors.

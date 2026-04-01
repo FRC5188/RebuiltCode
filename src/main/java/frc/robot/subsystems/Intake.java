@@ -44,7 +44,7 @@ public class Intake extends SubsystemBase {
     targetSpeed = velocity;
   }
 
-  public Command setPivotAngle(Angle pivotAngle) {
+  public Command setPivotAngle(Angle pivotAngle, PIDSlot slot) {
     return this.runOnce(
         () ->
             _pivotIO.runPosition(
@@ -52,8 +52,7 @@ public class Intake extends SubsystemBase {
                 IntakePivotConstants.CRUISE_VELOCITY,
                 IntakePivotConstants.ACCELERATION,
                 IntakePivotConstants.JERK,
-                PIDSlot.SLOT_0)
-        );
+                slot));
   }
 
   public AngularVelocity getVelocity() {
@@ -68,6 +67,12 @@ public class Intake extends SubsystemBase {
     setVelocity(RotationsPerSecond.of(0));
   }
 
+  public Command stopPickupIntake() {
+    return Commands.parallel(
+        runRollers(RotationsPerSecond.of(0)),
+        setPivotAngle(IntakePivotConstants.PICKUP_ANGLE, PIDSlot.SLOT_0));
+  }
+
   public Command runRollers(AngularVelocity velocity) {
     return Commands.run(() -> setVelocity(velocity));
   }
@@ -75,7 +80,7 @@ public class Intake extends SubsystemBase {
   public Command intake() {
     return Commands.parallel(
         runRollers(RotationsPerSecond.of(IntakeFlywheelConstants.PICKUP_SPEED)),
-        setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
+        setPivotAngle(IntakePivotConstants.PICKUP_ANGLE, PIDSlot.SLOT_0));
   }
 
   public boolean isIntendedAngle() {
@@ -104,11 +109,24 @@ public class Intake extends SubsystemBase {
                 PIDSlot.SLOT_0));
   }
 
-  public Command jostleIntake() {
+  // Agressive up PID and regular down PID used in shooting to help agitate fuel.
+  public Command littleJostle() {
+    return Commands.parallel(
+        runRollers(RotationsPerSecond.of(-20)),
+        Commands.sequence(
+                new WaitCommand(1.0),
+                setPivotAngle(IntakePivotConstants.LITTLE_JOSTLE_ANGLE, PIDSlot.SLOT_1),
+                new WaitCommand(0.5),
+                setPivotAngle(IntakePivotConstants.PICKUP_ANGLE, PIDSlot.SLOT_0))
+            .repeatedly());
+  }
+
+  // Regular jostle commmand called by driver.
+  public Command bigJostle() {
     return Commands.sequence(
-        setPivotAngle(IntakePivotConstants.JOSTLE_ANGLE),
-        new WaitCommand(0.5),
-        setPivotAngle(IntakePivotConstants.PICKUP_ANGLE));
+        setPivotAngle(IntakePivotConstants.BIG_JOSTLE_ANGLE, PIDSlot.SLOT_0),
+        new WaitCommand(0.7),
+        setPivotAngle(IntakePivotConstants.PICKUP_ANGLE, PIDSlot.SLOT_0));
   }
 
   public void tunePivotPosition() {

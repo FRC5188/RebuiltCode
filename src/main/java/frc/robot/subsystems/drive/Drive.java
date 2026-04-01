@@ -313,6 +313,11 @@ public class Drive extends SubsystemBase {
     return kinematics.toChassisSpeeds(getModuleStates());
   }
 
+  @AutoLogOutput(key = "DistanceFromHUB")
+  public double getDistanceFromHub() {
+    return getRadiusToHubInMeters();
+  }
+
   /** Returns the position of each module in radians. */
   public double[] getWheelRadiusCharacterizationPositions() {
     double[] values = new double[4];

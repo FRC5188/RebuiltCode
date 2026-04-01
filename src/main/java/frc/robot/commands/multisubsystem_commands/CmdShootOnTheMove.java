@@ -34,6 +34,7 @@ public class CmdShootOnTheMove extends Command {
 
   /** Creates a new CmdDriveShootOnTheMove. */
   private final Drive _drive;
+
   private final Shooter _shooter;
 
   private DoubleSupplier _translationXSupplier;

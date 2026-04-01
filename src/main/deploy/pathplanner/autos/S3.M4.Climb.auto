@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "LBump-Shoot3"
+                  "pathName": "LBump-ShootC"
                 }
               },
               {
@@ -23,7 +23,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeDown"
+                  "name": null
                 }
               }
             ]
@@ -42,7 +42,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Shoot3-Main4"
+                  "pathName": "ShootC-Main4"
                 }
               },
               {
@@ -58,7 +58,7 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "IntakeOn"
+                        "name": "Intake"
                       }
                     }
                   ]
