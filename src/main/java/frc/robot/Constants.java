@@ -377,7 +377,7 @@ public final class Constants {
       if (RobotBase.isReal()) {
         // Velocity PID
         config.Slot0 =
-            new Slot0Configs().withKP(4).withKI(0.15).withKD(0.0).withKV(0.1).withKS(8.5);
+            new Slot0Configs().withKP(4).withKI(0.0).withKD(0.0).withKV(0.1).withKS(8.5);
       } else {
         config.Slot0 = new Slot0Configs().withKP(0.75).withKI(0.0).withKD(0.0);
       }
@@ -854,7 +854,7 @@ public final class Constants {
       // config.Slot0 = SLOT0CONFIG;
       if (RobotBase.isReal()) {
         config.Slot0 =
-            new Slot0Configs().withKP(22.5).withKI(0.05).withKD(0.0).withKV(0.05).withKS(12.0);
+            new Slot0Configs().withKP(22.5).withKI(0.0).withKD(0.0).withKV(0.05).withKS(12.0);
 
       } else {
         config.Slot0 = new Slot0Configs().withKP(0.0).withKI(0.0).withKD(0.0).withKS(10.0);
