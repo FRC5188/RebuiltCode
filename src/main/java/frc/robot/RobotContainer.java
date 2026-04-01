@@ -334,7 +334,7 @@ public class RobotContainer {
     // Stops rollers - we shouldn't need this, but throw it in if autos are tweaking.
     NamedCommands.registerCommand("IntakeOff", Commands.run(() -> intake.stop()));
 
-    NamedCommands.registerCommand("Jostle", Commands.run(() -> intake.setPivotAngle(IntakePivotConstants.BIG_JOSTLE_ANGLE)));
+    NamedCommands.registerCommand("Jostle", intake.bigJostle());
     
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     autoChooser.addDefaultOption("Select An Auto", Commands.none());
@@ -418,7 +418,7 @@ public class RobotContainer {
     controller.b().onTrue(intake.bigJostle());
 
     // Stow Intake
-    controller.x().whileTrue(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE));
+    controller.x().whileTrue(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE, PIDSlot.SLOT_0));
 
     // Fixed Shots
     controller.povUp().onTrue(shooter.setHoodAngle(2.3));

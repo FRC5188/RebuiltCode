@@ -787,7 +787,8 @@ public final class Constants {
       if (RobotBase.isReal()) {
         config.Slot0 =
             new Slot0Configs().withKP(700.0).withKI(1000).withKD(80).withKS(8.0).withKV(0.0);
-
+        config.Slot1 =
+            new Slot1Configs().withKP(1200.0).withKI(1000.0).withKD(80.0).withKS(8.0).withKV(0.0);
       } else {
         config.Slot0 =
             new Slot0Configs().withKP(500.0).withKI(0.0).withKD(0).withKS(0.07).withKV(0.1);
