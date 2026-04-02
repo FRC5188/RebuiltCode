@@ -25,8 +25,11 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.Intake;
 // import frc.robot.subsystems.Intake;
 import frc.lib.firecontrol.ShotCalculator;
+
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -63,7 +66,7 @@ public class CmdShootOnTheMove extends Command {
 
   private ShotCalculator _shotCalc;
   private Hopper _hopper;
-  // private Intake _intake;
+  private Intake _intake;
   private Command _jostleCommand;
   private boolean _wasShootingTriggered;
 
@@ -83,7 +86,7 @@ public class CmdShootOnTheMove extends Command {
       Drive drivetrainSubsystem,
       Shooter shooterSubsystem,
       Hopper hopperSubsystem,
-      // Intake intakeSubsystem,
+      Intake intakeSubsystem,
       DoubleSupplier translationXSupplier,
       DoubleSupplier translationYSupplier,
       BooleanSupplier trigger) {
@@ -91,7 +94,7 @@ public class CmdShootOnTheMove extends Command {
     _drive = drivetrainSubsystem;
     _shooter = shooterSubsystem;
     _hopper = hopperSubsystem;
-    // _intake = intakeSubsystem;
+    _intake = intakeSubsystem;
     _translationXSupplier = translationXSupplier;
     _translationYSupplier = translationYSupplier;
     _trigger = trigger;
@@ -170,7 +173,8 @@ public class CmdShootOnTheMove extends Command {
     _drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, _correctedRotationRate, _drive.getRotation()));
 
     if (_trigger.getAsBoolean() && shot.isValid() && shot.confidence() > 50) {
-      _shooter.runFeeder(edu.wpi.first.units.Units.RotationsPerSecond.of(30));
+      _shooter.runFeeder(edu.wpi.first.units.Units.RotationsPerSecond.of(40));
+      _intake.setVelocity(RotationsPerSecond.of(-20));
       _hopper.runSpindexerImmediate(edu.wpi.first.units.Units.RotationsPerSecond.of(15));
       
       // if (!_wasShootingTriggered) {
@@ -180,6 +184,7 @@ public class CmdShootOnTheMove extends Command {
     } else {
       _shooter.runFeeder(edu.wpi.first.units.Units.RotationsPerSecond.of(0));
       _hopper.runSpindexerImmediate(edu.wpi.first.units.Units.RotationsPerSecond.of(0));
+      _intake.stop();
       
       // if (_wasShootingTriggered) {
       //   _jostleCommand.cancel();
@@ -217,6 +222,8 @@ public class CmdShootOnTheMove extends Command {
     _shooter.runFeeder(edu.wpi.first.units.Units.RotationsPerSecond.of(0));
     _hopper.runSpindexerImmediate(edu.wpi.first.units.Units.RotationsPerSecond.of(0));
     _shooter.setFlywheelVelocity(edu.wpi.first.units.Units.RotationsPerSecond.of(0));
+    _intake.stop();
+
     // Reenable CmdAdjustShooterAutomatically because this command is finished.
     _shooter.setAutoShootEnabled(true);
   }

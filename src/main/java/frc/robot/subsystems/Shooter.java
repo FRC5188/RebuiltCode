@@ -91,15 +91,15 @@ public class Shooter extends SubsystemBase {
       // shotCalculator.loadShotLUT(lut);
 
     // Initialize your custom empirical data lookup table
-    ShotLUT customLut = new ShotLUT();
+    ShotLUT customLut = new ShotLUT();  
     
     // Add your physical test data here:
     // format: .put(distance_meters, rpm, hood_angle_degrees, time_of_flight_seconds)
-    customLut.put(1.3, 3600, 2.3, 0.11); 
-    customLut.put(2.0, 3400, 6.2, 0.45);
-    customLut.put(3.0, 4000, 8.8, 0.60);
-    customLut.put(4.0, 4500, 12.3, 0.85);
-    customLut.put(4.0, 4500, 18.6, 0.85);
+    customLut.put(1.26, 3400, 2.3, 0.98); 
+    customLut.put(2.0, 3450, 6.2, 1.08);
+    customLut.put(3.0, 3660, 11, 1.2);
+    customLut.put(4.0, 3810, 13.4, 1.3);
+    // customLut.put(4.0, 4500, 18.6, 0.85);
 
     // Load custom lookup table into the shot calculator
     shotCalculator.loadShotLUT(customLut);
@@ -280,7 +280,7 @@ public class Shooter extends SubsystemBase {
           
           setFlywheelVelocity(RotationsPerSecond.of(targetRpm / 60.0));
           setHoodAngleImmediate(targetAngle);
-          runFeeder(RotationsPerSecond.of(60));
+          runFeeder(RotationsPerSecond.of(40));
         }, this);
   }
 

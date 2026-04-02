@@ -549,7 +549,6 @@ public final class Constants {
   //   }
   // }
 
-  public static final int CANDLE_ID = 50;
 
   public class IntakeFlywheelConstants {
     // Constants for Intake
@@ -693,10 +692,10 @@ public final class Constants {
   public class IntakePivotConstants {
     public static final String NAME = "Intake";
 
-    public static final Angle PICKUP_ANGLE = Degrees.of(123.5); // 123.0
+    public static final Angle PICKUP_ANGLE = Degrees.of(128.0); // 123.0
     public static final Angle STOW_ANGLE = Degrees.of(0.0);
     public static final Angle BIG_JOSTLE_ANGLE = Degrees.of(35.0); // 40.0
-    public static final Angle LITTLE_JOSTLE_ANGLE = Degrees.of(70.0);
+    public static final Angle LITTLE_JOSTLE_ANGLE = Degrees.of(55.0); //70
 
     public static final Angle TOLERANCE = Degrees.of(10);
 

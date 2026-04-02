@@ -416,11 +416,11 @@ public class RobotContainer {
         .a()
         .whileTrue(new CmdShootOnTheMove(
             drive, 
-            shooter, 
+            shooter,
             hopper,
-            // intake,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
+            intake,
+            () -> controller.getLeftY(),
+            () -> controller.getLeftX(),
             () -> controller.rightBumper().getAsBoolean()));
 
     // Jostle
@@ -430,7 +430,7 @@ public class RobotContainer {
     controller.y().whileTrue(
         Commands.parallel(
             shooter.tuneShoot(),
-            hopper.runSpindexer(RotationsPerSecond.of(30)),
+            hopper.runSpindexer(RotationsPerSecond.of(15)),
             intake.intake()
         )
     );
