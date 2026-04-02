@@ -430,8 +430,8 @@ public class RobotContainer {
     controller.y().whileTrue(
         Commands.parallel(
             shooter.tuneShoot(),
-            hopper.runSpindexer(RotationsPerSecond.of(15)),
-            intake.intake()
+            hopper.runSpindexer(RotationsPerSecond.of(18)),
+            intake.littleJostle()
         )
     );
     controller.y().onFalse(
