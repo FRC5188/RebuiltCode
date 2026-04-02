@@ -52,7 +52,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "IntakeOn",
+      "name": "",
       "waypointRelativePos": 0.07857142857142857,
       "endWaypointRelativePos": 1.0,
       "command": {
@@ -79,7 +79,7 @@
   "folder": "Shoot✔️ ",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 1.101706115206352
+    "rotation": 0.0
   },
   "useDefaultConstraints": false
 }

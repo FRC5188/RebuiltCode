@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.6,
-        "y": 5.590272435897436
+        "x": 3.428550226308467,
+        "y": 5.172994487239637
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.1725122228676925,
-        "y": 5.750543887023177
+        "x": 4.00106244917616,
+        "y": 5.333265938365378
       },
       "isLocked": false,
       "linkedName": "UB"
@@ -80,12 +80,12 @@
     },
     {
       "anchor": {
-        "x": 2.6085176282051274,
-        "y": 1.4477243589743591
+        "x": 3.5082500000033088,
+        "y": 2.8801012661030256
       },
       "prevControl": {
-        "x": 4.150253012045344,
-        "y": 2.253783132531429
+        "x": 5.0499853838435245,
+        "y": 3.6861600396600953
       },
       "nextControl": null,
       "isLocked": false,
@@ -126,7 +126,7 @@
       "command": null
     },
     {
-      "name": "ReadyUp",
+      "name": "",
       "waypointRelativePos": 2.9977578475336344,
       "endWaypointRelativePos": null,
       "command": null
@@ -148,13 +148,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 39.09385888622944
+    "rotation": 45.0
   },
   "reversed": false,
   "folder": "Compound Paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -45.0
   },
   "useDefaultConstraints": true
 }

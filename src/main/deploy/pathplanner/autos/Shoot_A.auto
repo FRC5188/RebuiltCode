@@ -23,7 +23,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ReadyUp"
+                  "name": null
                 }
               }
             ]
@@ -58,6 +58,6 @@
     }
   },
   "resetOdom": false,
-  "folder": "ShootNoMove",
+  "folder": "SHOOT",
   "choreoAuto": false
 }

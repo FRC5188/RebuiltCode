@@ -64,7 +64,7 @@
   "folder": "Shoot✔️ ",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 1.101706115206352
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

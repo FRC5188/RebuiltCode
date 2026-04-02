@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.6085176282051274,
-        "y": 1.4477243589743591
+        "x": 3.5082500000033088,
+        "y": 2.8801012661030256
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.3306746987951805,
-        "y": 2.472337349397591
+        "x": 4.230407070593362,
+        "y": 3.9047142565262574
       },
       "isLocked": false,
       "linkedName": "S3"
@@ -126,7 +126,7 @@
       "command": null
     },
     {
-      "name": "ReadyUp",
+      "name": "",
       "waypointRelativePos": 3.2040358744394712,
       "endWaypointRelativePos": null,
       "command": null
@@ -154,7 +154,7 @@
   "folder": "Compound Paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 39.09385888622944
+    "rotation": 45.0
   },
   "useDefaultConstraints": true
 }
