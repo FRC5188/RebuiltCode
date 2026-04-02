@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.6085176282051274,
-        "y": 1.4477243589743591
+        "x": 3.5082500000033088,
+        "y": 2.8801012661030256
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.816843373493977,
-        "y": 2.723674698795181
+        "x": 5.716575745292158,
+        "y": 4.156051605923848
       },
       "isLocked": false,
       "linkedName": "S3"
@@ -53,7 +53,7 @@
   "folder": "Shoot✔️ ",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 39.09385888622944
+    "rotation": 45.0
   },
   "useDefaultConstraints": true
 }

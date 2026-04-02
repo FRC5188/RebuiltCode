@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 3.6,
-        "y": 5.590272435897436
+        "x": 3.428550226308467,
+        "y": 5.172994487239637
       },
       "prevControl": {
-        "x": 5.014102564102563,
-        "y": 5.408581730769231
+        "x": 4.84265279041103,
+        "y": 4.991303782111432
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,7 +47,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -45.0
   },
   "reversed": false,
   "folder": "Sweep Paths ✔",
