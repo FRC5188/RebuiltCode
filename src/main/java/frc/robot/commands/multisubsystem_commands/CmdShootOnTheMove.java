@@ -25,7 +25,7 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.Hopper;
-import frc.robot.subsystems.Intake;
+// import frc.robot.subsystems.Intake;
 import frc.lib.firecontrol.ShotCalculator;
 
 import java.util.function.BooleanSupplier;
@@ -63,7 +63,7 @@ public class CmdShootOnTheMove extends Command {
 
   private ShotCalculator _shotCalc;
   private Hopper _hopper;
-  private Intake _intake;
+  // private Intake _intake;
   private Command _jostleCommand;
   private boolean _wasShootingTriggered;
 
@@ -83,7 +83,7 @@ public class CmdShootOnTheMove extends Command {
       Drive drivetrainSubsystem,
       Shooter shooterSubsystem,
       Hopper hopperSubsystem,
-      Intake intakeSubsystem,
+      // Intake intakeSubsystem,
       DoubleSupplier translationXSupplier,
       DoubleSupplier translationYSupplier,
       BooleanSupplier trigger) {
@@ -91,13 +91,13 @@ public class CmdShootOnTheMove extends Command {
     _drive = drivetrainSubsystem;
     _shooter = shooterSubsystem;
     _hopper = hopperSubsystem;
-    _intake = intakeSubsystem;
+    // _intake = intakeSubsystem;
     _translationXSupplier = translationXSupplier;
     _translationYSupplier = translationYSupplier;
     _trigger = trigger;
     _shotCalc = _shooter.getShotCalculator();
 
-    _jostleCommand = _intake.littleJostle();
+    // _jostleCommand = _intake.littleJostle();
     _wasShootingTriggered = false;
 
     _rotationPID =
@@ -173,19 +173,19 @@ public class CmdShootOnTheMove extends Command {
       _shooter.runFeeder(edu.wpi.first.units.Units.RotationsPerSecond.of(30));
       _hopper.runSpindexerImmediate(edu.wpi.first.units.Units.RotationsPerSecond.of(15));
       
-      if (!_wasShootingTriggered) {
-        _jostleCommand.schedule();
-        _wasShootingTriggered = true;
-      }
+      // if (!_wasShootingTriggered) {
+      //   _jostleCommand.schedule();
+      //   _wasShootingTriggered = true;
+      // }
     } else {
       _shooter.runFeeder(edu.wpi.first.units.Units.RotationsPerSecond.of(0));
       _hopper.runSpindexerImmediate(edu.wpi.first.units.Units.RotationsPerSecond.of(0));
       
-      if (_wasShootingTriggered) {
-        _jostleCommand.cancel();
-        _intake.stopPickupIntake().schedule();
-        _wasShootingTriggered = false;
-      }
+      // if (_wasShootingTriggered) {
+      //   _jostleCommand.cancel();
+      //   _intake.stopPickupIntake().schedule();
+      //   _wasShootingTriggered = false;
+      // }
     }
 
     // Keep state machine alive
@@ -208,11 +208,11 @@ public class CmdShootOnTheMove extends Command {
     _shotTimer.reset();
     _hasRunOnce = false;
 
-    if (_wasShootingTriggered) {
-      _jostleCommand.cancel();
-      _intake.stopPickupIntake().schedule();
-      _wasShootingTriggered = false;
-    }
+    // if (_wasShootingTriggered) {
+    //   _jostleCommand.cancel();
+    //   _intake.stopPickupIntake().schedule();
+    //   _wasShootingTriggered = false;
+    // }
 
     _shooter.runFeeder(edu.wpi.first.units.Units.RotationsPerSecond.of(0));
     _hopper.runSpindexerImmediate(edu.wpi.first.units.Units.RotationsPerSecond.of(0));
