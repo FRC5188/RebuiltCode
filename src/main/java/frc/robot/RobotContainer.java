@@ -418,8 +418,9 @@ public class RobotContainer {
             drive, 
             shooter, 
             hopper,
-            () -> controller.getLeftY(),
-            () -> controller.getLeftX(),
+            intake,
+            () -> -controller.getLeftY(),
+            () -> -controller.getLeftX(),
             () -> controller.rightBumper().getAsBoolean()));
 
     // Jostle
