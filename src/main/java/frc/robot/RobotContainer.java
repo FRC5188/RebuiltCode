@@ -315,13 +315,12 @@ public class RobotContainer {
     // Calibrates the hood
     NamedCommands.registerCommand("ZeroHood", shooter.calibrateHood());
 
-    // Runs tower, flywheel, spindexer, and auto hood angle
+    // Runs tower, flywheel, spindexer, and auto hood angle using the custom shot map
     NamedCommands.registerCommand(
         "Shoot",
         Commands.parallel(
-            shooter.score(),
-            hopper.runSpindexer(RotationsPerSecond.of(14)),
-            shooter.setAngleForDistance(() -> drive.getRadiusToHubInMeters())));
+            shooter.scoreAtDistance(() -> drive.getRadiusToHubInMeters()),
+            hopper.runSpindexer(RotationsPerSecond.of(14))));
     // Stops tower, flywheels, and spindexer
     NamedCommands.registerCommand(
         "Return",
@@ -373,45 +372,28 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    // Just Shooter Flywheels
+    // Just Shooter Flywheels (LB / Static Backup Shot)
     controller
         .leftBumper()
-        .whileTrue(shooter.setVelocityForDistance(() -> drive.getRadiusToHubInMeters()));
-    controller.leftBumper().onFalse(shooter.runFlywheel(RotationsPerSecond.of(0)));
-
-    controller.rightBumper().and(controller.a().negate()).whileTrue(Commands.parallel(shooter.runTower(RotationsPerSecond.of(30)),
-    hopper.runSpindexer(RotationsPerSecond.of(15))));
-    controller.rightBumper().and(controller.a().negate()).onFalse(Commands.parallel(shooter.runTower(RotationsPerSecond.of(0)),
-    hopper.runSpindexer(RotationsPerSecond.of(0))));
-
-    // Shoot
-    controller
-        .leftTrigger()
         .whileTrue(
             Commands.parallel(
                 shooter.score(),
-                hopper.runSpindexer(RotationsPerSecond.of(10)),
+                hopper.runSpindexer(RotationsPerSecond.of(15)),
                 intake.littleJostle()));
     controller
-        .leftTrigger()
+        .leftBumper()
         .onFalse(
             Commands.parallel(
                 shooter.stopScore(),
                 hopper.runSpindexer(RotationsPerSecond.of(0)),
                 intake.stopPickupIntake()));
 
-    // Intake Rollers 11 Motor: 9 Intake
+    controller.rightBumper().and(controller.a().negate()).whileTrue(Commands.parallel(shooter.runTower(RotationsPerSecond.of(40)),
+    hopper.runSpindexer(RotationsPerSecond.of(15))));
+    controller.rightBumper().and(controller.a().negate()).onFalse(Commands.parallel(shooter.runTower(RotationsPerSecond.of(0)),
+    hopper.runSpindexer(RotationsPerSecond.of(0))));
 
-    // controller.a().whileTrue((intake.runRollers(RotationsPerSecond.of(22.5))));
-    // controller
-    //     .a()
-    //     .onFalse(new RunCommand(() -> intake._rollerIO.runVoltage(Volts.of(0.0)), intake));
-
-    // Intake + Out
-    controller.rightTrigger().whileTrue(intake.intake());
-    controller.rightTrigger().onFalse(Commands.runOnce(() -> intake.stop()));
-
-    // Auto Align
+    // Auto Align with Shoot On The Move ('A' holds the align, 'LT' actually shoots)
     controller
         .a()
         .whileTrue(new CmdShootOnTheMove(
@@ -419,28 +401,51 @@ public class RobotContainer {
             shooter,
             hopper,
             intake,
+            false, // Moving calc (account for SOTM)
+            true, // control drive (align and translate)
             () -> controller.getLeftY(),
             () -> controller.getLeftX(),
-            () -> controller.rightBumper().getAsBoolean()));
+            () -> controller.leftTrigger().getAsBoolean()));
+
+    // Stationary Shot Calc (If just LT is pulled without A, it still aligns/shoots but WITHOUT speed offset)
+    controller
+        .leftTrigger()
+        .and(controller.a().negate())
+        .whileTrue(new CmdShootOnTheMove(
+            drive, 
+            shooter, 
+            hopper,
+            intake,
+            true, // Stationary calc (no offset)
+            false, // DO NOT control drive (no translation/alignment)
+            () -> 0.0,
+            () -> 0.0,
+            () -> true)); // Automatically shoot since LT is the activating button
+
+    // Intake + Out
+    controller.rightTrigger().whileTrue(intake.intake());
+    controller.rightTrigger().onFalse(Commands.runOnce(() -> intake.stop()));
 
     // Jostle
     controller.b().onTrue(intake.bigJostle());
 
+    // controller.y().onTrue(intake.littleJostle());
+
     // Tune Shoot
-    controller.y().whileTrue(
-        Commands.parallel(
-            shooter.tuneShoot(),
-            hopper.runSpindexer(RotationsPerSecond.of(18)),
-            intake.littleJostle()
-        )
-    );
-    controller.y().onFalse(
-        Commands.parallel(
-            shooter.stopScore(),
-            hopper.runSpindexer(RotationsPerSecond.of(0)),
-            Commands.runOnce(() -> intake.stop())
-        )
-    );
+    // controller.y().whileTrue(
+    //     Commands.parallel(
+    //         shooter.tuneShoot(),
+    //         hopper.runSpindexer(RotationsPerSecond.of(18)),
+    //         intake.littleJostle()
+    //     )
+    // );
+    // controller.y().onFalse(
+    //     Commands.parallel(
+    //         shooter.stopScore(),
+    //         hopper.runSpindexer(RotationsPerSecond.of(0)),
+    //         Commands.runOnce(() -> intake.stop())
+    //     )
+    // );
 
     // Stow Intake
     controller.x().whileTrue(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE, PIDSlot.SLOT_0));

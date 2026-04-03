@@ -259,9 +259,32 @@ public class Shooter extends SubsystemBase {
   public Command score() {
     return Commands.run(
         () -> {
-          runFeeder(RotationsPerSecond.of(35));
+          runFeeder(RotationsPerSecond.of(40));
           setFlywheelVelocity(RotationsPerSecond.of(67));
         });
+  }
+
+  public Command scoreAtDistance(DoubleSupplier distance) {
+    return Commands.run(
+        () -> {
+          double targetRpm = 3400.0;
+          double targetAngle = 2.3;
+
+          try {
+            double dist = distance.getAsDouble();
+            // If we have a valid, non-zero distance, use the shot calculator
+            if (dist > 0.0 && !Double.isNaN(dist)) {
+              targetRpm = shotCalculator.getBaseRPM(dist);
+              targetAngle = shotCalculator.getHoodAngle(dist);
+            }
+          } catch (Exception e) {
+            System.out.println("Failed to get distance, falling back to 3400 RPM and 2.3 deg.");
+          }
+
+          setFlywheelVelocity(RotationsPerSecond.of(targetRpm / 60.0));
+          setHoodAngleImmediate(targetAngle);
+          runFeeder(RotationsPerSecond.of(40));
+        }, this);
   }
 
   public Command stopScore() {
@@ -367,7 +390,7 @@ public class Shooter extends SubsystemBase {
     return this.runOnce(
             () -> {
               double distanceMeters = distance.getAsDouble();
-              double angle = hoodAngleMap.get(distanceMeters);
+              double angle = shotCalculator.getHoodAngle(distanceMeters);
               desiredHoodAngle = angle;
               System.out.println("Setting hood angle to: " + angle + " degrees");
               _hood.runPosition(
@@ -380,9 +403,8 @@ public class Shooter extends SubsystemBase {
         .andThen(() -> System.out.println("Command finished"));
   }
 
-  public void setAngleForDistance2(DoubleSupplier distance) {
-    double distanceMeters = distance.getAsDouble();
-    double angle = hoodAngleMap.get(distanceMeters);
+  public void setAngleForDistanceImmediate(double distanceMeters) {
+    double angle = shotCalculator.getHoodAngle(distanceMeters);
     desiredHoodAngle = angle;
     System.out.println("Setting hood angle to: " + angle + " degrees");
     _hood.runPosition(
@@ -397,14 +419,12 @@ public class Shooter extends SubsystemBase {
     return this.runOnce(
         () -> {
           double distanceMeters = distance.getAsDouble();
-          AngularVelocity speed = RotationsPerSecond.of(flywheelMap.get(distanceMeters));
+          AngularVelocity speed = RotationsPerSecond.of(shotCalculator.getBaseRPM(distanceMeters) / 60.0);        
           targetVelocity = speed;
-          System.out.println("Setting speed to: " + speed + " m/s");
+          System.out.println("Setting speed to: " + speed + " rot/s");
           _flywheel.runVelocity(speed, ShooterConstants.ACCELERATION, PIDSlot.SLOT_0);
         });
-  }
-
-  public void periodic() {
+  }  public void periodic() {
     _hood.periodic();
     _flywheel.periodic();
     _feeder.periodic();
