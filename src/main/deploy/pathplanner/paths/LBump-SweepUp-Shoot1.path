@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.6,
-        "y": 2.51
+        "x": 3.45681883024251,
+        "y": 2.7605420827389446
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.905948644793153,
-        "y": 2.889928673323824
+        "x": 4.762767475035663,
+        "y": 3.140470756062769
       },
       "isLocked": false,
       "linkedName": "LB"
@@ -144,7 +144,7 @@
   "folder": "Compound Paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 45.0
   },
   "useDefaultConstraints": true
 }

@@ -299,9 +299,9 @@ public class RobotContainer {
     // Set up auto routines
     // LEAVE THIS UP HERE
     // Extends climber arm
-    // NamedCommands.registerCommand("ExtendClimber", getAutonomousCommand());
-    // // Retracts climber arm
-    // NamedCommands.registerCommand("Climb", getAutonomousCommand());
+    NamedCommands.registerCommand("ExtendClimber", climber.extendClimber());
+    // Retracts climber arm
+    NamedCommands.registerCommand("Climb", climber.retractClimber(PIDSlot.SLOT_1));
 
     // Below Hub
     NamedCommands.registerCommand(
