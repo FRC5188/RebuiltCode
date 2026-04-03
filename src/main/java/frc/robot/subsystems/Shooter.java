@@ -98,7 +98,8 @@ public class Shooter extends SubsystemBase {
     customLut.put(1.26, 3400, 2.3, 0.98); 
     customLut.put(2.0, 3450, 6.2, 1.08);
     customLut.put(3.0, 3660, 11, 1.2);
-    customLut.put(4.0, 3810, 13.4, 1.3);
+    customLut.put(3.5, 3730, 12, 1.25);
+    customLut.put(4.0, 3800, 13.4, 1.3);
     // customLut.put(4.0, 4500, 18.6, 0.85);
 
     // Load custom lookup table into the shot calculator
@@ -206,7 +207,7 @@ public class Shooter extends SubsystemBase {
   public void setHoodAngleImmediate(double angleDegrees) {
     hoodAngle = angleDegrees;
     desiredHoodAngle = angleDegrees;
-    System.out.println("Setting hood angle to: " + angleDegrees + " degrees");
+    //System.out.println("Setting hood angle to: " + angleDegrees + " degrees");
     _hood.runPosition(
         Angle.ofBaseUnits(angleDegrees * ShooterConstants.SIM_MULTIPLIER, Degrees),
         ShooterRotaryConstants.CRUISE_VELOCITY,
@@ -288,11 +289,11 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command stopScore() {
-    return Commands.run(
+    return Commands.runOnce(
         () -> {
           runFeeder(RotationsPerSecond.of(0));
           setFlywheelVelocity(RotationsPerSecond.of(0));
-        });
+      });
   }
 
   public Command tuneShoot() {
@@ -392,7 +393,7 @@ public class Shooter extends SubsystemBase {
               double distanceMeters = distance.getAsDouble();
               double angle = shotCalculator.getHoodAngle(distanceMeters);
               desiredHoodAngle = angle;
-              System.out.println("Setting hood angle to: " + angle + " degrees");
+              //System.out.println("Setting hood angle to: " + angle + " degrees");
               _hood.runPosition(
                   Angle.ofBaseUnits(angle * ShooterConstants.SIM_MULTIPLIER, Degrees),
                   ShooterRotaryConstants.CRUISE_VELOCITY,
@@ -406,7 +407,7 @@ public class Shooter extends SubsystemBase {
   public void setAngleForDistanceImmediate(double distanceMeters) {
     double angle = shotCalculator.getHoodAngle(distanceMeters);
     desiredHoodAngle = angle;
-    System.out.println("Setting hood angle to: " + angle + " degrees");
+    //System.out.println("Setting hood angle to: " + angle + " degrees");
     _hood.runPosition(
         Angle.ofBaseUnits(angle * ShooterConstants.SIM_MULTIPLIER, Degrees),
         ShooterRotaryConstants.CRUISE_VELOCITY,
@@ -430,7 +431,7 @@ public class Shooter extends SubsystemBase {
     _feeder.periodic();
     Logger.recordOutput("Flywheel/TargetVelocity", targetVelocity);
     Logger.recordOutput("Feeder/TargetVelocity", feederTargetVelocity);
-    Logger.recordOutput("Hood/position", _hood.getPosition());
+    Logger.recordOutput("Hood/position", _hood.getPosition().in(Degrees));
     Logger.recordOutput("Hood/desired_position", desiredHoodAngle);
     Logger.recordOutput("Hood/current", _hood.getSupplyCurrent());
     Logger.recordOutput("ShooterTuning/FlywheelRPM", _flywheel.getVelocity().in(RotationsPerSecond) * 60.0);

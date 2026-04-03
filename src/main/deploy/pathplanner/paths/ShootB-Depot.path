@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.9688730385164042,
-        "y": 5.956390870185448
+        "x": 2.445080500894454,
+        "y": 6.152415026833632
       },
       "isLocked": false,
       "linkedName": "S2"
     },
     {
       "anchor": {
-        "x": 0.7526390870185449,
+        "x": 0.4471249999999998,
         "y": 5.9245833333333335
       },
       "prevControl": {
-        "x": 1.705450100355563,
-        "y": 5.90084935805892
+        "x": 0.9501124776386405,
+        "y": 5.909033989266548
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,14 +30,14 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.8064761904761906,
+      "waypointRelativePos": 0.35,
       "rotationDegrees": 180.0
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.36190476190476284,
+      "minWaypointRelativePos": 0.35,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 0.75,
@@ -50,19 +50,7 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "",
-      "waypointRelativePos": 0.07857142857142857,
-      "endWaypointRelativePos": 1.0,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "Intake"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,

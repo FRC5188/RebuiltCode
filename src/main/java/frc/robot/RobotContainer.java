@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.lib.W8.io.motor.*;
@@ -324,11 +325,11 @@ public class RobotContainer {
     // Stops tower, flywheels, and spindexer
     NamedCommands.registerCommand(
         "Return",
-        Commands.parallel(shooter.stopScore(), hopper.runSpindexer(RotationsPerSecond.of(0))));
+        Commands.deadline(new WaitCommand(1), shooter.stopScore(), hopper.runSpindexer(RotationsPerSecond.of(0))));
 
     // Runs rollers and pickup position ONLY when called
     // This is a zoned command.
-    NamedCommands.registerCommand("Intake", intake.intake().andThen(() -> intake.stop()));
+    NamedCommands.registerCommand("Intake", intake.intake());
     // Stops rollers - we shouldn't need this, but throw it in if autos are tweaking.
     NamedCommands.registerCommand("IntakeOff", Commands.run(() -> intake.stop()));
 
@@ -432,20 +433,20 @@ public class RobotContainer {
     // controller.y().onTrue(intake.littleJostle());
 
     // Tune Shoot
-    // controller.y().whileTrue(
-    //     Commands.parallel(
-    //         shooter.tuneShoot(),
-    //         hopper.runSpindexer(RotationsPerSecond.of(18)),
-    //         intake.littleJostle()
-    //     )
-    // );
-    // controller.y().onFalse(
-    //     Commands.parallel(
-    //         shooter.stopScore(),
-    //         hopper.runSpindexer(RotationsPerSecond.of(0)),
-    //         Commands.runOnce(() -> intake.stop())
-    //     )
-    // );
+    controller.y().whileTrue(
+        Commands.parallel(
+            shooter.tuneShoot(),
+            hopper.runSpindexer(RotationsPerSecond.of(18)),
+            intake.littleJostle()
+        )
+    );
+    controller.y().onFalse(
+        Commands.parallel(
+            shooter.stopScore(),
+            hopper.runSpindexer(RotationsPerSecond.of(0)),
+            Commands.runOnce(() -> intake.stop())
+        )
+    );
 
     // Stow Intake
     controller.x().whileTrue(intake.setPivotAngle(IntakePivotConstants.STOW_ANGLE, PIDSlot.SLOT_0));
