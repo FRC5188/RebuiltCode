@@ -13,8 +13,9 @@
     "Sweep Paths ✔"
   ],
   "autoFolders": [
-    "DEPOT",
     "CLIMB",
+    "DEPOT",
+    "COMBO",
     "SHOOT"
   ],
   "defaultMaxVel": 3.0,
