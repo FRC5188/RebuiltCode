@@ -3,58 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.035626506024096,
-        "y": 5.586734939759037
+        "x": 3.45681883024251,
+        "y": 2.7605420827389446
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8969612887091274,
-        "y": 4.381359016953759
+        "x": 2.4476034236804565,
+        "y": 2.7087874465049935
       },
       "isLocked": false,
-      "linkedName": "S1"
+      "linkedName": "LB"
     },
     {
       "anchor": {
-        "x": 1.8598752287016196,
-        "y": 4.664
+        "x": 1.0422131290243875,
+        "y": 2.7
       },
       "prevControl": {
-        "x": 2.1060771669546714,
-        "y": 4.620587955583267
-      },
-      "nextControl": {
-        "x": 1.6136732904485676,
-        "y": 4.707412044416732
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 1.0716738049959909,
-        "y": 4.599583975068654
-      },
-      "prevControl": {
-        "x": 1.0716738049959909,
-        "y": 4.849583975068654
+        "x": 1.7877318116975744,
+        "y": 2.6829101283880177
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Climb1"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.65,
-      "rotationDegrees": 90.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.7761904761904769,
-      "maxWaypointRelativePos": 2.0,
+      "minWaypointRelativePos": 0.4897342995169083,
+      "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 1.0,
         "maxAcceleration": 1.0,
@@ -77,13 +56,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": -90.0
   },
   "reversed": false,
-  "folder": "Climb Paths ✔",
+  "folder": "Climb Test Path",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -45.0
+    "rotation": 45.0
   },
   "useDefaultConstraints": true
 }

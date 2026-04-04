@@ -8,6 +8,7 @@
     "Depot✔",
     "Gather✔️",
     "Initial✔️",
+    "Climb Test Path",
     "Shoot✔️ ",
     "Sweep Paths ✔"
   ],
@@ -15,6 +16,7 @@
     "CLIMB",
     "DEPOT",
     "MID",
+    "COMBO",
     "SHOOT"
   ],
   "defaultMaxVel": 3.0,
