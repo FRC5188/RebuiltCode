@@ -17,6 +17,8 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 
 import au.grapplerobotics.CanBridge;
+
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
@@ -28,6 +30,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.Rebuilt2026.FuelSim;
+import frc.lib.Rebuilt2026.OrchestraMode;
+import frc.robot.Constants.Ports;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.generated.TunerConstants;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -47,6 +52,7 @@ public class Robot extends LoggedRobot {
   public static RobotContainer robotContainer;
   private Alert lowBatteryAlert = new Alert("The robot is low on battery!", AlertType.kWarning);
   public static FuelSim fuelSim = new FuelSim();
+  public static OrchestraMode music;
 
   public Robot() {
     CanBridge.runTCP();
@@ -137,7 +143,17 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when the robot is disabled. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    music = new OrchestraMode(new TalonFX(Ports.RightFlywheel.id(), Ports.RightFlywheel.bus()));
+
+    music.orchestraLoadFile("sounds/sovereign-reaper.chrp");
+    music.orchestraPlay();
+  }
+
+  @Override
+  public void disabledExit() {
+      music.orchestraClose();
+  }
 
   /** This function is called periodically when disabled. */
   @Override

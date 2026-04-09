@@ -71,7 +71,7 @@ public class RobotContainer {
   // Subsystems
   public final Drive drive;
   public final Hopper hopper;
-  private final Shooter shooter;
+  public final Shooter shooter;
   public final Intake intake;
   //   private final BallCounter ballCounter;
   private final Vision vision;
